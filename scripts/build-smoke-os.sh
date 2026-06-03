@@ -69,6 +69,15 @@ export PATH=/bin
 export HOME=/root
 export TERM=linux
 hostname VertexOS
+
+case " $(cat /proc/cmdline 2>/dev/null) " in
+    *" vertex.gui=1 "*)
+        if [ -w /dev/tty0 ]; then
+            exec >/dev/tty0 2>&1
+        fi
+        ;;
+esac
+
 clear
 
 cat <<'BANNER'
@@ -177,16 +186,26 @@ if command -v grub-mkrescue >/dev/null 2>&1 && [ -d /usr/lib/grub/x86_64-efi ]; 
     mkdir -p "$ISO_ROOT/boot/grub"
     cp "$OUT_DIR/vertexos-smoke-vmlinuz" "$ISO_ROOT/boot/vmlinuz"
     cp "$OUT_DIR/vertexos-smoke-initramfs.cpio.gz" "$ISO_ROOT/boot/initramfs.cpio.gz"
+    if [ -f "$ROOT_DIR/assets/branding/vertex-boot-splash.png" ]; then
+        cp "$ROOT_DIR/assets/branding/vertex-boot-splash.png" "$ISO_ROOT/boot/grub/vertex-boot-splash.png"
+    fi
 
     cat > "$ISO_ROOT/boot/grub/grub.cfg" <<'EOF'
+insmod all_video
+insmod gfxterm
+insmod png
 serial --speed=115200 --unit=0 --word=8 --parity=no --stop=1
+set gfxmode=1024x768
+set gfxpayload=keep
 terminal_input console serial
-terminal_output console serial
-set timeout=0
+terminal_output gfxterm serial
+background_image /boot/grub/vertex-boot-splash.png
+set timeout=5
+set timeout_style=hidden
 set default=0
 
 menuentry "VertexOS Smoke" {
-    linux /boot/vmlinuz console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1
+    linux /boot/vmlinuz vertex.gui=1 console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1
     initrd /boot/initramfs.cpio.gz
 }
 EOF

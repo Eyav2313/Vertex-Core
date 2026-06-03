@@ -3,7 +3,7 @@ param(
     [int]$Cpus = 2,
     [string]$DiskSize = "1GB",
     [ValidateSet("uefi", "direct")]
-    [string]$Firmware = "direct"
+    [string]$Firmware = "uefi"
 )
 
 $ErrorActionPreference = "Stop"
@@ -51,7 +51,11 @@ if (-not (Test-Path $Disk)) {
 $bootArgs = @()
 $firmwareArgs = @()
 
-if ($Firmware -eq "uefi" -and (Test-Path $UefiIso) -and (Test-Path $OvmfCode) -and (Test-Path $OvmfVarsTemplate)) {
+if ($Firmware -eq "uefi") {
+    if (-not (Test-Path $UefiIso) -or -not (Test-Path $OvmfCode) -or -not (Test-Path $OvmfVarsTemplate)) {
+        throw "UEFI smoke artifacts are missing. Run in WSL first: scripts/build-smoke-os.sh"
+    }
+
     if (-not (Test-Path $OvmfVars)) {
         Copy-Item -Force $OvmfVarsTemplate $OvmfVars
     }
@@ -70,7 +74,7 @@ if ($Firmware -eq "uefi" -and (Test-Path $UefiIso) -and (Test-Path $OvmfCode) -a
     $bootArgs = @(
         "-kernel", $Kernel
         "-initrd", $Initramfs
-        "-append", "console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1"
+        "-append", "vertex.gui=1 console=tty0 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1"
         "-boot", "menu=off,strict=on"
     )
 }
