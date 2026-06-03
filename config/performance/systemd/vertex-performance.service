@@ -1,0 +1,12 @@
+[Unit]
+Description=Apply Vertex OS performance profile
+After=multi-user.target
+ConditionPathExists=/usr/bin/powerprofilesctl
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/powerprofilesctl set performance
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

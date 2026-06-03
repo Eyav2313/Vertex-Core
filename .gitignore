@@ -1,0 +1,11 @@
+/.vertex-build/
+/out/
+/src/kernel/
+/build/live-build/
+/build/logs/
+/build/packages/
+/build/work/
+*.deb
+*.buildinfo
+*.changes
+*.egg-info/

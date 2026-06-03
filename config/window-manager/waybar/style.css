@@ -1,0 +1,171 @@
+/*
+ * Vertex OS Waybar dock theme.
+ * Pair with a Waybar config using:
+ *   "position": "bottom",
+ *   "layer": "top",
+ *   "margin-bottom": 14,
+ *   "margin-left": 520,
+ *   "margin-right": 520
+ */
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Inter", "JetBrainsMono Nerd Font", "Noto Sans", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent;
+    color: #f5f7fa;
+}
+
+window#waybar > box {
+    margin: 0 0 12px 0;
+    padding: 7px 9px;
+    border-radius: 18px;
+    background: rgba(18, 22, 30, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34);
+}
+
+tooltip {
+    border-radius: 10px;
+    background: rgba(14, 17, 23, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+tooltip label {
+    padding: 6px 8px;
+    color: #f5f7fa;
+}
+
+#workspaces,
+#clock,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#wireplumber,
+#custom-vertex-metrics,
+#battery,
+#tray,
+#custom-launcher,
+#custom-power {
+    margin: 0 3px;
+    padding: 0 10px;
+    min-height: 30px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #f5f7fa;
+}
+
+#workspaces {
+    padding: 0 5px;
+}
+
+#workspaces button {
+    margin: 4px 2px;
+    padding: 0 8px;
+    min-width: 12px;
+    min-height: 22px;
+    border-radius: 999px;
+    background: transparent;
+    color: #aab2c0;
+}
+
+#workspaces button.active {
+    min-width: 26px;
+    background: rgba(105, 210, 255, 0.28);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(105, 210, 255, 0.26);
+}
+
+#workspaces button.urgent {
+    background: rgba(255, 107, 122, 0.28);
+    color: #ffffff;
+}
+
+#workspaces button:hover,
+#cpu:hover,
+#memory:hover,
+#network:hover,
+#pulseaudio:hover,
+#wireplumber:hover,
+#custom-vertex-metrics:hover,
+#battery:hover,
+#custom-launcher:hover,
+#custom-power:hover {
+    background: rgba(255, 255, 255, 0.13);
+}
+
+#clock {
+    color: #ffffff;
+    background: rgba(105, 210, 255, 0.16);
+}
+
+#cpu {
+    color: #76f7b2;
+}
+
+#memory {
+    color: #69d2ff;
+}
+
+#custom-vertex-metrics {
+    color: #76f7b2;
+}
+
+#custom-vertex-metrics.warning {
+    color: #ffd166;
+    background: rgba(255, 209, 102, 0.13);
+}
+
+#custom-vertex-metrics.critical {
+    color: #ff6b7a;
+    background: rgba(255, 107, 122, 0.16);
+}
+
+#network {
+    color: #d8dee9;
+}
+
+#pulseaudio,
+#wireplumber {
+    color: #c792ea;
+}
+
+#battery {
+    color: #76f7b2;
+}
+
+#battery.warning {
+    color: #ffd166;
+    background: rgba(255, 209, 102, 0.13);
+}
+
+#battery.critical {
+    color: #ff6b7a;
+    background: rgba(255, 107, 122, 0.16);
+}
+
+#tray {
+    padding: 0 8px;
+}
+
+#custom-launcher {
+    color: #0e1117;
+    background: linear-gradient(135deg, #76f7b2, #69d2ff);
+}
+
+#custom-power {
+    color: #ff8795;
+}
+
+.modules-left,
+.modules-center,
+.modules-right {
+    margin: 0 2px;
+}

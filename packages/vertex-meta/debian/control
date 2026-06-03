@@ -1,0 +1,31 @@
+Source: vertex-meta
+Section: metapackages
+Priority: optional
+Maintainer: Nuren Zarif Haque <dev@vertex.local>
+Standards-Version: 4.7.0
+Build-Depends: debhelper-compat (= 13)
+Rules-Requires-Root: no
+
+Package: vertex-meta-desktop
+Architecture: all
+Depends:
+ ${misc:Depends},
+ linux-image-amd64,
+ initramfs-tools,
+ sddm,
+ hyprland,
+ waybar,
+ xwayland,
+ xdg-desktop-portal,
+ xdg-desktop-portal-wlr,
+ pipewire,
+ wireplumber,
+ network-manager,
+ alacritty,
+ zsh,
+ tmux,
+ apparmor,
+ nftables
+Description: Vertex OS premium desktop metapackage
+ Installs the default Vertex OS desktop stack, including the Wayland session,
+ display manager, terminal profile, shell profile, and security baseline.

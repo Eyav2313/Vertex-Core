@@ -1,0 +1,72 @@
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 42,
+    "margin-bottom": 14,
+    "margin-left": 520,
+    "margin-right": 520,
+    "modules-left": [
+        "custom/launcher",
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "custom/vertex-metrics",
+        "network",
+        "pulseaudio",
+        "battery",
+        "tray",
+        "custom/power"
+    ],
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "active": "●",
+            "default": "○"
+        },
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "{:%A, %d %B %Y}"
+    },
+    "custom/vertex-metrics": {
+        "exec": "/usr/libexec/vertex/vertex-sessiond --waybar",
+        "return-type": "json",
+        "interval": 2
+    },
+    "custom/launcher": {
+        "format": "V",
+        "tooltip": false,
+        "on-click": "wofi --show drun --allow-images"
+    },
+    "custom/power": {
+        "format": "⏻",
+        "tooltip": false,
+        "on-click": "systemctl poweroff"
+    },
+    "network": {
+        "format-wifi": "NET {signalStrength}%",
+        "format-ethernet": "NET wired",
+        "format-disconnected": "NET off"
+    },
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL muted"
+    },
+    "battery": {
+        "format": "BAT {capacity}%",
+        "format-charging": "BAT {capacity}%+",
+        "states": {
+            "warning": 30,
+            "critical": 15
+        }
+    },
+    "tray": {
+        "spacing": 8
+    }
+}

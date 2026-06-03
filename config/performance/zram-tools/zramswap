@@ -1,0 +1,6 @@
+# Vertex OS zram-tools profile.
+# Install as /etc/default/zramswap.
+
+ALGO=zstd
+PERCENT=50
+PRIORITY=100
