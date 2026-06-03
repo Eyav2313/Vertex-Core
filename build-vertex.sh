@@ -347,7 +347,9 @@ inject_vertex_config() {
         "$target_root/etc/systemd/system" \
         "$target_root/etc/wayland" \
         "$target_root/usr/share/sddm/themes" \
+        "$target_root/usr/share/vertex/assets" \
         "$target_root/usr/share/vertex/branding" \
+        "$target_root/usr/share/vertex/preview" \
         "$target_root/usr/share/vertex/wallpapers" \
         "$target_root/usr/libexec/vertex"
 
@@ -369,6 +371,8 @@ inject_vertex_config() {
     install -m 0644 "$ROOT_DIR/config/performance/systemd/vertex-performance.service" "$target_root/etc/systemd/system/vertex-performance.service"
 
     install_tree "$ROOT_DIR/config/display-manager/sddm/vertex-glass" "$target_root/usr/share/sddm/themes/vertex-glass"
+    install_tree "$ROOT_DIR/preview" "$target_root/usr/share/vertex/preview"
+    install_tree "$ROOT_DIR/assets" "$target_root/usr/share/vertex/assets"
 
     cat > "$target_root/etc/sddm.conf.d/10-vertex-theme.conf" <<EOF
 [Theme]
@@ -386,6 +390,29 @@ EOF
     if [ "$VERTEX_SKIP_NATIVE" != "1" ] && [ -x "$NATIVE_BUILD_DIR/vertex-sessiond" ]; then
         install -m 0755 "$NATIVE_BUILD_DIR/vertex-sessiond" "$target_root/usr/libexec/vertex/vertex-sessiond"
     fi
+
+    cat > "$target_root/usr/libexec/vertex/vertex-html-shell" <<'EOF'
+#!/bin/sh
+set -eu
+
+html="file:///usr/share/vertex/preview/desktop/index.html"
+
+if command -v firefox-esr >/dev/null 2>&1; then
+    exec firefox-esr --kiosk "$html"
+fi
+
+if command -v firefox >/dev/null 2>&1; then
+    exec firefox --kiosk "$html"
+fi
+
+if command -v xdg-open >/dev/null 2>&1; then
+    exec xdg-open "$html"
+fi
+
+printf '%s\n' "No browser found for VertexOS HTML shell: $html" >&2
+exit 127
+EOF
+    chmod 0755 "$target_root/usr/libexec/vertex/vertex-html-shell"
 
     cat > "$target_root/etc/wayland/vertex-session.conf" <<EOF
 [VertexOS]

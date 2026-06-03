@@ -77,6 +77,8 @@ Smoke boot metrics show the virtual machine resources assigned to QEMU. The WSL/
 
 The default smoke runner uses direct Linux-kernel boot with PXE/network boot disabled, so the old SeaBIOS/iPXE screen is avoided. A UEFI smoke ISO is also generated at `out/smoke/vertexos-smoke-uefi.iso`; when run with `-Firmware uefi`, QEMU will show OVMF/TianoCore firmware messages before handing off to VertexOS. The full desktop ISO pipeline targets proper UEFI live boot.
 
+The HTML design in `preview/desktop/index.html` is also installed into the OS at `/usr/share/vertex/preview/desktop/index.html`. Hyprland starts `/usr/libexec/vertex/vertex-html-shell`, which opens that local design with Firefox ESR inside the actual desktop session.
+
 The master build script performs the full pipeline:
 
 1. Checks and bootstraps host dependencies such as `mmdebstrap`, `live-build`, compiler tools, kernel build tools, CMake, and Debian packaging tools.

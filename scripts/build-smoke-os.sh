@@ -78,15 +78,7 @@ case " $(cat /proc/cmdline 2>/dev/null) " in
         ;;
 esac
 
-clear
-
-cat <<'BANNER'
-
- VertexOS
- Linux smoke boot
- Developer: Nuren Zarif Haque
-
-BANNER
+printf '\033[2J\033[H\033[?25l'
 
 cpu_model() {
     grep -m1 'model name' /proc/cpuinfo | cut -d: -f2- | sed 's/^ //' || echo unknown
@@ -120,22 +112,24 @@ else
     boot_mode="direct-kernel"
 fi
 
-printf 'Boot:   %s\n' "$boot_mode"
-printf 'Kernel: '
-uname -r
-printf 'CPU:    %s x %s\n' "$(cpu_count)" "$(cpu_model)"
-printf 'RAM:    %s MB\n' "$(mem_mb)"
-printf 'Disk:   '
-disk_report | head -n 1
+printf 'VertexOS\n'
+printf 'Linux smoke boot\n'
+printf 'Developer  Nuren Zarif Haque\n'
+printf '%s\n' '--------------------------------'
+printf '%-10s %s\n' 'Boot' "$boot_mode"
+printf '%-10s %s\n' 'Kernel' "$(uname -r)"
+printf '%-10s %s x %s\n' 'CPU' "$(cpu_count)" "$(cpu_model)"
+printf '%-10s %s MB\n' 'RAM' "$(mem_mb)"
+printf '%-10s %s\n' 'Disk' "$(disk_report | head -n 1)"
 
 cat <<'HELP'
 
-Commands: help, perf, disks, reboot, poweroff
+Commands   help | perf | disks | reboot | poweroff
 
 HELP
 
 while true; do
-    printf 'vertexos# '
+    printf 'vertexos> '
     read -r cmd || cmd=poweroff
     case "$cmd" in
         help)

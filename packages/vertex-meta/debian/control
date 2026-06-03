@@ -23,6 +23,7 @@ Depends:
  wireplumber,
  network-manager,
  alacritty,
+ firefox-esr,
  fonts-inter,
  zsh,
  tmux,
