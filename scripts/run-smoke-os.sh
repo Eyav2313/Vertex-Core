@@ -53,19 +53,26 @@ if [ "$DISPLAY_MODE" = "none" ]; then
         -no-reboot
 fi
 
-nohup qemu-system-x86_64 \
-    "${ACCEL_ARGS[@]}" \
-    "${CPU_ARGS[@]}" \
-    -m "${VERTEX_QEMU_MEMORY:-768M}" \
-    -smp "${VERTEX_QEMU_CPUS:-2}" \
-    -kernel "$KERNEL" \
-    -initrd "$INITRAMFS" \
-    -append "$APPEND" \
-    -display "$DISPLAY_MODE" \
-    -serial "file:$LOG_FILE.serial" \
-    -monitor none \
-    -no-reboot \
-    >"$LOG_FILE" 2>&1 &
+QEMU_CMD=(
+    qemu-system-x86_64
+    "${ACCEL_ARGS[@]}"
+    "${CPU_ARGS[@]}"
+    -m "${VERTEX_QEMU_MEMORY:-768M}"
+    -smp "${VERTEX_QEMU_CPUS:-2}"
+    -kernel "$KERNEL"
+    -initrd "$INITRAMFS"
+    -append "$APPEND"
+    -display "$DISPLAY_MODE"
+    -serial "file:$LOG_FILE.serial"
+    -monitor none
+    -no-reboot
+)
+
+if command -v setsid >/dev/null 2>&1; then
+    nohup setsid "${QEMU_CMD[@]}" >"$LOG_FILE" 2>&1 < /dev/null &
+else
+    nohup "${QEMU_CMD[@]}" >"$LOG_FILE" 2>&1 < /dev/null &
+fi
 
 printf '%s\n' "$!" > "$PID_FILE"
 printf '[vertexos-smoke] QEMU started. PID: %s\n' "$(cat "$PID_FILE")"
