@@ -8,10 +8,17 @@ MIRROR="${VERTEX_MIRROR:-http://deb.debian.org/debian}"
 PROFILE="${VERTEX_PROFILE:-desktop}"
 ARCH="${VERTEX_ARCH:-amd64}"
 
-BUILD_ROOT="$ROOT_DIR/build"
+REPO_BUILD_ROOT="$ROOT_DIR/build"
+DEFAULT_BUILD_ROOT="$REPO_BUILD_ROOT"
+
+if grep -qi microsoft /proc/version 2>/dev/null && [[ "$ROOT_DIR" == /mnt/* ]]; then
+    DEFAULT_BUILD_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}/vertex-os/$(basename "$ROOT_DIR")"
+fi
+
+BUILD_ROOT="${VERTEX_BUILD_ROOT:-$DEFAULT_BUILD_ROOT}"
 WORK_DIR="$BUILD_ROOT/work"
-LOG_DIR="$BUILD_ROOT/logs"
-PACKAGE_OUT_DIR="$BUILD_ROOT/packages"
+LOG_DIR="$REPO_BUILD_ROOT/logs"
+PACKAGE_OUT_DIR="$REPO_BUILD_ROOT/packages"
 ROOTFS_DIR="$WORK_DIR/rootfs"
 LIVE_BUILD_DIR="$BUILD_ROOT/live-build"
 LIVE_INCLUDES_DIR="$LIVE_BUILD_DIR/config/includes.chroot"
@@ -84,6 +91,7 @@ Environment options:
   VERTEX_SKIP_ROOTFS=1
   VERTEX_SKIP_ISO=1
   VERTEX_KERNEL_TARGETS="bindeb-pkg"
+  VERTEX_BUILD_ROOT=$DEFAULT_BUILD_ROOT
 
 Logs:
   build/logs/
@@ -156,7 +164,7 @@ safe_remove_dir() {
     resolved="$(realpath -m "$target")"
 
     case "$resolved" in
-        "$WORK_DIR"/*|"$ROOTFS_DIR"|"$LIVE_BUILD_DIR"|"$LIVE_BUILD_DIR"/*|"$PACKAGE_OUT_DIR"|"$PACKAGE_OUT_DIR"/*)
+        "$WORK_DIR"/*|"$ROOTFS_DIR"|"$LIVE_BUILD_DIR"|"$LIVE_BUILD_DIR"/*)
             run_root rm -rf -- "$resolved"
             ;;
         *)
@@ -216,6 +224,7 @@ prepare_workspace() {
     info "Suite: $SUITE"
     info "Profile: $PROFILE"
     info "Architecture: $ARCH"
+    info "Work root: $BUILD_ROOT"
     info "Log: $LOG_FILE"
 }
 
@@ -238,6 +247,7 @@ build_kernel() {
         return
     fi
 
+    VERTEX_KERNEL_BUILD_DIR="$WORK_DIR/kernel" \
     VERTEX_KERNEL_OUT_DIR="$OUT_DIR/kernel" \
         bash "$ROOT_DIR/scripts/build-kernel.sh"
 
@@ -256,14 +266,28 @@ build_kernel() {
 }
 
 build_vertex_metapackage() {
-    chmod +x "$ROOT_DIR/packages/vertex-meta/debian/rules" 2>/dev/null || true
+    local package_source="$ROOT_DIR/packages/vertex-meta"
+    local package_build_root="$WORK_DIR/packages"
+    local package_build_dir="$package_build_root/vertex-meta"
+
+    safe_remove_dir "$package_build_dir"
+    mkdir -p "$package_build_root" "$PACKAGE_OUT_DIR"
+
+    rsync -a \
+        --exclude 'debian/.debhelper' \
+        --exclude 'debian/vertex-meta-desktop' \
+        --exclude 'debian/files' \
+        --exclude 'debian/*.substvars' \
+        "$package_source"/ "$package_build_dir"/
+
+    chmod +x "$package_build_dir/debian/rules" 2>/dev/null || true
 
     (
-        cd "$ROOT_DIR/packages/vertex-meta"
+        cd "$package_build_dir"
         dpkg-buildpackage -us -uc -b
     )
 
-    find "$ROOT_DIR/packages" \
+    find "$package_build_root" \
         -maxdepth 1 \
         -type f \
         -name 'vertex-meta-desktop_*.deb' \
