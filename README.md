@@ -51,6 +51,16 @@ chmod +x build-vertex.sh scripts/*.sh
 ./build-vertex.sh
 ```
 
+For a fast real boot test, use the smoke boot path. This boots a Linux kernel in QEMU with a minimal VertexOS initramfs:
+
+```sh
+sudo apt-get install -y linux-image-virtual busybox-static qemu-system-x86 qemu-system-gui
+scripts/build-smoke-os.sh
+scripts/run-smoke-os.sh
+```
+
+The smoke boot is not a website preview and it is not the final Hyprland desktop. It exists to verify that VertexOS can boot as an operating system quickly while the full GUI ISO pipeline is being built.
+
 The master build script performs the full pipeline:
 
 1. Checks and bootstraps host dependencies such as `mmdebstrap`, `live-build`, compiler tools, kernel build tools, CMake, and Debian packaging tools.
