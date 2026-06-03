@@ -18,10 +18,11 @@
 
         /* --- BOOT SCREEN --- */
         #boot-screen { position: fixed; inset: 0; z-index: 10000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s ease; }
-        .boot-logo { position: relative; width: min(42vw, 420px); aspect-ratio: 1; overflow: hidden; display: grid; place-items: center; filter: drop-shadow(0 24px 70px rgba(255,255,255,0.08)); }
+        .boot-logo { position: relative; width: clamp(180px, 28vw, 300px); aspect-ratio: 1; overflow: hidden; display: grid; place-items: center; isolation: isolate; filter: drop-shadow(0 18px 48px rgba(255,255,255,0.08)); }
         .vertex-logo { width: 100%; height: 100%; object-fit: contain; opacity: 0.96; }
-        .boot-logo::after { content: ""; position: absolute; inset: -32%; background: linear-gradient(110deg, transparent 32%, rgba(255,255,255,0.08) 43%, rgba(255,255,255,0.72) 50%, rgba(255,255,255,0.1) 57%, transparent 68%); transform: translateX(-120%) rotate(8deg); mix-blend-mode: screen; animation: logoShine 2.6s cubic-bezier(0.19, 1, 0.22, 1) infinite; pointer-events: none; }
-        @keyframes logoShine { 0% { transform: translateX(-120%) rotate(8deg); opacity: 0; } 18% { opacity: 1; } 52% { opacity: 1; } 78%, 100% { transform: translateX(120%) rotate(8deg); opacity: 0; } }
+        .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 28%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.12) 58%, transparent 72%); background-size: 260% 100%; background-position: -160% 0; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; animation: logoShine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite; pointer-events: none; opacity: 0; will-change: background-position, opacity; }
+        @keyframes logoShine { 0%, 12% { background-position: -160% 0; opacity: 0; } 28% { opacity: 1; } 60% { opacity: 0.9; } 78%, 100% { background-position: 160% 0; opacity: 0; } }
+        @media (max-width: 700px) { .boot-logo { width: clamp(150px, 42vw, 220px); } }
 
         /* --- BACKGROUND --- */
         #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.1); filter: blur(40px); opacity: 0; }
