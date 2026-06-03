@@ -18,11 +18,11 @@
 
         /* --- BOOT SCREEN --- */
         #boot-screen { position: fixed; inset: 0; z-index: 10000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s ease; }
-        .boot-logo { position: relative; width: 30px; height: 30px; overflow: hidden; display: grid; place-items: center; isolation: isolate; }
-        .vertex-logo { width: 100%; height: 100%; object-fit: contain; filter: brightness(0); opacity: 0.8; }
+        .boot-logo { position: relative; width: clamp(64px, 7vw, 84px); height: clamp(64px, 7vw, 84px); overflow: hidden; display: grid; place-items: center; isolation: isolate; }
+        .vertex-logo { width: 100%; height: 100%; object-fit: contain; filter: brightness(0); opacity: 0.35; }
         .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 28%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.12) 58%, transparent 72%); background-size: 260% 100%; background-position: -160% 0; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; animation: logoShine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite; pointer-events: none; opacity: 0; will-change: background-position, opacity; }
         @keyframes logoShine { 0%, 12% { background-position: -160% 0; opacity: 0; } 28% { opacity: 1; } 60% { opacity: 0.9; } 78%, 100% { background-position: 160% 0; opacity: 0; } }
-        @media (max-width: 700px) { .boot-logo { width: 28px; height: 28px; } }
+        @media (max-width: 700px) { .boot-logo { width: 56px; height: 56px; } }
 
         /* --- BACKGROUND --- */
         #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.1); filter: blur(40px); opacity: 0; }
@@ -89,7 +89,7 @@
 
     <div id="wp-cont">
         <div class="lock-indicator" id="ui-main">
-            <p id="date-text">Wednesday, Feb 4</p>
+            <p id="date-text">Wednesday, June 3, 2026</p>
             <h1 id="time-text">00:00</h1>
         </div>
         <div class="bottom-shelf">
@@ -177,6 +177,12 @@
         function updateClock() {
             const now = new Date();
             document.getElementById('time-text').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('date-text').innerText = new Intl.DateTimeFormat(undefined, {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            }).format(now);
         }
 
         function initGestures() {
