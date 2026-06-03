@@ -66,6 +66,46 @@ run_step() {
     info "<== $name complete"
 }
 
+print_usage() {
+    cat <<EOF
+Vertex OS master build
+Developer: $DEVELOPER_NAME
+
+Usage:
+  ./build-vertex.sh
+
+Environment options:
+  VERTEX_PROFILE=desktop
+  VERTEX_SUITE=trixie
+  VERTEX_MIRROR=http://deb.debian.org/debian
+  VERTEX_HYPRLAND_PROFILE=performance|glass|full
+  VERTEX_SKIP_KERNEL=1
+  VERTEX_SKIP_NATIVE=1
+  VERTEX_SKIP_ROOTFS=1
+  VERTEX_SKIP_ISO=1
+  VERTEX_KERNEL_TARGETS="bindeb-pkg"
+
+Logs:
+  build/logs/
+EOF
+}
+
+parse_args() {
+    if [ "$#" -eq 0 ]; then
+        return
+    fi
+
+    case "$1" in
+        -h|--help)
+            print_usage
+            exit 0
+            ;;
+        *)
+            die "Unknown argument: $1. Use --help for usage."
+            ;;
+    esac
+}
+
 require_command() {
     command -v "$1" >/dev/null 2>&1
 }
@@ -424,6 +464,8 @@ build_iso() {
 }
 
 main() {
+    parse_args "$@"
+
     info "Vertex OS master build started."
     run_step "Prepare workspace" prepare_workspace
     run_step "Check dependencies" check_dependencies
