@@ -3,7 +3,7 @@ param(
     [int]$Cpus = 2,
     [string]$DiskSize = "1GB",
     [ValidateSet("uefi", "direct")]
-    [string]$Firmware = "uefi"
+    [string]$Firmware = "direct"
 )
 
 $ErrorActionPreference = "Stop"
