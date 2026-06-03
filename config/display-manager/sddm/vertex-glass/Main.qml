@@ -9,7 +9,6 @@ Rectangle {
     height: 1080
     color: "#000000"
 
-    property real bootProgress: 0
     property bool bootDone: false
     property bool loginVisible: false
     property bool customizeVisible: false
@@ -28,14 +27,6 @@ Rectangle {
 
     function doLogin() {
         sddm.login(userBox.currentText, passwordBox.text, sessionBox.currentIndex)
-    }
-
-    NumberAnimation on bootProgress {
-        from: 0
-        to: 1
-        duration: 3000
-        easing.type: Easing.InOutQuad
-        running: true
     }
 
     Timer {
@@ -440,32 +431,41 @@ Rectangle {
 
         Behavior on opacity { NumberAnimation { duration: 1000; easing.type: Easing.OutCubic } }
 
-        Column {
+        Item {
             anchors.centerIn: parent
-            spacing: 30
+            width: 180
+            height: 180
+            clip: true
 
             Image {
-                width: 44
-                height: 44
+                anchors.fill: parent
                 source: config.logo
                 fillMode: Image.PreserveAspectFit
                 smooth: true
-                anchors.horizontalCenter: parent.horizontalCenter
             }
 
             Rectangle {
-                id: bootBar
-                width: 140
-                height: 4
-                radius: 2
-                color: "#1AFFFFFF"
-                clip: true
+                id: bootShine
+                width: 58
+                height: 300
+                y: -60
+                color: "#99FFFFFF"
+                opacity: 0.0
+                rotation: 18
 
-                Rectangle {
-                    width: root.bootProgress * bootBar.width
-                    height: parent.height
-                    radius: 2
-                    color: "#FFFFFFFF"
+                SequentialAnimation on x {
+                    loops: Animation.Infinite
+                    PropertyAction { value: -130 }
+                    PauseAnimation { duration: 450 }
+                    ParallelAnimation {
+                        NumberAnimation { to: 260; duration: 1550; easing.type: Easing.OutCubic }
+                        SequentialAnimation {
+                            NumberAnimation { target: bootShine; property: "opacity"; to: 0.0; duration: 1 }
+                            NumberAnimation { target: bootShine; property: "opacity"; to: 0.65; duration: 280 }
+                            NumberAnimation { target: bootShine; property: "opacity"; to: 0.0; duration: 520 }
+                        }
+                    }
+                    PauseAnimation { duration: 800 }
                 }
             }
         }

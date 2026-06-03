@@ -1,7 +1,9 @@
 param(
     [string]$Memory = "768M",
     [int]$Cpus = 2,
-    [string]$DiskSize = "1GB"
+    [string]$DiskSize = "1GB",
+    [ValidateSet("uefi", "direct")]
+    [string]$Firmware = "uefi"
 )
 
 $ErrorActionPreference = "Stop"
@@ -10,6 +12,10 @@ $Root = Split-Path -Parent $PSScriptRoot
 $OutDir = Join-Path $Root "out\smoke"
 $Kernel = Join-Path $OutDir "vertexos-smoke-vmlinuz"
 $Initramfs = Join-Path $OutDir "vertexos-smoke-initramfs.cpio.gz"
+$UefiIso = Join-Path $OutDir "vertexos-smoke-uefi.iso"
+$OvmfCode = Join-Path $OutDir "OVMF_CODE_4M.fd"
+$OvmfVarsTemplate = Join-Path $OutDir "OVMF_VARS_4M.fd"
+$OvmfVars = Join-Path $OutDir "OVMF_VARS.fd"
 $Disk = Join-Path $OutDir "vertexos-smoke-disk.raw"
 $LogDir = Join-Path $Root "build\logs"
 $LogFile = Join-Path $LogDir "vertexos-smoke-windows-qemu.log"
@@ -42,15 +48,39 @@ if (-not (Test-Path $Disk)) {
     }
 }
 
+$bootArgs = @()
+$firmwareArgs = @()
+
+if ($Firmware -eq "uefi" -and (Test-Path $UefiIso) -and (Test-Path $OvmfCode) -and (Test-Path $OvmfVarsTemplate)) {
+    if (-not (Test-Path $OvmfVars)) {
+        Copy-Item -Force $OvmfVarsTemplate $OvmfVars
+    }
+
+    $firmwareArgs = @(
+        "-drive", "if=pflash,format=raw,readonly=on,file=$OvmfCode"
+        "-drive", "if=pflash,format=raw,file=$OvmfVars"
+    )
+
+    $bootArgs = @(
+        "-cdrom", $UefiIso
+        "-boot", "order=d,menu=off,strict=on"
+    )
+} else {
+    $Firmware = "direct"
+    $bootArgs = @(
+        "-kernel", $Kernel
+        "-initrd", $Initramfs
+        "-append", "console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1"
+        "-boot", "menu=off,strict=on"
+    )
+}
+
 $qemuArgs = @(
     "-name", "VertexOS-Smoke"
     "-m", $Memory
     "-smp", "$Cpus"
-    "-kernel", $Kernel
-    "-initrd", $Initramfs
-    "-append", "console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1"
+) + $firmwareArgs + $bootArgs + @(
     "-drive", "file=$Disk,if=virtio,format=raw,cache=writeback"
-    "-boot", "menu=off,strict=on"
     "-net", "none"
     "-display", "gtk"
     "-serial", "file:$SerialLog"
@@ -68,4 +98,5 @@ $argLine = ($qemuArgs | ForEach-Object {
 
 Start-Process -FilePath $Qemu -ArgumentList $argLine -RedirectStandardOutput $LogFile -RedirectStandardError $ErrFile
 Write-Host "[vertexos-smoke] Windows QEMU started."
+Write-Host "[vertexos-smoke] Firmware mode: $Firmware"
 Write-Host "[vertexos-smoke] Serial log: $SerialLog"

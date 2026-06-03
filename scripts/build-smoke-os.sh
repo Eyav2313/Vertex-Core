@@ -197,12 +197,19 @@ else
     info "Skipping UEFI ISO creation; grub-mkrescue or x86_64-efi GRUB modules are missing."
 fi
 
+if [ -f /usr/share/OVMF/OVMF_CODE_4M.fd ] && [ -f /usr/share/OVMF/OVMF_VARS_4M.fd ]; then
+    cp /usr/share/OVMF/OVMF_CODE_4M.fd "$OUT_DIR/OVMF_CODE_4M.fd"
+    cp /usr/share/OVMF/OVMF_VARS_4M.fd "$OUT_DIR/OVMF_VARS_4M.fd"
+    info "Copied OVMF UEFI firmware into $OUT_DIR"
+fi
+
 cat > "$OUT_DIR/README.txt" <<EOF
 VertexOS smoke boot artifacts
 
 Kernel: vertexos-smoke-vmlinuz
 Initramfs: vertexos-smoke-initramfs.cpio.gz
 UEFI ISO: vertexos-smoke-uefi.iso
+UEFI firmware: OVMF_CODE_4M.fd, OVMF_VARS_4M.fd
 
 Run:
   scripts/run-smoke-os.sh
