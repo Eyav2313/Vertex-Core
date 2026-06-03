@@ -1,0 +1,208 @@
+:root {
+  color-scheme: dark;
+  --bg: #080b10;
+  --panel: rgba(18, 22, 30, 0.68);
+  --panel-strong: rgba(20, 26, 36, 0.82);
+  --line: rgba(255, 255, 255, 0.16);
+  --text: #f5f7fa;
+  --muted: #aab2c0;
+  --cyan: #69d2ff;
+  --green: #76f7b2;
+  --red: #ff6b7a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: Inter, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(105, 210, 255, 0.18), transparent 28%),
+    radial-gradient(circle at 78% 20%, rgba(118, 247, 178, 0.14), transparent 26%),
+    linear-gradient(135deg, #080b10, #131820 46%, #0d1016);
+  color: var(--text);
+}
+
+.desktop {
+  position: relative;
+  min-height: 100vh;
+  padding: 44px;
+}
+
+.desktop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 82%, transparent);
+}
+
+.panel {
+  position: absolute;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(22px);
+}
+
+.terminal {
+  left: 7vw;
+  top: 13vh;
+  width: min(560px, 82vw);
+  min-height: 330px;
+}
+
+.terminal header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.green { background: var(--green); }
+.cyan { background: var(--cyan); }
+.red { background: var(--red); }
+
+.terminal-body {
+  padding: 20px;
+  font: 15px/1.65 "JetBrains Mono", Consolas, monospace;
+}
+
+.terminal-body p {
+  margin: 0;
+}
+
+.terminal-body span,
+.prompt {
+  color: var(--green);
+}
+
+.monitor {
+  right: 8vw;
+  top: 18vh;
+  width: 230px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.monitor div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.launcher {
+  right: 10vw;
+  bottom: 22vh;
+  width: 330px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--panel-strong);
+}
+
+.launcher img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.launcher h1 {
+  margin: 0 0 4px;
+  font-size: 30px;
+}
+
+.launcher p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.dock {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(18, 22, 30, 0.62);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(20px);
+}
+
+.dock button,
+.dock span {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font: 700 13px Inter, "Segoe UI", sans-serif;
+}
+
+.dock span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dock .active {
+  min-width: 48px;
+  background: rgba(105, 210, 255, 0.28);
+  color: #fff;
+}
+
+@media (max-width: 780px) {
+  .desktop {
+    padding: 24px;
+  }
+
+  .terminal,
+  .monitor,
+  .launcher {
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    margin-bottom: 18px;
+  }
+
+  .dock {
+    width: calc(100% - 24px);
+    overflow-x: auto;
+    justify-content: center;
+  }
+}

@@ -26,6 +26,6 @@ Depends:
  tmux,
  apparmor,
  nftables
-Description: Vertex OS premium desktop metapackage
- Installs the default Vertex OS desktop stack, including the Wayland session,
+Description: VertexOS premium desktop metapackage
+ Installs the default VertexOS desktop stack, including the Wayland session,
  display manager, terminal profile, shell profile, and security baseline.

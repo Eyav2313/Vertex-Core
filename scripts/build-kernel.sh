@@ -94,7 +94,7 @@ merge_vertex_fragments() {
     mapfile -t fragments < <(find "$ROOT_DIR/config/kernel" -maxdepth 1 -type f -name '*.fragment' | sort)
     [ "${#fragments[@]}" -gt 0 ] || die "No kernel fragments found in config/kernel/*.fragment"
 
-    info "Merging Vertex kernel fragments:"
+    info "Merging VertexOS kernel fragments:"
     printf '  %s\n' "${fragments[@]#$ROOT_DIR/}"
 
     bash "$merge_script" -m -O "$BUILD_DIR" "$BUILD_DIR/.config" "${fragments[@]}"
@@ -112,7 +112,7 @@ build_kernel() {
         ARCH="$KERNEL_ARCH"
         LOCALVERSION="$LOCALVERSION"
         KBUILD_BUILD_USER=vertex
-        KBUILD_BUILD_HOST=vertex-os
+        KBUILD_BUILD_HOST=vertexos
     )
 
     if [ -n "${CROSS_COMPILE:-}" ]; then

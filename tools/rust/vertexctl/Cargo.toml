@@ -2,7 +2,7 @@
 name = "vertexctl"
 version = "0.1.0"
 edition = "2021"
-description = "Vertex OS system control helper"
+description = "VertexOS system control helper"
 license = "GPL-3.0-or-later"
 
 [dependencies]

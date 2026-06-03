@@ -7,12 +7,15 @@ SUITE="${VERTEX_SUITE:-trixie}"
 MIRROR="${VERTEX_MIRROR:-http://deb.debian.org/debian}"
 PROFILE="${VERTEX_PROFILE:-desktop}"
 ARCH="${VERTEX_ARCH:-amd64}"
+COMPONENTS="${VERTEX_COMPONENTS:-main,contrib,non-free,non-free-firmware}"
+ENABLE_BACKPORTS="${VERTEX_ENABLE_BACKPORTS:-1}"
+BACKPORTS_TRUSTED="${VERTEX_BACKPORTS_TRUSTED:-0}"
 
 REPO_BUILD_ROOT="$ROOT_DIR/build"
 DEFAULT_BUILD_ROOT="$REPO_BUILD_ROOT"
 
 if grep -qi microsoft /proc/version 2>/dev/null && [[ "$ROOT_DIR" == /mnt/* ]]; then
-    DEFAULT_BUILD_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}/vertex-os/$(basename "$ROOT_DIR")"
+    DEFAULT_BUILD_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}/vertexos/$(basename "$ROOT_DIR")"
 fi
 
 BUILD_ROOT="${VERTEX_BUILD_ROOT:-$DEFAULT_BUILD_ROOT}"
@@ -75,7 +78,7 @@ run_step() {
 
 print_usage() {
     cat <<EOF
-Vertex OS master build
+VertexOS master build
 Developer: $DEVELOPER_NAME
 
 Usage:
@@ -85,6 +88,9 @@ Environment options:
   VERTEX_PROFILE=desktop
   VERTEX_SUITE=trixie
   VERTEX_MIRROR=http://deb.debian.org/debian
+  VERTEX_COMPONENTS=$COMPONENTS
+  VERTEX_ENABLE_BACKPORTS=1
+  VERTEX_BACKPORTS_TRUSTED=0
   VERTEX_HYPRLAND_PROFILE=performance|glass|full
   VERTEX_SKIP_KERNEL=1
   VERTEX_SKIP_NATIVE=1
@@ -224,6 +230,7 @@ prepare_workspace() {
     info "Suite: $SUITE"
     info "Profile: $PROFILE"
     info "Architecture: $ARCH"
+    info "Components: $COMPONENTS"
     info "Work root: $BUILD_ROOT"
     info "Log: $LOG_FILE"
 }
@@ -327,7 +334,7 @@ inject_vertex_config() {
     local hyprland_config
     hyprland_config="$(selected_hyprland_config)"
 
-    info "Injecting Vertex configuration into $target_root"
+    info "Injecting VertexOS configuration into $target_root"
 
     mkdir -p \
         "$target_root/etc/skel/.config/hypr" \
@@ -367,7 +374,7 @@ inject_vertex_config() {
     fi
 
     cat > "$target_root/etc/wayland/vertex-session.conf" <<EOF
-[Vertex]
+[VertexOS]
 Developer=$DEVELOPER_NAME
 Session=hyprland
 HyprlandProfile=$VERTEX_HYPRLAND_PROFILE
@@ -404,10 +411,29 @@ assemble_rootfs() {
     [ -n "$include_packages" ] || die "No packages found in profile manifest."
 
     info "Assembling rootfs with mmdebstrap."
+    local component_words
+    component_words="${COMPONENTS//,/ }"
+
+    local mmdebstrap_args=(
+        --mode="$VERTEX_MMDEBSTRAP_MODE"
+        --variant=minbase
+        --components="$COMPONENTS"
+        --include="$include_packages"
+    )
+
+    if [ "$ENABLE_BACKPORTS" = "1" ] && [ "$SUITE" = "trixie" ]; then
+        local backports_options=""
+        if [ "$BACKPORTS_TRUSTED" = "1" ]; then
+            backports_options="[trusted=yes] "
+        fi
+
+        mmdebstrap_args+=(
+            --setup-hook="echo 'deb ${backports_options}$MIRROR ${SUITE}-backports $component_words' > \"\$1/etc/apt/sources.list.d/${SUITE}-backports.list\""
+        )
+    fi
+
     run_root mmdebstrap \
-        --mode="$VERTEX_MMDEBSTRAP_MODE" \
-        --variant=minbase \
-        --include="$include_packages" \
+        "${mmdebstrap_args[@]}" \
         "$SUITE" \
         "$ROOTFS_DIR" \
         "$MIRROR"
@@ -419,6 +445,29 @@ assemble_rootfs() {
 write_live_build_package_list() {
     mkdir -p "$(dirname "$LIVE_PACKAGE_LIST")"
     read_manifest_packages > "$LIVE_PACKAGE_LIST"
+}
+
+write_live_build_archives() {
+    if [ "$ENABLE_BACKPORTS" != "1" ] || [ "$SUITE" != "trixie" ]; then
+        return
+    fi
+
+    local archive_dir="$LIVE_BUILD_DIR/config/archives"
+    local component_words
+    local backports_options=""
+    component_words="${COMPONENTS//,/ }"
+    if [ "$BACKPORTS_TRUSTED" = "1" ]; then
+        backports_options="[trusted=yes] "
+    fi
+    mkdir -p "$archive_dir"
+
+    cat > "$archive_dir/${SUITE}-backports.list.chroot" <<EOF
+deb ${backports_options}$MIRROR ${SUITE}-backports $component_words
+EOF
+
+    cat > "$archive_dir/${SUITE}-backports.list.binary" <<EOF
+deb ${backports_options}$MIRROR ${SUITE}-backports $component_words
+EOF
 }
 
 copy_local_debs_to_live_build() {
@@ -468,6 +517,7 @@ build_iso() {
     )
 
     write_live_build_package_list
+    write_live_build_archives
     inject_vertex_config "$LIVE_INCLUDES_DIR"
     copy_local_debs_to_live_build
     write_live_build_hooks
@@ -480,8 +530,8 @@ build_iso() {
     local iso
     iso="$(find "$LIVE_BUILD_DIR" -maxdepth 1 -type f -name '*.iso' | sort | tail -n 1 || true)"
     if [ -n "$iso" ]; then
-        cp "$iso" "$OUT_DIR/vertex-os-$BUILD_ID.iso"
-        info "ISO ready: $OUT_DIR/vertex-os-$BUILD_ID.iso"
+        cp "$iso" "$OUT_DIR/vertexos-$BUILD_ID.iso"
+        info "ISO ready: $OUT_DIR/vertexos-$BUILD_ID.iso"
     else
         warn "live-build completed, but no ISO was found in $LIVE_BUILD_DIR."
     fi
@@ -490,7 +540,7 @@ build_iso() {
 main() {
     parse_args "$@"
 
-    info "Vertex OS master build started."
+    info "VertexOS master build started."
     run_step "Prepare workspace" prepare_workspace
     run_step "Check dependencies" check_dependencies
     run_step "Build native components" build_native_components
@@ -500,7 +550,7 @@ main() {
     run_step "Create live-build ISO" build_iso
 
     printf '\n'
-    info "Vertex OS build complete."
+    info "VertexOS build complete."
     info "Detailed log: $LOG_FILE"
 }
 

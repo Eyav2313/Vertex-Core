@@ -10,7 +10,7 @@ console = Console()
 
 @click.group()
 def main() -> None:
-    """Vertex OS build and release helper."""
+    """VertexOS build and release helper."""
 
 
 @main.command()
@@ -28,7 +28,7 @@ def inspect(profile: str) -> None:
     if not profile_dir.exists():
         raise click.ClickException(f"unknown profile: {profile}")
 
-    console.print(f"[bold cyan]Vertex profile:[/] {profile}")
+    console.print(f"[bold cyan]VertexOS profile:[/] {profile}")
     for manifest in sorted(profile_dir.glob("*.packages")):
         packages = [
             line.strip()

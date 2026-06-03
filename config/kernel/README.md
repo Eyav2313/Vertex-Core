@@ -1,6 +1,6 @@
 # Kernel Configuration
 
-`vertex-desktop-performance.fragment` is the first desktop tuning fragment. It should be merged into the Debian kernel configuration or a Vertex kernel package build, then validated with:
+`vertex-desktop-performance.fragment` is the first desktop tuning fragment. It should be merged into the Debian kernel configuration or a VertexOS kernel package build, then validated with:
 
 ```sh
 bash scripts/init-build-env.sh
@@ -33,7 +33,7 @@ VERTEX_KERNEL_REF=v6.6.32 bash scripts/fetch-kernel.sh
 VERTEX_KERNEL_REF=linux-6.6.y VERTEX_KERNEL_FULL_CLONE=1 bash scripts/fetch-kernel.sh
 ```
 
-## Merging Vertex Fragments
+## Merging VertexOS Fragments
 
 Kernel fragments live in:
 
@@ -59,7 +59,7 @@ That step resolves new or missing symbols and writes the final config to:
 .vertex-build/kernel/.config
 ```
 
-By default, `scripts/build-kernel.sh` starts from `x86_64_defconfig`. To merge Vertex fragments onto a distro or custom config instead:
+By default, `scripts/build-kernel.sh` starts from `x86_64_defconfig`. To merge VertexOS fragments onto a distro or custom config instead:
 
 ```sh
 VERTEX_KERNEL_BASE_CONFIG=/boot/config-$(uname -r) bash scripts/build-kernel.sh
@@ -84,7 +84,7 @@ Use ordered names such as:
 
 ## Building
 
-Build the Vertex kernel packages:
+Build the VertexOS kernel packages:
 
 ```sh
 bash scripts/build-kernel.sh

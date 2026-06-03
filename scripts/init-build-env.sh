@@ -133,7 +133,7 @@ EOF
 }
 
 print_summary() {
-    info "Vertex build environment initialized."
+    info "VertexOS build environment initialized."
     printf '\n'
     printf 'Source the environment:\n'
     printf '  . "%s/vertex-env.sh"\n' "$BUILD_DIR"
@@ -148,7 +148,7 @@ print_summary() {
 }
 
 main() {
-    info "Initializing Vertex OS build environment."
+    info "Initializing VertexOS build environment."
     install_host_packages
     prepare_directories
     prepare_permissions

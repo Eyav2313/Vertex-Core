@@ -1,4 +1,4 @@
-# Vertex Kernel Patches
+# VertexOS kernel Patches
 
 Store custom kernel optimization, branding, hardware, or packaging patches here.
 

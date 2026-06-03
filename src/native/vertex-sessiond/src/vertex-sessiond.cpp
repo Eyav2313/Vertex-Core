@@ -1,4 +1,4 @@
-// Vertex OS session metrics daemon.
+// VertexOS session metrics daemon.
 // Developer: Nuren Zarif Haque
 
 #include <algorithm>
@@ -237,7 +237,7 @@ std::string render_waybar_json(const Metrics& metrics) {
          << "%  MEM " << metrics.memory_percent << "%";
 
     std::ostringstream tooltip;
-    tooltip << "Vertex performance metrics"
+    tooltip << "VertexOS performance metrics"
             << "\nCPU: " << std::fixed << std::setprecision(1) << metrics.cpu_percent << "%"
             << "\nMemory: " << metrics.memory_percent << "%"
             << "\nLoad 1m: " << metrics.load_1m;

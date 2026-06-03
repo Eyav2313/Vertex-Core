@@ -37,7 +37,7 @@ Rectangle {
             spacing: 18
 
             Text {
-                text: "Vertex OS"
+                text: "VertexOS"
                 color: "#F5F7FA"
                 font.pixelSize: 32
                 font.weight: Font.DemiBold

@@ -1,4 +1,4 @@
-# Vertex Glass Assets
+# VertexOS Glass Assets
 
 Place the login background at:
 

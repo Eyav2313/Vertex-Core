@@ -1,0 +1,10 @@
+{
+  "explorer.compactFolders": false,
+  "files.exclude": {
+    "**/.vertex-build": true,
+    "**/build/logs": true,
+    "**/build/packages": true,
+    "**/build/work": true,
+    "**/out": false
+  }
+}

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VertexOS Desktop Preview</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="desktop" aria-label="VertexOS desktop preview">
+    <section class="panel terminal" aria-label="Terminal">
+      <header>
+        <span class="dot green"></span>
+        <span class="dot cyan"></span>
+        <span class="dot red"></span>
+        <strong>vertex@core</strong>
+      </header>
+      <div class="terminal-body">
+        <p><span>vertex</span> status</p>
+        <p>kernel: linux-preview</p>
+        <p>session: hyprland</p>
+        <p>profile: performance</p>
+        <p>waybar: live metrics ready</p>
+        <p class="prompt">vertex %#</p>
+      </div>
+    </section>
+
+    <section class="panel monitor" aria-label="System monitor">
+      <div>
+        <span class="label">CPU</span>
+        <strong>18%</strong>
+      </div>
+      <div>
+        <span class="label">MEM</span>
+        <strong>1.6G</strong>
+      </div>
+      <div>
+        <span class="label">IO</span>
+        <strong>fast</strong>
+      </div>
+    </section>
+
+    <section class="panel launcher" aria-label="Launcher">
+      <img src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
+      <div>
+        <h1>VertexOS</h1>
+        <p>Performance-first Linux desktop</p>
+      </div>
+    </section>
+
+    <nav class="dock" aria-label="Waybar dock">
+      <button>V</button>
+      <button class="active">1</button>
+      <button>2</button>
+      <button>3</button>
+      <span>10:04</span>
+      <span>CPU 18%</span>
+      <span>MEM 16%</span>
+      <button>⏻</button>
+    </nav>
+  </main>
+</body>
+</html>

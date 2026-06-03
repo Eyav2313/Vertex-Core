@@ -1,4 +1,4 @@
-# Vertex OS Coding Standards
+# VertexOS Coding Standards
 
 ## Language Boundaries
 
@@ -19,7 +19,7 @@
 
 - C++ standard: C++20.
 - C standard: C17.
-- Treat warnings as errors in CI for Vertex-owned code.
+- Treat warnings as errors in CI for VertexOS-owned code.
 - Prefer RAII and clear ownership boundaries.
 - Do not block compositor or login paths on network availability.
 
