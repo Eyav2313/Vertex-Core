@@ -54,12 +54,22 @@ chmod +x build-vertex.sh scripts/*.sh
 For a fast real boot test, use the smoke boot path. This boots a Linux kernel in QEMU with a minimal VertexOS initramfs:
 
 ```sh
-sudo apt-get install -y linux-image-virtual busybox-static qemu-system-x86 qemu-system-gui
+sudo apt-get install -y linux-image-virtual busybox-static qemu-system-x86 qemu-system-gui grub-efi-amd64-bin mtools xorriso
 scripts/build-smoke-os.sh
 scripts/run-smoke-os.sh
 ```
 
+On Windows, after the WSL build creates the kernel/initramfs artifacts, the same smoke boot can use the QEMU already installed in `C:\Program Files\qemu`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run-smoke-os.ps1
+```
+
 The smoke boot is not a website preview and it is not the final Hyprland desktop. It exists to verify that VertexOS can boot as an operating system quickly while the full GUI ISO pipeline is being built.
+
+Smoke boot metrics show the virtual machine resources assigned to QEMU. The WSL/KVM runner passes through the host CPU model when `/dev/kvm` is available, while the Windows runner may show a generic QEMU CPU unless Windows acceleration is enabled. RAM shows the QEMU memory size, and disk shows the attached smoke disk image. A full live USB or installed VertexOS system reports the real machine CPU, memory, and physical disks.
+
+The default smoke runner uses direct Linux-kernel boot with PXE/network boot disabled, so the old SeaBIOS/iPXE screen is avoided. A UEFI smoke ISO is also generated at `out/smoke/vertexos-smoke-uefi.iso`; the full desktop ISO pipeline targets proper UEFI live boot.
 
 The master build script performs the full pipeline:
 
