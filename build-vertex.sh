@@ -342,14 +342,19 @@ inject_vertex_config() {
         "$target_root/etc/skel/.config/alacritty" \
         "$target_root/etc/sysctl.d" \
         "$target_root/etc/default" \
+        "$target_root/etc/sddm.conf.d" \
         "$target_root/etc/udev/rules.d" \
         "$target_root/etc/systemd/system" \
         "$target_root/etc/wayland" \
         "$target_root/usr/share/sddm/themes" \
         "$target_root/usr/share/vertex/branding" \
+        "$target_root/usr/share/vertex/wallpapers" \
         "$target_root/usr/libexec/vertex"
 
     install -m 0644 "$hyprland_config" "$target_root/etc/skel/.config/hypr/hyprland.conf"
+    if [ -f "$ROOT_DIR/config/window-manager/hyprlock/vertex-lock.conf" ]; then
+        install -m 0644 "$ROOT_DIR/config/window-manager/hyprlock/vertex-lock.conf" "$target_root/etc/skel/.config/hypr/hyprlock.conf"
+    fi
     install -m 0644 "$ROOT_DIR/config/window-manager/waybar/style.css" "$target_root/etc/skel/.config/waybar/style.css"
 
     if [ -f "$ROOT_DIR/config/window-manager/waybar/config.jsonc" ]; then
@@ -365,8 +370,17 @@ inject_vertex_config() {
 
     install_tree "$ROOT_DIR/config/display-manager/sddm/vertex-glass" "$target_root/usr/share/sddm/themes/vertex-glass"
 
+    cat > "$target_root/etc/sddm.conf.d/10-vertex-theme.conf" <<EOF
+[Theme]
+Current=vertex-glass
+EOF
+
     if [ -f "$ROOT_DIR/assets/branding/vertex-logo.png" ]; then
         install -m 0644 "$ROOT_DIR/assets/branding/vertex-logo.png" "$target_root/usr/share/vertex/branding/vertex-logo.png"
+    fi
+
+    if [ -f "$ROOT_DIR/assets/wallpapers/vertex-lock-background.png" ]; then
+        install -m 0644 "$ROOT_DIR/assets/wallpapers/vertex-lock-background.png" "$target_root/usr/share/vertex/wallpapers/vertex-lock-background.png"
     fi
 
     if [ "$VERTEX_SKIP_NATIVE" != "1" ] && [ -x "$NATIVE_BUILD_DIR/vertex-sessiond" ]; then

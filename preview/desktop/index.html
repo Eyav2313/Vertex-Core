@@ -1,63 +1,229 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>VertexOS Desktop Preview</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VertexOS Lock Screen | Zarif</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Playfair+Display:wght@700&family=Space+Mono&family=Dancing+Script:wght@700&family=Bebas+Neue&family=Montserrat:wght@800&family=Inter:wght@900&family=Poppins:wght@700&family=Lora:wght@700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --font: 'Outfit', sans-serif; 
+            --accent: #fff; 
+            --bg: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000'); 
+            --f-size: clamp(6rem, 24vw, 10rem);
+            --time-opacity: 1;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }
+
+        /* --- BOOT SCREEN --- */
+        #boot-screen { position: fixed; inset: 0; z-index: 10000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s ease; }
+        .vertex-logo { width: 44px; height: 44px; object-fit: contain; margin-bottom: 30px; filter: drop-shadow(0 10px 24px rgba(0,0,0,0.35)); }
+        .boot-bar { width: 140px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .fill { width: 0%; height: 100%; background: #fff; animation: bootFill 3s forwards cubic-bezier(0.1, 0, 0.1, 1); }
+        @keyframes bootFill { 100% { width: 100%; } }
+
+        /* --- BACKGROUND --- */
+        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.1); filter: blur(40px); opacity: 0; }
+        .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
+        .wp-lock-blur { filter: blur(70px) brightness(0.6) !important; transform: scale(1.05) !important; }
+
+        /* --- DYNAMIC ISLAND --- */
+        .top-island-container { position: absolute; top: 12px; width: 100%; display: flex; justify-content: center; z-index: 9999; }
+        .dynamic-island { background: #000; min-width: 160px; height: 36px; border-radius: 20px; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; padding: 0 15px; }
+        .lock-icon-svg { width: 13px; height: 13px; fill: white; margin-right: auto; }
+
+        /* --- CLOCK --- */
+        .lock-indicator { position: relative; margin-top: 12vh; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
+        #date-text { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+        #time-text { font-size: var(--f-size); font-weight: 900; letter-spacing: -5px; line-height: 1; }
+
+        /* --- BOTTOM UI --- */
+        .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .unlock-msg { font-size: 0.85rem; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
+        .msg-active { opacity: 1; transform: translateY(0); }
+        .home-bar { width: 130px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; }
+
+        /* --- HIGH TRANSPARENCY CUSTOMIZATION WINDOW --- */
+        #custom-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.2); 
+            display: flex; align-items: center; justify-content: center; 
+            z-index: 9800; opacity: 0; visibility: hidden; transition: 0.5s; backdrop-filter: blur(10px);
+        }
+        #custom-overlay.active { opacity: 1; visibility: visible; }
+        
+        #custom-window { 
+            width: 380px; max-height: 80vh; overflow-y: auto;
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; 
+            padding: 30px; transform: scale(0.8); transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); scrollbar-width: none;
+        }
+        #custom-overlay.active #custom-window { transform: scale(1); }
+
+        .section-header { font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; opacity: 0.5; margin: 25px 0 12px; text-transform: uppercase; }
+        .chip-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .chip { padding: 10px 18px; background: rgba(255,255,255,0.1); border-radius: 14px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; border: 1px solid transparent; }
+        
+        /* Slider for Time Transparency */
+        .slider { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; -webkit-appearance: none; cursor: pointer; margin: 10px 0; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: white; border-radius: 50%; }
+
+        /* --- PASSWORD ERROR --- */
+        .pass-group { display: flex; align-items: center; background: rgba(255,255,255,0.15); padding: 8px 8px 8px 20px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .error-shake { border-color: #ff4d4d !important; background: rgba(255, 77, 77, 0.2) !important; animation: shake 0.4s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
+        #login-module.active { opacity: 1; visibility: visible; }
+    </style>
 </head>
 <body>
-  <main class="desktop" aria-label="VertexOS desktop preview">
-    <section class="panel terminal" aria-label="Terminal">
-      <header>
-        <span class="dot green"></span>
-        <span class="dot cyan"></span>
-        <span class="dot red"></span>
-        <strong>vertex@core</strong>
-      </header>
-      <div class="terminal-body">
-        <p><span>vertex</span> status</p>
-        <p>kernel: linux-preview</p>
-        <p>session: hyprland</p>
-        <p>profile: performance</p>
-        <p>waybar: live metrics ready</p>
-        <p class="prompt">vertex %#</p>
-      </div>
-    </section>
 
-    <section class="panel monitor" aria-label="System monitor">
-      <div>
-        <span class="label">CPU</span>
-        <strong>18%</strong>
-      </div>
-      <div>
-        <span class="label">MEM</span>
-        <strong>1.6G</strong>
-      </div>
-      <div>
-        <span class="label">IO</span>
-        <strong>fast</strong>
-      </div>
-    </section>
+    <div id="boot-screen">
+        <img class="vertex-logo" src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
+        <div class="boot-bar"><div class="fill"></div></div>
+    </div>
 
-    <section class="panel launcher" aria-label="Launcher">
-      <img src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
-      <div>
-        <h1>VertexOS</h1>
-        <p>Performance-first Linux desktop</p>
-      </div>
-    </section>
+    <div id="wp-cont">
+        <div class="lock-indicator" id="ui-main">
+            <p id="date-text">Wednesday, Feb 4</p>
+            <h1 id="time-text">00:00</h1>
+        </div>
+        <div class="bottom-shelf">
+            <div class="unlock-msg" id="hint-text">Click anywhere to unlock</div>
+            <div class="home-bar"></div>
+        </div>
+    </div>
 
-    <nav class="dock" aria-label="Waybar dock">
-      <button>V</button>
-      <button class="active">1</button>
-      <button>2</button>
-      <button>3</button>
-      <span>10:04</span>
-      <span>CPU 18%</span>
-      <span>MEM 16%</span>
-      <button>⏻</button>
-    </nav>
-  </main>
+    <div class="top-island-container">
+        <div class="dynamic-island">
+            <svg class="lock-icon-svg" viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7V10H6C4.897 10 4 10.897 4 12V20C4 21.103 4.897 22 6 22H18C19.103 22 20 21.103 20 20V12C20 10.897 19.103 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7Z"/></svg>
+        </div>
+    </div>
+
+    <div id="custom-overlay">
+        <div id="custom-window">
+            <h2 style="text-align:center; font-weight:300;">Appearance</h2>
+            
+            <p class="section-header">Time Transparency</p>
+            <input type="range" min="0.1" max="1" step="0.1" value="1" class="slider" oninput="setTimeOpacity(this.value)">
+
+            <p class="section-header">Wallpapers</p>
+            <div class="chip-container">
+                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b')">Alpine</div>
+                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd')">Night</div>
+                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1506744038136-46273834b3fb')">Canyon</div>
+                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05')">Forest</div>
+            </div>
+
+            <p class="section-header">Clock Fonts</p>
+            <div class="chip-container">
+                <div class="chip" onclick="setFont('Outfit')">Outfit</div>
+                <div class="chip" onclick="setFont('Space Mono')">Mono</div>
+                <div class="chip" onclick="setFont('Bebas Neue')">Bebas</div>
+                <div class="chip" onclick="setFont('Playfair Display')">Serif</div>
+                <div class="chip" onclick="setFont('Inter')">Inter</div>
+            </div>
+
+            <button onclick="closePanel()" style="width:100%; padding:15px; border-radius:20px; border:none; background:white; color:black; font-weight:800; margin-top:30px; cursor:pointer;">Done</button>
+        </div>
+    </div>
+
+    <div id="login-module">
+        <div style="text-align:center">
+            <div style="width:75px; height:75px; background:rgba(255,255,255,0.1); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px);">
+                <img src="../../assets/branding/vertex-logo.png" alt="VertexOS logo" style="width:52px;height:52px;object-fit:contain;">
+            </div>
+            <div class="pass-group" id="pass-wrap">
+                <input type="password" id="pass-in" placeholder="Password">
+                <button onclick="checkPass()" style="width:34px; height:34px; background:white; border-radius:50%; border:none; cursor:pointer;">➔</button>
+            </div>
+            <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
+        </div>
+    </div>
+
+    <script>
+        let hintIdx = 0;
+        const hints = ["Click anywhere to unlock", "Hold to customize"];
+
+        window.onload = () => {
+            // Boot sequence
+            setTimeout(() => {
+                document.getElementById('boot-screen').style.opacity = '0';
+                document.getElementById('wp-cont').classList.add('wp-ready');
+                setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
+            }, 3200);
+
+            updateClock();
+            setInterval(updateClock, 1000);
+            initGestures();
+
+            // Hint Swap
+            const hintEl = document.getElementById('hint-text');
+            setInterval(() => {
+                hintEl.classList.remove('msg-active');
+                setTimeout(() => {
+                    hintIdx = (hintIdx + 1) % hints.length;
+                    hintEl.innerText = hints[hintIdx];
+                    hintEl.classList.add('msg-active');
+                }, 800);
+            }, 4000);
+            hintEl.classList.add('msg-active');
+        };
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('time-text').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        }
+
+        function initGestures() {
+            let pTimer;
+            window.addEventListener('mousedown', (e) => {
+                if(e.target.id === 'wp-cont' || e.target.closest('#ui-main')) 
+                    pTimer = setTimeout(openPanel, 800);
+            });
+            window.addEventListener('mouseup', () => clearTimeout(pTimer));
+            window.addEventListener('click', (e) => {
+                if(e.target.id === 'wp-cont') 
+                    if(!document.getElementById('custom-overlay').classList.contains('active')) showLogin();
+            });
+        }
+
+        function openPanel() {
+            document.getElementById('custom-overlay').classList.add('active');
+            document.getElementById('wp-cont').classList.add('wp-lock-blur');
+        }
+        function closePanel() {
+            document.getElementById('custom-overlay').classList.remove('active');
+            document.getElementById('wp-cont').classList.remove('wp-lock-blur');
+        }
+
+        function setFont(f) { document.getElementById('time-text').style.fontFamily = f; }
+        function setWP(url) { document.documentElement.style.setProperty('--bg', `url('${url}')`); }
+        function setTimeOpacity(val) { document.documentElement.style.setProperty('--time-opacity', val); }
+
+        function showLogin() {
+            document.getElementById('wp-cont').classList.add('wp-lock-blur');
+            document.getElementById('login-module').classList.add('active');
+        }
+        function hideLogin() {
+            document.getElementById('wp-cont').classList.remove('wp-lock-blur');
+            document.getElementById('login-module').classList.remove('active');
+        }
+
+        function checkPass() {
+            const wrap = document.getElementById('pass-wrap');
+            const input = document.getElementById('pass-in');
+            if(input.value === "1234") {
+                hideLogin();
+                alert("Welcome Zarif!");
+            } else {
+                wrap.classList.add('error-shake');
+                setTimeout(() => wrap.classList.remove('error-shake'), 400);
+                input.value = "";
+            }
+        }
+    </script>
 </body>
 </html>

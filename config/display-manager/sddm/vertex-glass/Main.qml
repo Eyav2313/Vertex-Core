@@ -7,103 +7,493 @@ Rectangle {
     id: root
     width: 1920
     height: 1080
-    color: "#0E1117"
+    color: "#000000"
+
+    property real bootProgress: 0
+    property bool bootDone: false
+    property bool loginVisible: false
+    property bool customizeVisible: false
+    property bool loginError: false
+    property int shakeOffset: 0
+    property int hintIndex: 0
+    property string selectedFont: config.font
+    property string backgroundSource: config.background
+    readonly property var hints: ["Click anywhere to unlock", "Hold to customize"]
+
+    function refreshClock() {
+        var now = new Date()
+        timeText.text = Qt.formatTime(now, "hh:mm")
+        dateText.text = Qt.formatDate(now, "dddd, MMM d")
+    }
+
+    function doLogin() {
+        sddm.login(userBox.currentText, passwordBox.text, sessionBox.currentIndex)
+    }
+
+    NumberAnimation on bootProgress {
+        from: 0
+        to: 1
+        duration: 3000
+        easing.type: Easing.InOutQuad
+        running: true
+    }
+
+    Timer {
+        interval: 3200
+        running: true
+        repeat: false
+        onTriggered: root.bootDone = true
+    }
+
+    Timer {
+        interval: 1000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: root.refreshClock()
+    }
+
+    Timer {
+        interval: 4000
+        running: root.bootDone && !root.loginVisible && !root.customizeVisible
+        repeat: true
+        onTriggered: root.hintIndex = (root.hintIndex + 1) % root.hints.length
+    }
 
     Image {
+        id: wallpaper
         anchors.fill: parent
-        source: config.background
+        source: root.backgroundSource
         fillMode: Image.PreserveAspectCrop
-        opacity: 0.92
+        opacity: root.bootDone ? 1 : 0
+        scale: root.loginVisible || root.customizeVisible ? 1.05 : (root.bootDone ? 1 : 1.1)
+
+        Behavior on opacity { NumberAnimation { duration: 1200; easing.type: Easing.OutCubic } }
+        Behavior on scale { NumberAnimation { duration: 1200; easing.type: Easing.OutCubic } }
     }
 
     Rectangle {
         anchors.fill: parent
-        color: "#66080B10"
+        color: root.loginVisible || root.customizeVisible ? "#99000000" : "#22000000"
+        opacity: root.bootDone ? 1 : 0
+        Behavior on color { ColorAnimation { duration: 550; easing.type: Easing.OutCubic } }
     }
 
-    Rectangle {
-        id: loginPanel
-        width: Math.min(parent.width * 0.86, 420)
-        height: 430
-        radius: 20
-        color: "#B0181C25"
-        border.color: "#55FFFFFF"
-        border.width: 1
-        anchors.centerIn: parent
+    MouseArea {
+        anchors.fill: parent
+        enabled: root.bootDone
+        onClicked: {
+            if (!root.customizeVisible && !root.loginVisible) {
+                root.loginVisible = true
+                passwordBox.forceActiveFocus()
+            }
+        }
+        onPressAndHold: {
+            if (!root.loginVisible) {
+                root.customizeVisible = true
+            }
+        }
+    }
 
-        ColumnLayout {
+    Item {
+        id: island
+        width: 160
+        height: 36
+        anchors.top: parent.top
+        anchors.topMargin: 12
+        anchors.horizontalCenter: parent.horizontalCenter
+        opacity: root.bootDone ? 1 : 0
+        z: 20
+
+        Behavior on opacity { NumberAnimation { duration: 700 } }
+
+        Rectangle {
             anchors.fill: parent
-            anchors.margins: 34
-            spacing: 18
+            radius: 20
+            color: "#000000"
+            border.width: 1
+            border.color: "#22FFFFFF"
+        }
 
-            Text {
-                text: "VertexOS"
-                color: "#F5F7FA"
-                font.pixelSize: 32
-                font.weight: Font.DemiBold
-                Layout.alignment: Qt.AlignHCenter
+        Item {
+            id: lockIcon
+            width: 18
+            height: 18
+            anchors.left: parent.left
+            anchors.leftMargin: 15
+            anchors.verticalCenter: parent.verticalCenter
+
+            Rectangle {
+                x: 4
+                y: 1
+                width: 10
+                height: 10
+                radius: 5
+                color: "transparent"
+                border.width: 2
+                border.color: "#FFFFFFFF"
             }
 
-            Text {
-                text: "Secure session"
-                color: "#AAB2C0"
-                font.pixelSize: 14
-                Layout.alignment: Qt.AlignHCenter
+            Rectangle {
+                x: 2
+                y: 8
+                width: 14
+                height: 10
+                radius: 3
+                color: "#FFFFFFFF"
+            }
+        }
+    }
+
+    Column {
+        id: clockBlock
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: Math.max(96, parent.height * 0.12)
+        spacing: 5
+        opacity: root.bootDone && !root.loginVisible ? 1 : 0
+        z: 10
+
+        Behavior on opacity { NumberAnimation { duration: 600; easing.type: Easing.OutCubic } }
+
+        Text {
+            id: dateText
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: "#FFFFFFFF"
+            font.family: root.selectedFont
+            font.pixelSize: 24
+            font.weight: Font.Bold
+        }
+
+        Text {
+            id: timeText
+            anchors.horizontalCenter: parent.horizontalCenter
+            color: "#FFFFFFFF"
+            font.family: root.selectedFont
+            font.pixelSize: 150
+            font.weight: Font.Black
+            lineHeight: 0.86
+        }
+    }
+
+    Column {
+        id: bottomShelf
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 25
+        spacing: 15
+        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible ? 1 : 0
+        z: 10
+
+        Behavior on opacity { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
+
+        Text {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: root.hints[root.hintIndex]
+            color: "#B3FFFFFF"
+            font.family: root.selectedFont
+            font.pixelSize: 13
+            font.weight: Font.Medium
+        }
+
+        Rectangle {
+            width: 130
+            height: 5
+            radius: 3
+            color: "#55FFFFFF"
+        }
+    }
+
+    Item {
+        id: loginModule
+        anchors.fill: parent
+        visible: opacity > 0
+        opacity: root.loginVisible ? 1 : 0
+        z: 100
+
+        Behavior on opacity { NumberAnimation { duration: 450; easing.type: Easing.OutCubic } }
+
+        MouseArea {
+            anchors.fill: parent
+        }
+
+        Column {
+            anchors.centerIn: parent
+            spacing: 16
+
+            Rectangle {
+                width: 78
+                height: 78
+                radius: 39
+                color: "#1FFFFFFF"
+                border.width: 1
+                border.color: "#26FFFFFF"
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                Image {
+                    anchors.centerIn: parent
+                    width: 52
+                    height: 52
+                    source: config.logo
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                }
             }
 
             ComboBox {
                 id: userBox
+                width: 260
                 model: userModel
                 textRole: "name"
-                Layout.fillWidth: true
-                Layout.topMargin: 18
-            }
-
-            PasswordBox {
-                id: passwordBox
-                placeholderText: "Password"
-                Layout.fillWidth: true
-                focus: true
-                onAccepted: sddm.login(userBox.currentText, passwordBox.text, sessionBox.currentIndex)
+                visible: count > 1
+                font.family: root.selectedFont
             }
 
             ComboBox {
                 id: sessionBox
+                width: 260
                 model: sessionModel
                 textRole: "name"
-                Layout.fillWidth: true
+                visible: false
             }
 
-            Button {
-                text: "Sign in"
-                Layout.fillWidth: true
-                Layout.preferredHeight: 44
-                onClicked: sddm.login(userBox.currentText, passwordBox.text, sessionBox.currentIndex)
+            Rectangle {
+                id: passWrap
+                width: 318
+                height: 52
+                radius: 26
+                color: root.loginError ? "#33FF4D4D" : "#26FFFFFF"
+                border.width: 1
+                border.color: root.loginError ? "#FFFF4D4D" : "#1AFFFFFF"
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.horizontalCenterOffset: root.shakeOffset
+
+                PasswordBox {
+                    id: passwordBox
+                    anchors.left: parent.left
+                    anchors.right: unlockButton.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 20
+                    anchors.rightMargin: 10
+                    height: 36
+                    placeholderText: "Password"
+                    font.family: root.selectedFont
+                    font.pixelSize: 14
+                    color: "#FFFFFFFF"
+                    focus: root.loginVisible
+                    onAccepted: root.doLogin()
+                }
+
+                Rectangle {
+                    id: unlockButton
+                    width: 34
+                    height: 34
+                    radius: 17
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    color: "#FFFFFFFF"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: ">"
+                        color: "#000000"
+                        font.family: root.selectedFont
+                        font.pixelSize: 18
+                        font.weight: Font.Bold
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: root.doLogin()
+                    }
+                }
             }
 
-            Item {
-                Layout.fillHeight: true
+            Text {
+                text: "Cancel"
+                anchors.horizontalCenter: parent.horizontalCenter
+                color: "#66FFFFFF"
+                font.family: root.selectedFont
+                font.pixelSize: 13
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        root.loginVisible = false
+                        passwordBox.text = ""
+                    }
+                }
             }
+        }
+    }
 
-            RowLayout {
-                Layout.alignment: Qt.AlignHCenter
-                spacing: 12
+    Item {
+        id: customizeOverlay
+        anchors.fill: parent
+        visible: opacity > 0
+        opacity: root.customizeVisible ? 1 : 0
+        z: 120
 
-                Button {
-                    text: "Sleep"
-                    onClicked: sddm.suspend()
+        Behavior on opacity { NumberAnimation { duration: 500; easing.type: Easing.OutCubic } }
+
+        MouseArea {
+            anchors.fill: parent
+        }
+
+        Rectangle {
+            id: customWindow
+            width: 380
+            height: 430
+            radius: 40
+            anchors.centerIn: parent
+            color: "#0DFFFFFF"
+            border.width: 1
+            border.color: "#1AFFFFFF"
+
+            Column {
+                anchors.fill: parent
+                anchors.margins: 30
+                spacing: 16
+
+                Text {
+                    text: "Appearance"
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    color: "#FFFFFFFF"
+                    font.family: root.selectedFont
+                    font.pixelSize: 26
+                    font.weight: Font.Light
+                }
+
+                Text {
+                    text: "TIME TRANSPARENCY"
+                    color: "#80FFFFFF"
+                    font.family: root.selectedFont
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                    topPadding: 8
+                }
+
+                Slider {
+                    width: parent.width
+                    from: 0.1
+                    to: 1
+                    value: clockBlock.opacity
+                    onMoved: clockBlock.opacity = value
+                }
+
+                Text {
+                    text: "WALLPAPERS"
+                    color: "#80FFFFFF"
+                    font.family: root.selectedFont
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                }
+
+                Row {
+                    spacing: 10
+                    Repeater {
+                        model: ["Alpine", "Night", "Canyon", "Forest"]
+                        delegate: Button {
+                            text: modelData
+                            onClicked: root.backgroundSource = config.background
+                        }
+                    }
+                }
+
+                Text {
+                    text: "CLOCK FONTS"
+                    color: "#80FFFFFF"
+                    font.family: root.selectedFont
+                    font.pixelSize: 10
+                    font.weight: Font.Bold
+                }
+
+                Row {
+                    spacing: 10
+                    Repeater {
+                        model: ["Inter", "Noto Sans", "Sans"]
+                        delegate: Button {
+                            text: modelData
+                            onClicked: root.selectedFont = modelData
+                        }
+                    }
                 }
 
                 Button {
-                    text: "Restart"
-                    onClicked: sddm.reboot()
-                }
-
-                Button {
-                    text: "Power"
-                    onClicked: sddm.powerOff()
+                    width: parent.width
+                    height: 48
+                    text: "Done"
+                    onClicked: root.customizeVisible = false
                 }
             }
+        }
+    }
+
+    Rectangle {
+        id: bootScreen
+        anchors.fill: parent
+        color: "#000000"
+        opacity: root.bootDone ? 0 : 1
+        visible: opacity > 0
+        z: 10000
+
+        Behavior on opacity { NumberAnimation { duration: 1000; easing.type: Easing.OutCubic } }
+
+        Column {
+            anchors.centerIn: parent
+            spacing: 30
+
+            Image {
+                width: 44
+                height: 44
+                source: config.logo
+                fillMode: Image.PreserveAspectFit
+                smooth: true
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Rectangle {
+                id: bootBar
+                width: 140
+                height: 4
+                radius: 2
+                color: "#1AFFFFFF"
+                clip: true
+
+                Rectangle {
+                    width: root.bootProgress * bootBar.width
+                    height: parent.height
+                    radius: 2
+                    color: "#FFFFFFFF"
+                }
+            }
+        }
+    }
+
+    SequentialAnimation {
+        id: shake
+        PropertyAnimation { target: root; property: "shakeOffset"; to: -8; duration: 55 }
+        PropertyAnimation { target: root; property: "shakeOffset"; to: 8; duration: 90 }
+        PropertyAnimation { target: root; property: "shakeOffset"; to: 0; duration: 55 }
+    }
+
+    Timer {
+        id: clearError
+        interval: 500
+        repeat: false
+        onTriggered: root.loginError = false
+    }
+
+    Connections {
+        target: sddm
+        ignoreUnknownSignals: true
+        function onLoginFailed() {
+            root.loginError = true
+            passwordBox.text = ""
+            shake.restart()
+            clearError.restart()
+            passwordBox.forceActiveFocus()
         }
     }
 }

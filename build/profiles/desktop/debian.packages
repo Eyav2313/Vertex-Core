@@ -46,6 +46,7 @@ pkexec
 
 # Window manager and shell surface
 hyprland
+hyprlock
 waybar
 wofi
 mako-notifier
@@ -66,6 +67,7 @@ bat
 eza
 python3
 python3-venv
+fonts-inter
 
 # Security defaults
 apparmor
