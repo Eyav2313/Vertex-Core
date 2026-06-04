@@ -17,17 +17,28 @@
         body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }
 
         /* --- BOOT SCREEN --- */
-        #boot-screen { position: fixed; inset: 0; z-index: 10000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 1s ease; }
-        .boot-logo { position: relative; width: clamp(64px, 7vw, 84px); height: clamp(64px, 7vw, 84px); overflow: hidden; display: grid; place-items: center; isolation: isolate; }
-        .vertex-logo { width: 100%; height: 100%; object-fit: contain; filter: brightness(0); opacity: 0.35; }
-        .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 28%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0.12) 58%, transparent 72%); background-size: 260% 100%; background-position: -160% 0; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; animation: logoShine 2.8s cubic-bezier(0.19, 1, 0.22, 1) infinite; pointer-events: none; opacity: 0; will-change: background-position, opacity; }
-        @keyframes logoShine { 0%, 12% { background-position: -160% 0; opacity: 0; } 28% { opacity: 1; } 60% { opacity: 0.9; } 78%, 100% { background-position: 160% 0; opacity: 0; } }
-        @media (max-width: 700px) { .boot-logo { width: 56px; height: 56px; } }
+        #boot-screen { position: fixed; inset: 0; z-index: 10000; overflow: hidden; background: #000; cursor: wait; transition: background-color 0.5s ease-out, opacity 0.5s ease-out; }
+        #boot-screen.logo-phase { background: #0c0c0c; }
+        .loading-titlebar { position: absolute; top: 0; left: 0; right: 0; height: 32px; display: flex; justify-content: flex-end; user-select: none; }
+        .window-button { width: 46px; height: 32px; display: grid; place-items: center; color: #808080; }
+        .window-button svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 1.25; fill: none; }
+        .loading-stage { position: absolute; inset: 32px 0 0; display: grid; place-items: center; }
+        .boot-logo { position: relative; width: 80px; height: 80px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
+        .vertex-logo { width: 80px; height: 80px; object-fit: contain; }
+        #boot-screen.logo-phase .boot-logo { opacity: 1; }
+        .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 35%, rgba(255,255,255,0.6) 50%, transparent 65%); background-size: 260% 260%; background-position: -130% -130%; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; opacity: 0; pointer-events: none; }
+        #boot-screen.logo-phase .boot-logo::after { animation: logoShine 2s linear infinite; opacity: 1; }
+        .loading-spinner { position: absolute; left: 50%; bottom: 80px; width: 24px; height: 24px; margin-left: -12px; border-radius: 50%; border: 2px solid rgba(96,96,96,0.2); border-top-color: #606060; opacity: 0; animation: spinnerRotate 0.85s linear infinite; transition: opacity 0.5s ease-out; }
+        #boot-screen.spinner-phase .loading-spinner { opacity: 1; }
+        @keyframes logoShine { to { background-position: 130% 130%; } }
+        @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
         /* --- BACKGROUND --- */
         #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.1); filter: blur(40px); opacity: 0; }
         .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
         .wp-lock-blur { filter: blur(70px) brightness(0.6) !important; transform: scale(1.05) !important; }
+        html.preview-capture #boot-screen { display: none; }
+        html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
 
         /* --- DYNAMIC ISLAND --- */
         .top-island-container { position: absolute; top: 12px; width: 100%; display: flex; justify-content: center; z-index: 9999; }
@@ -78,18 +89,37 @@
         #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
         #login-module.active { opacity: 1; visibility: visible; }
     </style>
+    <script>
+        if (new URLSearchParams(window.location.search).has('preview')) {
+            document.documentElement.classList.add('preview-capture');
+        }
+    </script>
 </head>
 <body>
 
     <div id="boot-screen">
-        <div class="boot-logo">
-            <img class="vertex-logo" src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
+        <div class="loading-titlebar">
+            <div class="window-button" aria-hidden="true">
+                <svg viewBox="0 0 10 10"><path d="M1 8.5H9"/></svg>
+            </div>
+            <div class="window-button" aria-hidden="true">
+                <svg viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6"/></svg>
+            </div>
+            <div class="window-button" aria-hidden="true">
+                <svg viewBox="0 0 10 10"><path d="M2 2L8 8M8 2L2 8"/></svg>
+            </div>
         </div>
+        <div class="loading-stage">
+            <div class="boot-logo">
+                <img class="vertex-logo" src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
+            </div>
+        </div>
+        <div class="loading-spinner" aria-hidden="true"></div>
     </div>
 
     <div id="wp-cont">
         <div class="lock-indicator" id="ui-main">
-            <p id="date-text">Wednesday, June 3, 2026</p>
+            <p id="date-text">Thursday, June 4, 2026</p>
             <h1 id="time-text">00:00</h1>
         </div>
         <div class="bottom-shelf">
@@ -150,12 +180,17 @@
         const hints = ["Click anywhere to continue", "Hold to customize"];
 
         window.onload = () => {
-            // Boot sequence
+            const bootScreen = document.getElementById('boot-screen');
+            const wallpaper = document.getElementById('wp-cont');
+
+            setTimeout(() => bootScreen.classList.add('logo-phase'), 5000);
+            setTimeout(() => bootScreen.classList.remove('logo-phase'), 10000);
+            setTimeout(() => bootScreen.classList.add('spinner-phase'), 15000);
             setTimeout(() => {
-                document.getElementById('boot-screen').style.opacity = '0';
-                document.getElementById('wp-cont').classList.add('wp-ready');
-                setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 1000);
-            }, 3200);
+                bootScreen.style.opacity = '0';
+                wallpaper.classList.add('wp-ready');
+                setTimeout(() => bootScreen.style.display = 'none', 500);
+            }, 20000);
 
             updateClock();
             setInterval(updateClock, 1000);
