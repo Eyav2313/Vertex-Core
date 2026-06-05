@@ -26,8 +26,6 @@ Rectangle {
         var date = Qt.formatDate(now, "dddd, MMM d")
         timeText.text = time
         dateText.text = date
-        customPreviewTime.text = time
-        customPreviewDate.text = date
     }
 
     function doLogin() {
