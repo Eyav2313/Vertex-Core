@@ -12,6 +12,7 @@ Rectangle {
     property bool bootDone: false
     property bool loginVisible: false
     property bool customizeVisible: false
+    property bool accessibilityBoost: false
     property bool loginError: false
     property int shakeOffset: 0
     property int hintIndex: 0
@@ -65,7 +66,7 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
-        color: root.loginVisible || root.customizeVisible ? "#99000000" : "#22000000"
+        color: root.loginVisible || root.customizeVisible ? "#99000000" : (root.accessibilityBoost ? "#33000000" : "#22000000")
         opacity: root.bootDone ? 1 : 0
         Behavior on color { ColorAnimation { duration: 550; easing.type: Easing.OutCubic } }
     }
@@ -132,6 +133,135 @@ Rectangle {
                 height: 10
                 radius: 3
                 color: "#FFFFFFFF"
+            }
+        }
+    }
+
+    Row {
+        id: systemWidgets
+        anchors.top: parent.top
+        anchors.topMargin: 28
+        anchors.right: parent.right
+        anchors.rightMargin: 34
+        spacing: 8
+        opacity: root.bootDone ? 1 : 0
+        z: 24
+
+        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+
+        Rectangle {
+            width: 34
+            height: 34
+            radius: 17
+            color: root.accessibilityBoost ? "#18FFFFFF" : "#2E070A10"
+            border.width: 1
+            border.color: "#14FFFFFF"
+
+            Canvas {
+                anchors.centerIn: parent
+                width: 16
+                height: 16
+                opacity: 0.8
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.clearRect(0, 0, width, height)
+                    ctx.strokeStyle = "#FFFFFFFF"
+                    ctx.lineWidth = 1.4
+                    ctx.lineCap = "round"
+                    ctx.lineJoin = "round"
+                    ctx.beginPath()
+                    ctx.arc(8, 3, 1.6, 0, Math.PI * 2)
+                    ctx.moveTo(2.5, 6)
+                    ctx.lineTo(13.5, 6)
+                    ctx.moveTo(8, 6)
+                    ctx.lineTo(8, 10)
+                    ctx.moveTo(5.2, 15)
+                    ctx.lineTo(8, 10)
+                    ctx.lineTo(10.8, 15)
+                    ctx.stroke()
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.accessibilityBoost = !root.accessibilityBoost
+            }
+        }
+
+        Rectangle {
+            width: 48
+            height: 34
+            radius: 17
+            color: "#2E070A10"
+            border.width: 1
+            border.color: "#14FFFFFF"
+
+            Rectangle {
+                width: 22
+                height: 11
+                radius: 3
+                color: "transparent"
+                border.width: 1
+                border.color: "#CCFFFFFF"
+                anchors.centerIn: parent
+
+                Rectangle {
+                    width: 14
+                    height: 5
+                    radius: 1
+                    color: "#CCFFFFFF"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Rectangle {
+                width: 2
+                height: 5
+                radius: 1
+                color: "#CCFFFFFF"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.horizontalCenter
+                anchors.leftMargin: 13
+            }
+        }
+
+        Rectangle {
+            width: 34
+            height: 34
+            radius: 17
+            color: "#2E070A10"
+            border.width: 1
+            border.color: "#14FFFFFF"
+
+            Canvas {
+                anchors.centerIn: parent
+                width: 16
+                height: 16
+                opacity: 0.82
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.clearRect(0, 0, width, height)
+                    ctx.strokeStyle = "#FFFFFFFF"
+                    ctx.lineWidth = 1.5
+                    ctx.lineCap = "round"
+                    ctx.beginPath()
+                    ctx.moveTo(2, 4)
+                    ctx.lineTo(14, 4)
+                    ctx.moveTo(2, 12)
+                    ctx.lineTo(14, 12)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(6, 4, 2, 0, Math.PI * 2)
+                    ctx.arc(10, 12, 2, 0, Math.PI * 2)
+                    ctx.stroke()
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: root.customizeVisible = true
             }
         }
     }
@@ -250,10 +380,10 @@ Rectangle {
 
             Rectangle {
                 id: passWrap
-                width: 318
-                height: 52
-                radius: 26
-                color: root.loginError ? "#33FF4D4D" : "#26FFFFFF"
+                width: 300
+                height: 42
+                radius: 21
+                color: root.loginError ? "#33FF4D4D" : "#10FFFFFF"
                 border.width: 1
                 border.color: root.loginError ? "#FFFF4D4D" : "#1AFFFFFF"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -264,12 +394,12 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.right: unlockButton.left
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.leftMargin: 20
-                    anchors.rightMargin: 10
-                    height: 36
+                    anchors.leftMargin: 16
+                    anchors.rightMargin: 8
+                    height: 30
                     placeholderText: "Password"
                     font.family: root.selectedFont
-                    font.pixelSize: 14
+                    font.pixelSize: 13
                     color: "#FFFFFFFF"
                     focus: root.loginVisible
                     onAccepted: root.doLogin()
@@ -277,21 +407,33 @@ Rectangle {
 
                 Rectangle {
                     id: unlockButton
-                    width: 34
-                    height: 34
-                    radius: 17
+                    width: 30
+                    height: 30
+                    radius: 15
                     anchors.right: parent.right
-                    anchors.rightMargin: 8
+                    anchors.rightMargin: 6
                     anchors.verticalCenter: parent.verticalCenter
-                    color: "#FFFFFFFF"
+                    color: "#E6FFFFFF"
 
-                    Text {
+                    Canvas {
                         anchors.centerIn: parent
-                        text: ">"
-                        color: "#000000"
-                        font.family: root.selectedFont
-                        font.pixelSize: 18
-                        font.weight: Font.Bold
+                        width: 15
+                        height: 15
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            ctx.strokeStyle = "#E6000000"
+                            ctx.lineWidth = 2
+                            ctx.lineCap = "round"
+                            ctx.lineJoin = "round"
+                            ctx.beginPath()
+                            ctx.moveTo(2, 7.5)
+                            ctx.lineTo(13, 7.5)
+                            ctx.moveTo(8.2, 3)
+                            ctx.lineTo(13, 7.5)
+                            ctx.lineTo(8.2, 12)
+                            ctx.stroke()
+                        }
                     }
 
                     MouseArea {

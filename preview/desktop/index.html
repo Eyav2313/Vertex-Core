@@ -57,8 +57,21 @@
         input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
         .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
         .wp-lock-blur { filter: blur(18px) brightness(0.68) !important; transform: scale(1.02) !important; }
+        body.accessibility-boost #wp-cont { filter: contrast(1.08) brightness(0.94); }
+        body.accessibility-boost #time-text { color: rgba(255,255,255,0.9); text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 16px rgba(255,255,255,0.06); }
         html.preview-capture #boot-screen { display: none; }
         html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
+
+        /* --- SYSTEM WIDGETS --- */
+        .system-widgets { position: absolute; top: 28px; right: 34px; z-index: 30; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateY(-6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        body.lock-ready .system-widgets { opacity: 1; transform: translateY(0); }
+        .widget-icon { width: 34px; height: 34px; border: 0; border-radius: 50%; display: grid; place-items: center; color: rgba(255,255,255,0.72); background: rgba(7,10,16,0.18); box-shadow: 0 10px 26px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.08); backdrop-filter: blur(12px); transition: transform 0.22s ease, color 0.22s ease, background 0.22s ease; }
+        .widget-icon:hover, .widget-icon.active { transform: translateY(-1px); color: rgba(255,255,255,0.94); background: rgba(255,255,255,0.09); }
+        .widget-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.65; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .battery-widget { width: 48px; border-radius: 18px; }
+        .battery-body { width: 22px; height: 11px; border: 1.45px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
+        .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 5px; border-radius: 1px; background: currentColor; }
+        .battery-fill { display: block; width: var(--battery-level, 72%); height: 100%; border-radius: 1.5px; background: currentColor; }
 
         /* --- CLOCK --- */
         .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
@@ -97,16 +110,25 @@
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: white; border-radius: 50%; }
 
         /* --- PASSWORD ERROR --- */
-        .pass-group { display: flex; align-items: center; background: rgba(255,255,255,0.15); padding: 8px 8px 8px 20px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .pass-group { height: 42px; display: flex; align-items: center; background: rgba(255,255,255,0.065); padding: 5px 6px 5px 16px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 14px 38px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.035); backdrop-filter: blur(18px); transition: 0.3s; }
+        #pass-in { width: 210px; height: 30px; border: 0; background: transparent; color: rgba(255,255,255,0.92); font-family: var(--font); font-size: 0.9rem; font-weight: 300; letter-spacing: 0.02em; }
+        #pass-in::placeholder { color: rgba(255,255,255,0.46); }
+        .submit-btn { width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center; color: rgba(9,11,16,0.92); background: rgba(255,255,255,0.9); box-shadow: 0 8px 22px rgba(0,0,0,0.24), inset 0 -1px 0 rgba(0,0,0,0.08); transition: transform 0.22s ease, background 0.22s ease; }
+        .submit-btn:hover { transform: translateX(1px) scale(1.03); background: #fff; }
+        .submit-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .error-shake { border-color: #ff4d4d !important; background: rgba(255, 77, 77, 0.2) !important; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
         #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
         #login-module.active { opacity: 1; visibility: visible; }
         @media (max-width: 720px) {
+            .system-widgets { top: 16px; right: 14px; gap: 6px; }
+            .widget-icon { width: 32px; height: 32px; }
+            .battery-widget { width: 44px; }
             .lock-indicator { margin-top: 9.5vh; }
             #time-text { font-size: clamp(4.2rem, 19vw, 5.5rem); letter-spacing: 0.6px; }
             #date-text { font-size: 0.76rem; }
+            #pass-in { width: 184px; }
         }
     </style>
     <script>
@@ -127,6 +149,27 @@
     </div>
 
     <div id="wp-cont">
+        <div class="system-widgets" aria-label="System controls">
+            <button class="widget-icon" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibility(this)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="4.5" r="1.8"></circle>
+                    <path d="M5.6 8.2h12.8"></path>
+                    <path d="M12 8.4v5.1"></path>
+                    <path d="M8.5 20.5l3.5-7 3.5 7"></path>
+                </svg>
+            </button>
+            <button class="widget-icon battery-widget" type="button" title="Battery" aria-label="Battery status">
+                <span class="battery-body" aria-hidden="true"><span class="battery-fill" id="battery-fill"></span></span>
+            </button>
+            <button class="widget-icon" type="button" title="Control center" aria-label="Control center" onclick="openPanel()">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 7h14"></path>
+                    <path d="M5 17h14"></path>
+                    <circle cx="9" cy="7" r="2"></circle>
+                    <circle cx="15" cy="17" r="2"></circle>
+                </svg>
+            </button>
+        </div>
         <div class="lock-indicator" id="ui-main">
             <p id="date-text">Thursday, June 4</p>
             <h1 id="time-text">00:00</h1>
@@ -171,7 +214,12 @@
             </div>
             <div class="pass-group" id="pass-wrap">
                 <input type="password" id="pass-in" placeholder="Password">
-                <button onclick="checkPass()" style="width:30px; height:30px; background:white; border-radius:50%; border:none; cursor:pointer;">&gt;</button>
+                <button class="submit-btn" onclick="checkPass()" aria-label="Submit password">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M5 12h13"></path>
+                        <path d="M13 6l6 6-6 6"></path>
+                    </svg>
+                </button>
             </div>
             <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
         </div>
@@ -200,6 +248,7 @@
             updateClock();
             setInterval(updateClock, 1000);
             initGestures();
+            initBatteryWidget();
 
             // Hint Swap
             const hintEl = document.getElementById('hint-text');
@@ -309,6 +358,30 @@
         function setFont(f) { document.getElementById('time-text').style.fontFamily = f; }
         function setWP(url) { document.documentElement.style.setProperty('--bg', `url('${url}')`); }
         function setTimeOpacity(val) { document.documentElement.style.setProperty('--time-opacity', val); }
+        function toggleAccessibility(button) {
+            document.body.classList.toggle('accessibility-boost');
+            if (button) button.classList.toggle('active', document.body.classList.contains('accessibility-boost'));
+        }
+
+        function initBatteryWidget() {
+            const fill = document.getElementById('battery-fill');
+            if (!fill) return;
+
+            const setLevel = (level) => {
+                const percent = Math.max(8, Math.min(100, Math.round(level * 100)));
+                fill.style.setProperty('--battery-level', `${percent}%`);
+            };
+
+            setLevel(0.72);
+            if (!navigator.getBattery) return;
+
+            navigator.getBattery().then((battery) => {
+                const update = () => setLevel(battery.level);
+                update();
+                battery.addEventListener('levelchange', update);
+                battery.addEventListener('chargingchange', update);
+            }).catch(() => {});
+        }
 
         function showLogin() {
             document.getElementById('wp-cont').classList.add('wp-lock-blur');
