@@ -1,3 +1,3 @@
 # Tools
 
-Developer and system tooling for VertexOS.
+Developer and system tooling for Vertex.

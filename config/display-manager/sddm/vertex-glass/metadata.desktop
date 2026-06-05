@@ -1,8 +1,8 @@
 [SddmGreeterTheme]
-Name=VertexOS Glass
-Description=Minimal glassmorphism login theme for VertexOS
-Author=VertexOS
-Copyright=2026 VertexOS
+Name=Vertex Glass
+Description=Minimal glassmorphism login theme for Vertex
+Author=Vertex
+Copyright=2026 Vertex
 License=GPL-3.0-or-later
 Type=sddm-theme
 Version=0.1.0

@@ -1,5 +1,5 @@
 # Hyprlock
 
-Actual Hyprland session lock screen profile for VertexOS.
+Actual Hyprland session lock screen profile for Vertex.
 
-This mirrors the SDDM lock/login visual direction: alpine wallpaper, oversized clock, top lock island, bottom home bar, and VertexOS branding.
+This mirrors the SDDM lock/login visual direction: alpine wallpaper, oversized clock, top lock island, bottom home bar, and Vertex branding.

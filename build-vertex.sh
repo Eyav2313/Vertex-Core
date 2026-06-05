@@ -15,7 +15,7 @@ REPO_BUILD_ROOT="$ROOT_DIR/build"
 DEFAULT_BUILD_ROOT="$REPO_BUILD_ROOT"
 
 if grep -qi microsoft /proc/version 2>/dev/null && [[ "$ROOT_DIR" == /mnt/* ]]; then
-    DEFAULT_BUILD_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}/vertexos/$(basename "$ROOT_DIR")"
+    DEFAULT_BUILD_ROOT="${XDG_CACHE_HOME:-$HOME/.cache}/Vertex/$(basename "$ROOT_DIR")"
 fi
 
 BUILD_ROOT="${VERTEX_BUILD_ROOT:-$DEFAULT_BUILD_ROOT}"
@@ -78,7 +78,7 @@ run_step() {
 
 print_usage() {
     cat <<EOF
-VertexOS master build
+Vertex master build
 Developer: $DEVELOPER_NAME
 
 Usage:
@@ -334,7 +334,7 @@ inject_vertex_config() {
     local hyprland_config
     hyprland_config="$(selected_hyprland_config)"
 
-    info "Injecting VertexOS configuration into $target_root"
+    info "Injecting Vertex configuration into $target_root"
 
     mkdir -p \
         "$target_root/etc/skel/.config/hypr" \
@@ -409,13 +409,13 @@ if command -v xdg-open >/dev/null 2>&1; then
     exec xdg-open "$html"
 fi
 
-printf '%s\n' "No browser found for VertexOS HTML shell: $html" >&2
+printf '%s\n' "No browser found for Vertex HTML shell: $html" >&2
 exit 127
 EOF
     chmod 0755 "$target_root/usr/libexec/vertex/vertex-html-shell"
 
     cat > "$target_root/etc/wayland/vertex-session.conf" <<EOF
-[VertexOS]
+[Vertex]
 Developer=$DEVELOPER_NAME
 Session=hyprland
 HyprlandProfile=$VERTEX_HYPRLAND_PROFILE
@@ -571,8 +571,8 @@ build_iso() {
     local iso
     iso="$(find "$LIVE_BUILD_DIR" -maxdepth 1 -type f -name '*.iso' | sort | tail -n 1 || true)"
     if [ -n "$iso" ]; then
-        cp "$iso" "$OUT_DIR/vertexos-$BUILD_ID.iso"
-        info "ISO ready: $OUT_DIR/vertexos-$BUILD_ID.iso"
+        cp "$iso" "$OUT_DIR/Vertex-$BUILD_ID.iso"
+        info "ISO ready: $OUT_DIR/Vertex-$BUILD_ID.iso"
     else
         warn "live-build completed, but no ISO was found in $LIVE_BUILD_DIR."
     fi
@@ -581,7 +581,7 @@ build_iso() {
 main() {
     parse_args "$@"
 
-    info "VertexOS master build started."
+    info "Vertex master build started."
     run_step "Prepare workspace" prepare_workspace
     run_step "Check dependencies" check_dependencies
     run_step "Build native components" build_native_components
@@ -591,7 +591,7 @@ main() {
     run_step "Create live-build ISO" build_iso
 
     printf '\n'
-    info "VertexOS build complete."
+    info "Vertex build complete."
     info "Detailed log: $LOG_FILE"
 }
 

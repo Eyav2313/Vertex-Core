@@ -1,4 +1,4 @@
-# VertexOS zram-tools profile.
+# Vertex zram-tools profile.
 # Install as /etc/default/zramswap.
 
 ALGO=zstd

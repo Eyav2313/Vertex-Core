@@ -1,6 +1,6 @@
 # Preview Build Profile
 
-Fast visual preview profile for early VertexOS ISO testing.
+Fast visual preview profile for early Vertex ISO testing.
 
 This profile intentionally uses the same package manifest as `desktop`, but it is intended to be run with:
 

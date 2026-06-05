@@ -1,4 +1,4 @@
-# VertexOS storage scheduler defaults.
+# Vertex storage scheduler defaults.
 # NVMe usually performs best with no extra scheduler; SATA benefits from mq-deadline.
 
 ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="none"

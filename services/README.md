@@ -1,3 +1,3 @@
 # Services
 
-System service definitions and policy notes for VertexOS daemons.
+System service definitions and policy notes for Vertex daemons.

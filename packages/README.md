@@ -1,3 +1,3 @@
 # Packages
 
-Debian packaging scaffolds for VertexOS-owned packages.
+Debian packaging scaffolds for Vertex-owned packages.

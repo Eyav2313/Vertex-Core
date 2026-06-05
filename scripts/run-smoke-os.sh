@@ -3,17 +3,17 @@ set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT_DIR="$ROOT_DIR/out/smoke"
-KERNEL="$OUT_DIR/vertexos-smoke-vmlinuz"
-INITRAMFS="$OUT_DIR/vertexos-smoke-initramfs.cpio.gz"
-UEFI_ISO="$OUT_DIR/vertexos-smoke-uefi.iso"
-DISK="$OUT_DIR/vertexos-smoke-disk.raw"
+KERNEL="$OUT_DIR/Vertex-smoke-vmlinuz"
+INITRAMFS="$OUT_DIR/Vertex-smoke-initramfs.cpio.gz"
+UEFI_ISO="$OUT_DIR/Vertex-smoke-uefi.iso"
+DISK="$OUT_DIR/Vertex-smoke-disk.raw"
 OVMF_VARS="$OUT_DIR/OVMF_VARS.fd"
 LOG_DIR="$ROOT_DIR/build/logs"
-PID_FILE="$LOG_DIR/vertexos-smoke-qemu.pid"
-LOG_FILE="$LOG_DIR/vertexos-smoke-qemu.log"
+PID_FILE="$LOG_DIR/Vertex-smoke-qemu.pid"
+LOG_FILE="$LOG_DIR/Vertex-smoke-qemu.log"
 
 die() {
-    printf '[vertexos-smoke] %s\n' "$*" >&2
+    printf '[Vertex-smoke] %s\n' "$*" >&2
     exit 1
 }
 
@@ -63,7 +63,7 @@ if [ "${VERTEX_QEMU_FIRMWARE:-direct}" = "uefi" ]; then
             -boot "order=d,menu=off,strict=on"
         )
     else
-        printf '[vertexos-smoke] UEFI firmware not found; falling back to direct BIOS boot.\n'
+        printf '[Vertex-smoke] UEFI firmware not found; falling back to direct BIOS boot.\n'
     fi
 fi
 
@@ -117,7 +117,7 @@ else
 fi
 
 printf '%s\n' "$!" > "$PID_FILE"
-printf '[vertexos-smoke] QEMU started. PID: %s\n' "$(cat "$PID_FILE")"
-printf '[vertexos-smoke] Firmware mode: %s\n' "${VERTEX_QEMU_FIRMWARE:-direct}"
-printf '[vertexos-smoke] Disk image: %s\n' "$DISK"
-printf '[vertexos-smoke] Log: %s\n' "$LOG_FILE"
+printf '[Vertex-smoke] QEMU started. PID: %s\n' "$(cat "$PID_FILE")"
+printf '[Vertex-smoke] Firmware mode: %s\n' "${VERTEX_QEMU_FIRMWARE:-direct}"
+printf '[Vertex-smoke] Disk image: %s\n' "$DISK"
+printf '[Vertex-smoke] Log: %s\n' "$LOG_FILE"

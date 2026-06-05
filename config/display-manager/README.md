@@ -1,3 +1,3 @@
 # Display Manager
 
-Display manager configuration and login themes for VertexOS.
+Display manager configuration and login themes for Vertex.

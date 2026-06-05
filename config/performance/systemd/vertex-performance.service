@@ -1,5 +1,5 @@
 [Unit]
-Description=Apply VertexOS performance profile
+Description=Apply Vertex performance profile
 After=multi-user.target
 ConditionPathExists=/usr/bin/powerprofilesctl
 

@@ -1,6 +1,6 @@
-# VertexOS performance Profile
+# Vertex performance Profile
 
-This folder contains performance-first defaults for VertexOS. These settings are intentionally modular so the distro can ship a fast default while still offering a premium glass profile for stronger GPUs.
+This folder contains performance-first defaults for Vertex. These settings are intentionally modular so the distro can ship a fast default while still offering a premium glass profile for stronger GPUs.
 
 ## Default Policy
 

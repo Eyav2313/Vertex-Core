@@ -129,8 +129,8 @@ body {
 }
 
 .launcher img {
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
 }
 
@@ -162,14 +162,14 @@ body {
 
 .dock button,
 .dock span {
-  min-width: 34px;
-  height: 32px;
-  padding: 0 12px;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 9px;
   border: 0;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--text);
-  font: 700 13px Inter, "Segoe UI", sans-serif;
+  font: 700 12px Inter, "Segoe UI", sans-serif;
 }
 
 .dock span {
@@ -178,7 +178,7 @@ body {
 }
 
 .dock .active {
-  min-width: 48px;
+  min-width: 40px;
   background: rgba(105, 210, 255, 0.28);
   color: #fff;
 }

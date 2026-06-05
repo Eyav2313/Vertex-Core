@@ -1,4 +1,4 @@
-"""VertexOS Python tooling."""
+"""Vertex Python tooling."""
 
 __all__ = ["__version__"]
 

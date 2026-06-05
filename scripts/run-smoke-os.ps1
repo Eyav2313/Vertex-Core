@@ -10,17 +10,17 @@ $ErrorActionPreference = "Stop"
 
 $Root = Split-Path -Parent $PSScriptRoot
 $OutDir = Join-Path $Root "out\smoke"
-$Kernel = Join-Path $OutDir "vertexos-smoke-vmlinuz"
-$Initramfs = Join-Path $OutDir "vertexos-smoke-initramfs.cpio.gz"
-$UefiIso = Join-Path $OutDir "vertexos-smoke-uefi.iso"
+$Kernel = Join-Path $OutDir "Vertex-smoke-vmlinuz"
+$Initramfs = Join-Path $OutDir "Vertex-smoke-initramfs.cpio.gz"
+$UefiIso = Join-Path $OutDir "Vertex-smoke-uefi.iso"
 $OvmfCode = Join-Path $OutDir "OVMF_CODE_4M.fd"
 $OvmfVarsTemplate = Join-Path $OutDir "OVMF_VARS_4M.fd"
 $OvmfVars = Join-Path $OutDir "OVMF_VARS.fd"
-$Disk = Join-Path $OutDir "vertexos-smoke-disk.raw"
+$Disk = Join-Path $OutDir "Vertex-smoke-disk.raw"
 $LogDir = Join-Path $Root "build\logs"
-$LogFile = Join-Path $LogDir "vertexos-smoke-windows-qemu.log"
-$ErrFile = Join-Path $LogDir "vertexos-smoke-windows-qemu.err.log"
-$SerialLog = Join-Path $LogDir "vertexos-smoke-windows-qemu.serial.log"
+$LogFile = Join-Path $LogDir "Vertex-smoke-windows-qemu.log"
+$ErrFile = Join-Path $LogDir "Vertex-smoke-windows-qemu.err.log"
+$SerialLog = Join-Path $LogDir "Vertex-smoke-windows-qemu.serial.log"
 
 $Qemu = Join-Path ${env:ProgramFiles} "qemu\qemu-system-x86_64.exe"
 if (-not (Test-Path $Qemu)) {
@@ -80,7 +80,7 @@ if ($Firmware -eq "uefi") {
 }
 
 $qemuArgs = @(
-    "-name", "VertexOS-Smoke"
+    "-name", "Vertex-Smoke"
     "-m", $Memory
     "-smp", "$Cpus"
 ) + $firmwareArgs + $bootArgs + @(
@@ -101,6 +101,6 @@ $argLine = ($qemuArgs | ForEach-Object {
 }) -join ' '
 
 Start-Process -FilePath $Qemu -ArgumentList $argLine -RedirectStandardOutput $LogFile -RedirectStandardError $ErrFile
-Write-Host "[vertexos-smoke] Windows QEMU started."
-Write-Host "[vertexos-smoke] Firmware mode: $Firmware"
-Write-Host "[vertexos-smoke] Serial log: $SerialLog"
+Write-Host "[Vertex-smoke] Windows QEMU started."
+Write-Host "[Vertex-smoke] Firmware mode: $Firmware"
+Write-Host "[Vertex-smoke] Serial log: $SerialLog"

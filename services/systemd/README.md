@@ -1,3 +1,3 @@
 # systemd
 
-System units, user units, and preset policy for VertexOS.
+System units, user units, and preset policy for Vertex.

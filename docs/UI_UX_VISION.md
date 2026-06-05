@@ -1,8 +1,8 @@
-# VertexOS UI/UX Vision
+# Vertex UI/UX Vision
 
 ## Design Direction
 
-VertexOS Glass is a premium minimalist desktop language built around depth, light, translucency, and generous whitespace. The system should feel calm, precise, and fast rather than decorative.
+Vertex Glass is a premium minimalist desktop language built around depth, light, translucency, and generous whitespace. The system should feel calm, precise, and fast rather than decorative.
 
 ## Principles
 

@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VertexOS Lock Screen | Zarif</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Playfair+Display:wght@700&family=Space+Mono&family=Dancing+Script:wght@700&family=Bebas+Neue&family=Montserrat:wght@800&family=Inter:wght@900&family=Poppins:wght@700&family=Lora:wght@700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <title>Vertex Lock Screen | Zarif</title>
     <style>
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-ExtraLight.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Light.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Bold.ttf') format('truetype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 500; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF') format('opentype'); }
         :root { 
-            --font: 'Inter', 'Outfit', sans-serif; 
+            --font: 'Manrope', 'Inter', 'Outfit', sans-serif;
             --accent: #fff; 
             --bg: url('../../assets/wallpapers/vertex-lock-background.png'); 
             --f-size: clamp(6rem, 24vw, 10rem);
             --time-opacity: 1;
+            --cursor-default: url('../../assets/cursors/vertex-arrow.png') 1 1, auto;
+            --cursor-pointer: url('../../assets/cursors/vertex-hand.png') 11 2, pointer;
+            --cursor-input: url('../../assets/cursors/vertex-input.png') 10 12, text;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }
 
         /* --- BOOT SCREEN --- */
-        #boot-screen { position: fixed; inset: 0; z-index: 10000; overflow: hidden; background: #000; cursor: wait; transition: background-color 0.5s ease-out, opacity 0.5s ease-out; }
-        #boot-screen.logo-phase { background: #0c0c0c; }
-        .loading-titlebar { position: absolute; top: 0; left: 0; right: 0; height: 32px; display: flex; justify-content: flex-end; user-select: none; }
-        .window-button { width: 46px; height: 32px; display: grid; place-items: center; color: #808080; }
-        .window-button svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 1.25; fill: none; }
-        .loading-stage { position: absolute; inset: 32px 0 0; display: grid; place-items: center; }
-        .boot-logo { position: relative; width: 80px; height: 80px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
-        .vertex-logo { width: 80px; height: 80px; object-fit: contain; }
+        #boot-screen { position: fixed; inset: 0; z-index: 10000; overflow: hidden; background: #000; cursor: none; transition: opacity 0.5s ease-out; }
+        .loading-stage { position: absolute; inset: 0; display: grid; place-items: center; }
+        .boot-logo { position: relative; width: 48px; height: 48px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
+        .vertex-logo { width: 48px; height: 48px; object-fit: contain; }
         #boot-screen.logo-phase .boot-logo { opacity: 1; }
         .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 35%, rgba(255,255,255,0.6) 50%, transparent 65%); background-size: 260% 260%; background-position: -130% -130%; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; opacity: 0; pointer-events: none; }
         #boot-screen.logo-phase .boot-logo::after { animation: logoShine 2s linear infinite; opacity: 1; }
@@ -34,22 +41,20 @@
         @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
         /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.1); filter: blur(40px); opacity: 0; }
+        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 0.45s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1); filter: none; opacity: 0; cursor: var(--cursor-default); }
+        body.lock-ready, body.lock-ready #wp-cont, body.lock-ready #wp-cont * { cursor: var(--cursor-default); }
+        button, .chip, .slider, input[type="range"], [onclick] { cursor: var(--cursor-pointer) !important; }
+        input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
         .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
-        .wp-lock-blur { filter: blur(70px) brightness(0.6) !important; transform: scale(1.05) !important; }
+        .wp-lock-blur { filter: blur(18px) brightness(0.68) !important; transform: scale(1.02) !important; }
         html.preview-capture #boot-screen { display: none; }
         html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
 
-        /* --- DYNAMIC ISLAND --- */
-        .top-island-container { position: absolute; top: 12px; width: 100%; display: flex; justify-content: center; z-index: 9999; }
-        .dynamic-island { background: #000; min-width: 160px; height: 36px; border-radius: 20px; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; padding: 0 15px; }
-        .lock-icon-svg { width: 13px; height: 13px; fill: white; margin-right: auto; }
-
         /* --- CLOCK --- */
-        .lock-indicator { position: relative; margin-top: 12vh; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
-        #date-text { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
-        #time-text { font-size: var(--f-size); font-weight: 900; letter-spacing: -5px; line-height: 1; }
-
+        .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
+        .lock-indicator::before { content: ""; position: absolute; inset: -18px -34px -16px; z-index: -1; background: radial-gradient(ellipse at center, rgba(7,10,16,0.24), rgba(7,10,16,0.08) 44%, transparent 72%); opacity: 0.72; pointer-events: none; }
+        #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(199,203,212,0.74); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); }
+        #time-text { font-family: 'SF Pro Display', sans-serif; font-style: normal; font-weight: 600; font-size: clamp(5rem, 11vw, 6.8rem); color: rgba(255,255,255,0.78); letter-spacing: 1px; line-height: 0.91; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 12px 30px rgba(0,0,0,0.2), 0 0 15px rgba(255,255,255,0.04); }
         /* --- BOTTOM UI --- */
         .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .unlock-msg { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
@@ -88,6 +93,11 @@
 
         #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
         #login-module.active { opacity: 1; visibility: visible; }
+        @media (max-width: 720px) {
+            .lock-indicator { margin-top: 9.5vh; }
+            #time-text { font-size: clamp(4.8rem, 22vw, 6.2rem); letter-spacing: 0.6px; }
+            #date-text { font-size: 0.76rem; }
+        }
     </style>
     <script>
         if (new URLSearchParams(window.location.search).has('preview')) {
@@ -98,20 +108,9 @@
 <body>
 
     <div id="boot-screen">
-        <div class="loading-titlebar">
-            <div class="window-button" aria-hidden="true">
-                <svg viewBox="0 0 10 10"><path d="M1 8.5H9"/></svg>
-            </div>
-            <div class="window-button" aria-hidden="true">
-                <svg viewBox="0 0 10 10"><rect x="2" y="2" width="6" height="6"/></svg>
-            </div>
-            <div class="window-button" aria-hidden="true">
-                <svg viewBox="0 0 10 10"><path d="M2 2L8 8M8 2L2 8"/></svg>
-            </div>
-        </div>
         <div class="loading-stage">
             <div class="boot-logo">
-                <img class="vertex-logo" src="../../assets/branding/vertex-logo.png" alt="VertexOS logo">
+                <img class="vertex-logo" src="../../assets/branding/vertex-logo.png" alt="Vertex logo">
             </div>
         </div>
         <div class="loading-spinner" aria-hidden="true"></div>
@@ -119,18 +118,12 @@
 
     <div id="wp-cont">
         <div class="lock-indicator" id="ui-main">
-            <p id="date-text">Thursday, June 4, 2026</p>
+            <p id="date-text">Thursday, June 4</p>
             <h1 id="time-text">00:00</h1>
         </div>
         <div class="bottom-shelf">
             <div class="unlock-msg" id="hint-text">Click anywhere to continue</div>
             <div class="home-bar"></div>
-        </div>
-    </div>
-
-    <div class="top-island-container">
-        <div class="dynamic-island">
-            <svg class="lock-icon-svg" viewBox="0 0 24 24"><path d="M12 2C9.243 2 7 4.243 7 7V10H6C4.897 10 4 10.897 4 12V20C4 21.103 4.897 22 6 22H18C19.103 22 20 21.103 20 20V12C20 10.897 19.103 10 18 10H17V7C17 4.243 14.757 2 12 2ZM9 7C9 5.346 10.346 4 12 4C13.654 4 15 5.346 15 7V10H9V7Z"/></svg>
         </div>
     </div>
 
@@ -151,6 +144,7 @@
 
             <p class="section-header">Clock Fonts</p>
             <div class="chip-container">
+                <div class="chip" onclick="setFont('Manrope')">Manrope</div>
                 <div class="chip" onclick="setFont('Outfit')">Outfit</div>
                 <div class="chip" onclick="setFont('Space Mono')">Mono</div>
                 <div class="chip" onclick="setFont('Bebas Neue')">Bebas</div>
@@ -164,12 +158,12 @@
 
     <div id="login-module">
         <div style="text-align:center">
-            <div style="width:75px; height:75px; background:rgba(255,255,255,0.1); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px);">
-                <img src="../../assets/branding/vertex-logo.png" alt="VertexOS logo" style="width:52px;height:52px;object-fit:contain;">
+            <div style="width:46px; height:46px; background:rgba(255,255,255,0.1); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px);">
+                <img src="../../assets/branding/vertex-logo.png" alt="Vertex logo" style="width:28px;height:28px;object-fit:contain;">
             </div>
             <div class="pass-group" id="pass-wrap">
                 <input type="password" id="pass-in" placeholder="Password">
-                <button onclick="checkPass()" style="width:34px; height:34px; background:white; border-radius:50%; border:none; cursor:pointer;">➔</button>
+                <button onclick="checkPass()" style="width:30px; height:30px; background:white; border-radius:50%; border:none; cursor:pointer;">&gt;</button>
             </div>
             <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
         </div>
@@ -178,19 +172,19 @@
     <script>
         let hintIdx = 0;
         const hints = ["Click anywhere to continue", "Hold to customize"];
-
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const bootScreen = document.getElementById('boot-screen');
             const wallpaper = document.getElementById('wp-cont');
 
-            setTimeout(() => bootScreen.classList.add('logo-phase'), 5000);
-            setTimeout(() => bootScreen.classList.remove('logo-phase'), 10000);
-            setTimeout(() => bootScreen.classList.add('spinner-phase'), 15000);
+            setTimeout(() => bootScreen.classList.add('logo-phase'), 120);
+            setTimeout(() => bootScreen.classList.remove('logo-phase'), 760);
+            setTimeout(() => bootScreen.classList.add('spinner-phase'), 850);
             setTimeout(() => {
                 bootScreen.style.opacity = '0';
                 wallpaper.classList.add('wp-ready');
+                document.body.classList.add('lock-ready');
                 setTimeout(() => bootScreen.style.display = 'none', 500);
-            }, 20000);
+            }, 1350);
 
             updateClock();
             setInterval(updateClock, 1000);
@@ -207,7 +201,7 @@
                 }, 800);
             }, 4000);
             hintEl.classList.add('msg-active');
-        };
+        });
 
         function updateClock() {
             const now = new Date();
@@ -215,21 +209,29 @@
             document.getElementById('date-text').innerText = new Intl.DateTimeFormat(undefined, {
                 weekday: 'long',
                 month: 'long',
-                day: 'numeric',
-                year: 'numeric'
+                day: 'numeric'
             }).format(now);
         }
 
         function initGestures() {
             let pTimer;
-            window.addEventListener('mousedown', (e) => {
-                if(e.target.id === 'wp-cont' || e.target.closest('#ui-main')) 
-                    pTimer = setTimeout(openPanel, 800);
+            let pressStarted = 0;
+            const isLockSurface = (e) => e.target.id === 'wp-cont' || e.target.closest('#ui-main') || e.target.closest('.bottom-shelf');
+
+            window.addEventListener('pointerdown', (e) => {
+                if (isLockSurface(e)) {
+                    pressStarted = Date.now();
+                    pTimer = setTimeout(openPanel, 900);
+                }
             });
-            window.addEventListener('mouseup', () => clearTimeout(pTimer));
+            window.addEventListener('pointerup', () => clearTimeout(pTimer));
+            window.addEventListener('pointercancel', () => clearTimeout(pTimer));
             window.addEventListener('click', (e) => {
-                if(e.target.id === 'wp-cont') 
-                    if(!document.getElementById('custom-overlay').classList.contains('active')) showLogin();
+                if (!isLockSurface(e)) return;
+                if (Date.now() - pressStarted > 850) return;
+                if (!document.getElementById('custom-overlay').classList.contains('active')) {
+                    showLogin();
+                }
             });
         }
 

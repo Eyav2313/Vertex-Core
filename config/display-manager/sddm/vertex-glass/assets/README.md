@@ -1,4 +1,4 @@
-# VertexOS Glass Assets
+# Vertex Glass Assets
 
 The lock/login theme uses the same visual direction as `preview/desktop/index.html`.
 

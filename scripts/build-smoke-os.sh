@@ -7,11 +7,11 @@ INITRAMFS_ROOT="$OUT_DIR/initramfs-root"
 ISO_ROOT="$OUT_DIR/iso-root"
 
 info() {
-    printf '[vertexos-smoke] %s\n' "$*"
+    printf '[Vertex-smoke] %s\n' "$*"
 }
 
 die() {
-    printf '[vertexos-smoke] %s\n' "$*" >&2
+    printf '[Vertex-smoke] %s\n' "$*" >&2
     exit 1
 }
 
@@ -39,9 +39,9 @@ info "Using busybox: $BUSYBOX_PATH"
 rm -rf \
     "$INITRAMFS_ROOT" \
     "$ISO_ROOT" \
-    "$OUT_DIR/vertexos-smoke-vmlinuz" \
-    "$OUT_DIR/vertexos-smoke-initramfs.cpio.gz" \
-    "$OUT_DIR/vertexos-smoke-uefi.iso"
+    "$OUT_DIR/Vertex-smoke-vmlinuz" \
+    "$OUT_DIR/Vertex-smoke-initramfs.cpio.gz" \
+    "$OUT_DIR/Vertex-smoke-uefi.iso"
 mkdir -p \
     "$INITRAMFS_ROOT/bin" \
     "$INITRAMFS_ROOT/dev" \
@@ -68,7 +68,7 @@ mount -t devtmpfs devtmpfs /dev 2>/dev/null || {
 export PATH=/bin
 export HOME=/root
 export TERM=linux
-hostname VertexOS
+hostname Vertex
 
 case " $(cat /proc/cmdline 2>/dev/null) " in
     *" vertex.gui=1 "*)
@@ -112,7 +112,7 @@ else
     boot_mode="direct-kernel"
 fi
 
-printf 'VertexOS\n'
+printf 'Vertex\n'
 printf 'Linux smoke boot\n'
 printf 'Developer  Nuren Zarif Haque\n'
 printf '%s\n' '--------------------------------'
@@ -129,7 +129,7 @@ Commands   help | perf | disks | reboot | poweroff
 HELP
 
 while true; do
-    printf 'vertexos> '
+    printf 'Vertex> '
     read -r cmd || cmd=poweroff
     case "$cmd" in
         help)
@@ -171,15 +171,15 @@ chmod +x "$INITRAMFS_ROOT/init" "$INITRAMFS_ROOT/bin/busybox"
 
 (
     cd "$INITRAMFS_ROOT"
-    find . -print0 | cpio --null -ov --format=newc 2>/dev/null | gzip -9 > "$OUT_DIR/vertexos-smoke-initramfs.cpio.gz"
+    find . -print0 | cpio --null -ov --format=newc 2>/dev/null | gzip -9 > "$OUT_DIR/Vertex-smoke-initramfs.cpio.gz"
 )
 
-cp "$KERNEL_IMAGE" "$OUT_DIR/vertexos-smoke-vmlinuz"
+cp "$KERNEL_IMAGE" "$OUT_DIR/Vertex-smoke-vmlinuz"
 
 if command -v grub-mkrescue >/dev/null 2>&1 && [ -d /usr/lib/grub/x86_64-efi ]; then
     mkdir -p "$ISO_ROOT/boot/grub"
-    cp "$OUT_DIR/vertexos-smoke-vmlinuz" "$ISO_ROOT/boot/vmlinuz"
-    cp "$OUT_DIR/vertexos-smoke-initramfs.cpio.gz" "$ISO_ROOT/boot/initramfs.cpio.gz"
+    cp "$OUT_DIR/Vertex-smoke-vmlinuz" "$ISO_ROOT/boot/vmlinuz"
+    cp "$OUT_DIR/Vertex-smoke-initramfs.cpio.gz" "$ISO_ROOT/boot/initramfs.cpio.gz"
     if [ -f "$ROOT_DIR/assets/branding/vertex-boot-splash.png" ]; then
         cp "$ROOT_DIR/assets/branding/vertex-boot-splash.png" "$ISO_ROOT/boot/grub/vertex-boot-splash.png"
     fi
@@ -198,14 +198,14 @@ set timeout=5
 set timeout_style=hidden
 set default=0
 
-menuentry "VertexOS Smoke" {
+menuentry "Vertex Smoke" {
     linux /boot/vmlinuz vertex.gui=1 console=tty0 console=ttyS0,115200 quiet loglevel=0 vt.global_cursor_default=0 fbcon=font:VGA8x8 panic=1
     initrd /boot/initramfs.cpio.gz
 }
 EOF
 
-    grub-mkrescue -o "$OUT_DIR/vertexos-smoke-uefi.iso" "$ISO_ROOT" >/dev/null 2>&1
-    info "Created $OUT_DIR/vertexos-smoke-uefi.iso"
+    grub-mkrescue -o "$OUT_DIR/Vertex-smoke-uefi.iso" "$ISO_ROOT" >/dev/null 2>&1
+    info "Created $OUT_DIR/Vertex-smoke-uefi.iso"
 else
     info "Skipping UEFI ISO creation; grub-mkrescue or x86_64-efi GRUB modules are missing."
 fi
@@ -217,16 +217,16 @@ if [ -f /usr/share/OVMF/OVMF_CODE_4M.fd ] && [ -f /usr/share/OVMF/OVMF_VARS_4M.f
 fi
 
 cat > "$OUT_DIR/README.txt" <<EOF
-VertexOS smoke boot artifacts
+Vertex smoke boot artifacts
 
-Kernel: vertexos-smoke-vmlinuz
-Initramfs: vertexos-smoke-initramfs.cpio.gz
-UEFI ISO: vertexos-smoke-uefi.iso
+Kernel: Vertex-smoke-vmlinuz
+Initramfs: Vertex-smoke-initramfs.cpio.gz
+UEFI ISO: Vertex-smoke-uefi.iso
 UEFI firmware: OVMF_CODE_4M.fd, OVMF_VARS_4M.fd
 
 Run:
   scripts/run-smoke-os.sh
 EOF
 
-info "Created $OUT_DIR/vertexos-smoke-vmlinuz"
-info "Created $OUT_DIR/vertexos-smoke-initramfs.cpio.gz"
+info "Created $OUT_DIR/Vertex-smoke-vmlinuz"
+info "Created $OUT_DIR/Vertex-smoke-initramfs.cpio.gz"

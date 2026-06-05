@@ -1,4 +1,4 @@
-# VertexOS desktop performance kernel fragment.
+# Vertex desktop performance kernel fragment.
 # Merge with the distro kernel config, then validate with olddefconfig.
 
 CONFIG_PREEMPT_DYNAMIC=y

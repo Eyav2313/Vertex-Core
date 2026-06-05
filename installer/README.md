@@ -1,6 +1,6 @@
 # Installer
 
-Installer planning area for VertexOS.
+Installer planning area for Vertex.
 
 Future work:
 

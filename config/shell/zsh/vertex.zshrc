@@ -1,4 +1,4 @@
-# VertexOS zsh profile.
+# Vertex zsh profile.
 
 export EDITOR="${EDITOR:-nvim}"
 export PAGER="${PAGER:-less}"

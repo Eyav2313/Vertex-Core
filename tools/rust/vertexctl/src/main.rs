@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
 #[command(name = "vertexctl")]
-#[command(about = "VertexOS system control helper")]
+#[command(about = "Vertex system control helper")]
 struct Cli {
     #[command(subcommand)]
     command: Command,

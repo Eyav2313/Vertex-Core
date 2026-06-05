@@ -9,3 +9,4 @@
 *.buildinfo
 *.changes
 *.egg-info/
+/assets/fonts/sf-pro-display/*.OTF
