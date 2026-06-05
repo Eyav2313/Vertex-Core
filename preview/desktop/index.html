@@ -63,14 +63,14 @@
         html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
 
         /* --- SYSTEM WIDGETS --- */
-        .system-widgets { position: absolute; top: 28px; right: 34px; z-index: 30; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateY(-6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .system-widgets { z-index: 30; display: flex; align-items: center; justify-content: center; gap: 16px; opacity: 0; transform: translateY(6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
         body.lock-ready .system-widgets { opacity: 1; transform: translateY(0); }
-        .widget-icon { width: 34px; height: 34px; border: 0; border-radius: 50%; display: grid; place-items: center; color: rgba(255,255,255,0.72); background: rgba(7,10,16,0.18); box-shadow: 0 10px 26px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.08); backdrop-filter: blur(12px); transition: transform 0.22s ease, color 0.22s ease, background 0.22s ease; }
-        .widget-icon:hover, .widget-icon.active { transform: translateY(-1px); color: rgba(255,255,255,0.94); background: rgba(255,255,255,0.09); }
-        .widget-icon svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.65; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .battery-widget { width: 48px; border-radius: 18px; }
-        .battery-body { width: 22px; height: 11px; border: 1.45px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
-        .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 5px; border-radius: 1px; background: currentColor; }
+        .widget-icon { width: 24px; height: 24px; border: 0; display: grid; place-items: center; color: rgba(255,255,255,0.62); background: transparent; padding: 0; transition: transform 0.22s ease, color 0.22s ease; }
+        .widget-icon:hover, .widget-icon.active { transform: translateY(-1px); color: rgba(255,255,255,0.9); }
+        .widget-icon svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .battery-widget { width: 30px; }
+        .battery-body { width: 21px; height: 10px; border: 1.35px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
+        .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; border-radius: 1px; background: currentColor; }
         .battery-fill { display: block; width: var(--battery-level, 72%); height: 100%; border-radius: 1.5px; background: currentColor; }
 
         /* --- CLOCK --- */
@@ -79,31 +79,44 @@
         #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(199,203,212,0.74); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); }
         #time-text { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-style: normal; font-weight: 360; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255, 255, 255, 0.678); letter-spacing: 0.015em; line-height: 0.91; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
         /* --- BOTTOM UI --- */
-        .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .unlock-msg { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
+        .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .unlock-msg { font-family: var(--font); font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
         .msg-active { opacity: 1; transform: translateY(0); }
         .home-bar { width: 130px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; }
 
         /* --- HIGH TRANSPARENCY CUSTOMIZATION WINDOW --- */
-        #custom-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.2); 
+        #custom-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.28);
             display: flex; align-items: center; justify-content: center; 
-            z-index: 9800; opacity: 0; visibility: hidden; transition: 0.5s; backdrop-filter: blur(10px);
+            z-index: 9800; opacity: 0; visibility: hidden; transition: 0.42s ease; backdrop-filter: blur(10px);
         }
         #custom-overlay.active { opacity: 1; visibility: visible; }
         
-        #custom-window { 
-            width: 380px; max-height: 80vh; overflow-y: auto;
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 40px; 
-            padding: 30px; transform: scale(0.8); transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); scrollbar-width: none;
+        #custom-window {
+            width: min(520px, calc(100vw - 32px)); max-height: min(82vh, 680px); overflow: hidden;
+            background: rgba(15, 17, 22, 0.82); backdrop-filter: blur(28px) saturate(160%);
+            border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
+            transform: scale(0.96) translateY(8px); transition: 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 28px 80px rgba(0,0,0,0.52); font-family: 'Manrope', sans-serif;
         }
-        #custom-overlay.active #custom-window { transform: scale(1); }
+        #custom-overlay.active #custom-window { transform: scale(1) translateY(0); }
+        .window-titlebar { height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 0 0 12px; background: rgba(255,255,255,0.035); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .window-titlebar span { font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.78); }
+        .window-close { width: 46px; height: 34px; border: 0; background: transparent; color: rgba(255,255,255,0.58); display: grid; place-items: center; }
+        .window-close:hover { background: rgba(232,17,35,0.82); color: white; }
+        .window-close svg { width: 10px; height: 10px; stroke: currentColor; stroke-width: 1.5; }
+        .custom-content { padding: 18px; overflow-y: auto; max-height: calc(min(82vh, 680px) - 34px); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.28) transparent; }
+        .custom-preview { position: relative; height: 170px; border-radius: 6px; overflow: hidden; background: var(--bg) center/cover; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035); }
+        .custom-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.34)); }
+        .preview-clock { position: absolute; top: 18px; left: 0; right: 0; z-index: 1; text-align: center; opacity: var(--time-opacity); }
+        .preview-date { font-size: 0.52rem; font-weight: 300; color: rgba(199,203,212,0.76); }
+        .preview-time { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-size: 2.3rem; font-weight: 360; line-height: 0.92; color: rgba(255,255,255,0.72); letter-spacing: 0.02em; }
+        .preview-bar { position: absolute; left: 50%; bottom: 14px; z-index: 1; width: 70px; height: 3px; border-radius: 2px; transform: translateX(-50%); background: rgba(255,255,255,0.28); }
 
-        .section-header { font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; opacity: 0.5; margin: 25px 0 12px; text-transform: uppercase; }
-        .chip-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .chip { padding: 10px 18px; background: rgba(255,255,255,0.1); border-radius: 14px; cursor: pointer; white-space: nowrap; font-size: 0.85rem; border: 1px solid transparent; }
+        .section-header { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.11em; opacity: 0.58; margin: 18px 0 10px; text-transform: uppercase; }
+        .chip-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+        .chip { padding: 8px 12px; background: rgba(255,255,255,0.075); border-radius: 6px; cursor: pointer; white-space: nowrap; font-size: 0.78rem; font-weight: 400; border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.82); }
+        .chip:hover { background: rgba(255,255,255,0.12); }
         
         /* Slider for Time Transparency */
         .slider { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; -webkit-appearance: none; cursor: pointer; margin: 10px 0; }
@@ -122,9 +135,9 @@
         #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
         #login-module.active { opacity: 1; visibility: visible; }
         @media (max-width: 720px) {
-            .system-widgets { top: 16px; right: 14px; gap: 6px; }
-            .widget-icon { width: 32px; height: 32px; }
-            .battery-widget { width: 44px; }
+            .system-widgets { gap: 14px; }
+            .widget-icon { width: 22px; height: 22px; }
+            .battery-widget { width: 28px; }
             .lock-indicator { margin-top: 9.5vh; }
             #time-text { font-size: clamp(4.2rem, 19vw, 5.5rem); letter-spacing: 0.6px; }
             #date-text { font-size: 0.76rem; }
@@ -149,61 +162,65 @@
     </div>
 
     <div id="wp-cont">
-        <div class="system-widgets" aria-label="System controls">
-            <button class="widget-icon" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibility(this)">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="4.5" r="1.8"></circle>
-                    <path d="M5.6 8.2h12.8"></path>
-                    <path d="M12 8.4v5.1"></path>
-                    <path d="M8.5 20.5l3.5-7 3.5 7"></path>
-                </svg>
-            </button>
-            <button class="widget-icon battery-widget" type="button" title="Battery" aria-label="Battery status">
-                <span class="battery-body" aria-hidden="true"><span class="battery-fill" id="battery-fill"></span></span>
-            </button>
-            <button class="widget-icon" type="button" title="Control center" aria-label="Control center" onclick="openPanel()">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 7h14"></path>
-                    <path d="M5 17h14"></path>
-                    <circle cx="9" cy="7" r="2"></circle>
-                    <circle cx="15" cy="17" r="2"></circle>
-                </svg>
-            </button>
-        </div>
         <div class="lock-indicator" id="ui-main">
             <p id="date-text">Thursday, June 4</p>
             <h1 id="time-text">00:00</h1>
         </div>
         <div class="bottom-shelf">
-            <div class="unlock-msg" id="hint-text">Click anywhere to continue</div>
+            <div class="unlock-msg" id="hint-text">Click anywhere to unlock</div>
+            <div class="system-widgets" aria-label="System controls">
+                <button class="widget-icon" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibility(this)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="4.5" r="1.8"></circle>
+                        <path d="M5.6 8.2h12.8"></path>
+                        <path d="M12 8.4v5.1"></path>
+                        <path d="M8.5 20.5l3.5-7 3.5 7"></path>
+                    </svg>
+                </button>
+                <button class="widget-icon battery-widget" type="button" title="Battery" aria-label="Battery status">
+                    <span class="battery-body" aria-hidden="true"><span class="battery-fill" id="battery-fill"></span></span>
+                </button>
+            </div>
             <div class="home-bar"></div>
         </div>
     </div>
 
     <div id="custom-overlay">
         <div id="custom-window">
-            <h2 style="text-align:center; font-weight:300;">Appearance</h2>
-            
-            <p class="section-header">Time Transparency</p>
-            <input type="range" min="0.1" max="1" step="0.1" value="1" class="slider" oninput="setTimeOpacity(this.value)">
-
-            <p class="section-header">Wallpapers</p>
-            <div class="chip-container">
-                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b')">Alpine</div>
-                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd')">Night</div>
-                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1506744038136-46273834b3fb')">Canyon</div>
-                <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05')">Forest</div>
+            <div class="window-titlebar">
+                <span>Vertex Appearance</span>
+                <button class="window-close" onclick="closePanel()" aria-label="Close">
+                    <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 2l6 6M8 2L2 8"></path></svg>
+                </button>
             </div>
+            <div class="custom-content">
+                <div class="custom-preview">
+                    <div class="preview-clock">
+                        <div class="preview-date" id="preview-date">Thursday, June 4</div>
+                        <div class="preview-time" id="preview-time">00:00</div>
+                    </div>
+                    <div class="preview-bar"></div>
+                </div>
 
-            <p class="section-header">Clock Fonts</p>
-            <div class="chip-container">
-                <div class="chip" onclick="setFont('Vertex Clock')">Vertex</div>
-                <div class="chip" onclick="setFont('Space Grotesk')">Grotesk</div>
-                <div class="chip" onclick="setFont('Manrope')">Manrope</div>
-                <div class="chip" onclick="setFont('SF Pro Display')">SF</div>
+                <p class="section-header">Time Transparency</p>
+                <input type="range" min="0.1" max="1" step="0.1" value="1" class="slider" oninput="setTimeOpacity(this.value)">
+
+                <p class="section-header">Wallpapers</p>
+                <div class="chip-container">
+                    <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b')">Alpine</div>
+                    <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1534067783941-51c9c23ecefd')">Night</div>
+                    <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1506744038136-46273834b3fb')">Canyon</div>
+                    <div class="chip" onclick="setWP('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05')">Forest</div>
+                </div>
+
+                <p class="section-header">Clock Fonts</p>
+                <div class="chip-container">
+                    <div class="chip" onclick="setFont('Vertex Clock')">Vertex</div>
+                    <div class="chip" onclick="setFont('Space Grotesk')">Grotesk</div>
+                    <div class="chip" onclick="setFont('Manrope')">Manrope</div>
+                    <div class="chip" onclick="setFont('SF Pro Display')">SF</div>
+                </div>
             </div>
-
-            <button onclick="closePanel()" style="width:100%; padding:15px; border-radius:20px; border:none; background:white; color:black; font-weight:800; margin-top:30px; cursor:pointer;">Done</button>
         </div>
     </div>
 
@@ -213,7 +230,7 @@
                 <img src="../../assets/branding/vertex-logo.png" alt="Vertex logo" style="width:28px;height:28px;object-fit:contain;">
             </div>
             <div class="pass-group" id="pass-wrap">
-                <input type="password" id="pass-in" placeholder="Password">
+                <input type="password" id="pass-in" placeholder="Password" onkeydown="if(event.key === 'Enter') checkPass()">
                 <button class="submit-btn" onclick="checkPass()" aria-label="Submit password">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M5 12h13"></path>
@@ -227,7 +244,7 @@
 
     <script>
         let hintIdx = 0;
-        const hints = ["Click anywhere to continue", "Hold to customize"];
+        const hints = ["Click anywhere to unlock", "Press Enter to unlock", "Hold anywhere to personalize"];
         document.addEventListener('DOMContentLoaded', () => {
             const bootScreen = document.getElementById('boot-screen');
             const wallpaper = document.getElementById('wp-cont');
@@ -316,18 +333,28 @@
 
         function updateClock() {
             const now = new Date();
-            document.getElementById('time-text').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('date-text').innerText = new Intl.DateTimeFormat(undefined, {
+            const time = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+            const date = new Intl.DateTimeFormat(undefined, {
                 weekday: 'long',
                 month: 'long',
                 day: 'numeric'
             }).format(now);
+            document.getElementById('time-text').innerText = time;
+            document.getElementById('date-text').innerText = date;
+
+            const previewTime = document.getElementById('preview-time');
+            const previewDate = document.getElementById('preview-date');
+            if (previewTime) previewTime.innerText = time;
+            if (previewDate) previewDate.innerText = date;
         }
 
         function initGestures() {
             let pTimer;
             let pressStarted = 0;
-            const isLockSurface = (e) => e.target.id === 'wp-cont' || e.target.closest('#ui-main') || e.target.closest('.bottom-shelf');
+            const isLockSurface = (e) => {
+                if (e.target.closest('.system-widgets') || e.target.closest('#custom-window') || e.target.closest('#login-module')) return false;
+                return e.target.id === 'wp-cont' || e.target.closest('#ui-main') || e.target.closest('.bottom-shelf');
+            };
 
             window.addEventListener('pointerdown', (e) => {
                 if (isLockSurface(e)) {
@@ -344,6 +371,12 @@
                     showLogin();
                 }
             });
+            window.addEventListener('keydown', (e) => {
+                const customOpen = document.getElementById('custom-overlay').classList.contains('active');
+                const loginOpen = document.getElementById('login-module').classList.contains('active');
+                if (e.key === 'Escape' && customOpen) closePanel();
+                if (e.key === 'Enter' && !customOpen && !loginOpen) showLogin();
+            });
         }
 
         function openPanel() {
@@ -355,7 +388,11 @@
             document.getElementById('wp-cont').classList.remove('wp-lock-blur');
         }
 
-        function setFont(f) { document.getElementById('time-text').style.fontFamily = f; }
+        function setFont(f) {
+            document.getElementById('time-text').style.fontFamily = f;
+            const previewTime = document.getElementById('preview-time');
+            if (previewTime) previewTime.style.fontFamily = f;
+        }
         function setWP(url) { document.documentElement.style.setProperty('--bg', `url('${url}')`); }
         function setTimeOpacity(val) { document.documentElement.style.setProperty('--time-opacity', val); }
         function toggleAccessibility(button) {

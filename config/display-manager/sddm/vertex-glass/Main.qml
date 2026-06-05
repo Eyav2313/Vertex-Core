@@ -18,12 +18,16 @@ Rectangle {
     property int hintIndex: 0
     property string selectedFont: config.font
     property string backgroundSource: config.background
-    readonly property var hints: ["Click anywhere to unlock", "Hold to customize"]
+    readonly property var hints: ["Click anywhere to unlock", "Press Enter to unlock", "Hold anywhere to personalize"]
 
     function refreshClock() {
         var now = new Date()
-        timeText.text = Qt.formatTime(now, "hh:mm")
-        dateText.text = Qt.formatDate(now, "dddd, MMM d")
+        var time = Qt.formatTime(now, "hh:mm")
+        var date = Qt.formatDate(now, "dddd, MMM d")
+        timeText.text = time
+        dateText.text = date
+        customPreviewTime.text = time
+        customPreviewDate.text = date
     }
 
     function doLogin() {
@@ -137,135 +141,6 @@ Rectangle {
         }
     }
 
-    Row {
-        id: systemWidgets
-        anchors.top: parent.top
-        anchors.topMargin: 28
-        anchors.right: parent.right
-        anchors.rightMargin: 34
-        spacing: 8
-        opacity: root.bootDone ? 1 : 0
-        z: 24
-
-        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
-
-        Rectangle {
-            width: 34
-            height: 34
-            radius: 17
-            color: root.accessibilityBoost ? "#18FFFFFF" : "#2E070A10"
-            border.width: 1
-            border.color: "#14FFFFFF"
-
-            Canvas {
-                anchors.centerIn: parent
-                width: 16
-                height: 16
-                opacity: 0.8
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
-                    ctx.strokeStyle = "#FFFFFFFF"
-                    ctx.lineWidth = 1.4
-                    ctx.lineCap = "round"
-                    ctx.lineJoin = "round"
-                    ctx.beginPath()
-                    ctx.arc(8, 3, 1.6, 0, Math.PI * 2)
-                    ctx.moveTo(2.5, 6)
-                    ctx.lineTo(13.5, 6)
-                    ctx.moveTo(8, 6)
-                    ctx.lineTo(8, 10)
-                    ctx.moveTo(5.2, 15)
-                    ctx.lineTo(8, 10)
-                    ctx.lineTo(10.8, 15)
-                    ctx.stroke()
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: root.accessibilityBoost = !root.accessibilityBoost
-            }
-        }
-
-        Rectangle {
-            width: 48
-            height: 34
-            radius: 17
-            color: "#2E070A10"
-            border.width: 1
-            border.color: "#14FFFFFF"
-
-            Rectangle {
-                width: 22
-                height: 11
-                radius: 3
-                color: "transparent"
-                border.width: 1
-                border.color: "#CCFFFFFF"
-                anchors.centerIn: parent
-
-                Rectangle {
-                    width: 14
-                    height: 5
-                    radius: 1
-                    color: "#CCFFFFFF"
-                    anchors.left: parent.left
-                    anchors.leftMargin: 3
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-
-            Rectangle {
-                width: 2
-                height: 5
-                radius: 1
-                color: "#CCFFFFFF"
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 13
-            }
-        }
-
-        Rectangle {
-            width: 34
-            height: 34
-            radius: 17
-            color: "#2E070A10"
-            border.width: 1
-            border.color: "#14FFFFFF"
-
-            Canvas {
-                anchors.centerIn: parent
-                width: 16
-                height: 16
-                opacity: 0.82
-                onPaint: {
-                    var ctx = getContext("2d")
-                    ctx.clearRect(0, 0, width, height)
-                    ctx.strokeStyle = "#FFFFFFFF"
-                    ctx.lineWidth = 1.5
-                    ctx.lineCap = "round"
-                    ctx.beginPath()
-                    ctx.moveTo(2, 4)
-                    ctx.lineTo(14, 4)
-                    ctx.moveTo(2, 12)
-                    ctx.lineTo(14, 12)
-                    ctx.stroke()
-                    ctx.beginPath()
-                    ctx.arc(6, 4, 2, 0, Math.PI * 2)
-                    ctx.arc(10, 12, 2, 0, Math.PI * 2)
-                    ctx.stroke()
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: root.customizeVisible = true
-            }
-        }
-    }
-
     Column {
         id: clockBlock
         anchors.horizontalCenter: parent.horizontalCenter
@@ -302,7 +177,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 25
-        spacing: 15
+        spacing: 10
         opacity: root.bootDone && !root.loginVisible && !root.customizeVisible ? 1 : 0
         z: 10
 
@@ -313,8 +188,85 @@ Rectangle {
             text: root.hints[root.hintIndex]
             color: "#B3FFFFFF"
             font.family: root.selectedFont
-            font.pixelSize: 13
-            font.weight: Font.Medium
+            font.pixelSize: 12
+            font.weight: Font.Normal
+        }
+
+        Row {
+            id: systemWidgets
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 16
+
+            Item {
+                width: 24
+                height: 24
+                opacity: root.accessibilityBoost ? 0.95 : 0.62
+
+                Canvas {
+                    anchors.centerIn: parent
+                    width: 15
+                    height: 15
+                    onPaint: {
+                        var ctx = getContext("2d")
+                        ctx.clearRect(0, 0, width, height)
+                        ctx.strokeStyle = "#FFFFFFFF"
+                        ctx.lineWidth = 1.35
+                        ctx.lineCap = "round"
+                        ctx.lineJoin = "round"
+                        ctx.beginPath()
+                        ctx.arc(7.5, 2.8, 1.45, 0, Math.PI * 2)
+                        ctx.moveTo(2.4, 5.8)
+                        ctx.lineTo(12.6, 5.8)
+                        ctx.moveTo(7.5, 6)
+                        ctx.lineTo(7.5, 9.7)
+                        ctx.moveTo(4.9, 14)
+                        ctx.lineTo(7.5, 9.7)
+                        ctx.lineTo(10.1, 14)
+                        ctx.stroke()
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.accessibilityBoost = !root.accessibilityBoost
+                }
+            }
+
+            Item {
+                width: 30
+                height: 24
+                opacity: 0.66
+
+                Rectangle {
+                    width: 21
+                    height: 10
+                    radius: 3
+                    color: "transparent"
+                    border.width: 1
+                    border.color: "#FFFFFFFF"
+                    anchors.centerIn: parent
+
+                    Rectangle {
+                        width: 13
+                        height: 5
+                        radius: 1
+                        color: "#FFFFFFFF"
+                        anchors.left: parent.left
+                        anchors.leftMargin: 3
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                Rectangle {
+                    width: 2
+                    height: 4
+                    radius: 1
+                    color: "#FFFFFFFF"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.horizontalCenter
+                    anchors.leftMargin: 12
+                }
+            }
         }
 
         Rectangle {
@@ -476,88 +428,230 @@ Rectangle {
 
         Rectangle {
             id: customWindow
-            width: 380
-            height: 430
-            radius: 40
+            width: Math.min(520, root.width - 48)
+            height: Math.min(620, root.height - 96)
+            radius: 6
             anchors.centerIn: parent
-            color: "#0DFFFFFF"
+            color: "#DD101116"
             border.width: 1
-            border.color: "#1AFFFFFF"
+            border.color: "#22FFFFFF"
+            clip: true
 
             Column {
                 anchors.fill: parent
-                anchors.margins: 30
-                spacing: 16
+                spacing: 0
 
-                Text {
-                    text: "Appearance"
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    color: "#FFFFFFFF"
-                    font.family: root.selectedFont
-                    font.pixelSize: 26
-                    font.weight: Font.Light
-                }
-
-                Text {
-                    text: "TIME TRANSPARENCY"
-                    color: "#80FFFFFF"
-                    font.family: root.selectedFont
-                    font.pixelSize: 10
-                    font.weight: Font.Bold
-                    topPadding: 8
-                }
-
-                Slider {
+                Rectangle {
                     width: parent.width
-                    from: 0.1
-                    to: 1
-                    value: clockBlock.opacity
-                    onMoved: clockBlock.opacity = value
-                }
+                    height: 34
+                    color: "#0AFFFFFF"
 
-                Text {
-                    text: "WALLPAPERS"
-                    color: "#80FFFFFF"
-                    font.family: root.selectedFont
-                    font.pixelSize: 10
-                    font.weight: Font.Bold
-                }
+                    Text {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 12
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: "Vertex Appearance"
+                        color: "#C8FFFFFF"
+                        font.family: root.selectedFont
+                        font.pixelSize: 13
+                        font.weight: Font.Normal
+                    }
 
-                Row {
-                    spacing: 10
-                    Repeater {
-                        model: ["Alpine", "Night", "Canyon", "Forest"]
-                        delegate: Button {
-                            text: modelData
-                            onClicked: root.backgroundSource = config.background
+                    Text {
+                        width: 46
+                        height: parent.height
+                        anchors.right: parent.right
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: "x"
+                        color: "#95FFFFFF"
+                        font.family: root.selectedFont
+                        font.pixelSize: 14
+                        font.weight: Font.Light
+
+                        MouseArea {
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: root.customizeVisible = false
                         }
+                    }
+
+                    Rectangle {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        height: 1
+                        color: "#12FFFFFF"
                     }
                 }
 
-                Text {
-                    text: "CLOCK FONTS"
-                    color: "#80FFFFFF"
-                    font.family: root.selectedFont
-                    font.pixelSize: 10
-                    font.weight: Font.Bold
-                }
+                Item {
+                    width: parent.width
+                    height: parent.height - 34
 
-                Row {
-                    spacing: 10
-                    Repeater {
-                        model: ["Inter", "Noto Sans", "Sans"]
-                        delegate: Button {
-                            text: modelData
-                            onClicked: root.selectedFont = modelData
+                    Column {
+                        anchors.fill: parent
+                        anchors.margins: 18
+                        spacing: 14
+
+                        Rectangle {
+                            width: parent.width
+                            height: 166
+                            radius: 6
+                            clip: true
+                            color: "#111319"
+                            border.width: 1
+                            border.color: "#12FFFFFF"
+
+                            Image {
+                                anchors.fill: parent
+                                source: root.backgroundSource
+                                fillMode: Image.PreserveAspectCrop
+                                smooth: true
+                            }
+
+                            Rectangle {
+                                anchors.fill: parent
+                                color: "#44000000"
+                            }
+
+                            Column {
+                                anchors.top: parent.top
+                                anchors.topMargin: 18
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                spacing: 1
+
+                                Text {
+                                    id: customPreviewDate
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: dateText.text
+                                    color: "#BFC7CBD4"
+                                    font.family: root.selectedFont
+                                    font.pixelSize: 8
+                                    font.weight: Font.Light
+                                }
+
+                                Text {
+                                    id: customPreviewTime
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: timeText.text
+                                    color: "#B8FFFFFF"
+                                    font.family: root.selectedFont
+                                    font.pixelSize: 38
+                                    font.weight: Font.Light
+                                    lineHeight: 0.9
+                                }
+                            }
+
+                            Rectangle {
+                                width: 72
+                                height: 3
+                                radius: 2
+                                color: "#44FFFFFF"
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 14
+                            }
+                        }
+
+                        Text {
+                            text: "TIME TRANSPARENCY"
+                            color: "#88FFFFFF"
+                            font.family: root.selectedFont
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                        }
+
+                        Slider {
+                            width: parent.width
+                            from: 0.1
+                            to: 1
+                            value: clockBlock.opacity
+                            onMoved: clockBlock.opacity = value
+                        }
+
+                        Text {
+                            text: "WALLPAPERS"
+                            color: "#88FFFFFF"
+                            font.family: root.selectedFont
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                        }
+
+                        Row {
+                            spacing: 8
+                            Repeater {
+                                model: ["Alpine", "Night", "Canyon", "Forest"]
+                                delegate: Rectangle {
+                                    width: 76
+                                    height: 30
+                                    radius: 6
+                                    color: "#12FFFFFF"
+                                    border.width: 1
+                                    border.color: "#12FFFFFF"
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData
+                                        color: "#CCFFFFFF"
+                                        font.family: root.selectedFont
+                                        font.pixelSize: 11
+                                        font.weight: Font.Normal
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: root.backgroundSource = config.background
+                                    }
+                                }
+                            }
+                        }
+
+                        Text {
+                            text: "CLOCK FONTS"
+                            color: "#88FFFFFF"
+                            font.family: root.selectedFont
+                            font.pixelSize: 10
+                            font.weight: Font.Medium
+                        }
+
+                        Row {
+                            spacing: 8
+                            Repeater {
+                                model: ["SF Pro", "Vertex", "Manrope"]
+                                delegate: Rectangle {
+                                    width: 82
+                                    height: 30
+                                    radius: 6
+                                    color: "#12FFFFFF"
+                                    border.width: 1
+                                    border.color: "#12FFFFFF"
+
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: modelData
+                                        color: "#CCFFFFFF"
+                                        font.family: root.selectedFont
+                                        font.pixelSize: 11
+                                        font.weight: Font.Normal
+                                    }
+
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onClicked: {
+                                            if (modelData === "SF Pro") {
+                                                root.selectedFont = config.font
+                                            } else if (modelData === "Vertex") {
+                                                root.selectedFont = "Space Grotesk"
+                                            } else {
+                                                root.selectedFont = "Manrope"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-
-                Button {
-                    width: parent.width
-                    height: 48
-                    text: "Done"
-                    onClicked: root.customizeVisible = false
                 }
             }
         }
