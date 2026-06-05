@@ -30,18 +30,22 @@
         /* --- BOOT SCREEN --- */
         #boot-screen { position: fixed; inset: 0; z-index: 10000; overflow: hidden; background: #000; cursor: none; transition: opacity 0.5s ease-out; }
         .loading-stage { position: absolute; inset: 0; display: grid; place-items: center; }
-        .boot-logo { position: relative; width: 64px; height: 64px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
-        .vertex-logo { width: 64px; height: 64px; object-fit: contain; }
+        .boot-logo { position: relative; width: 88px; height: 88px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
+        .vertex-logo { width: 88px; height: 88px; object-fit: contain; }
         #boot-screen.logo-phase .boot-logo { opacity: 1; }
         .boot-logo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 35%, rgba(255,255,255,0.6) 50%, transparent 65%); background-size: 260% 260%; background-position: -130% -130%; -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mix-blend-mode: screen; opacity: 0; pointer-events: none; }
-        #boot-screen.logo-phase .boot-logo::after { animation: logoShine 2s linear infinite; opacity: 1; }
+        #boot-screen.logo-phase .boot-logo::after { animation: logoShine 4s cubic-bezier(0.16, 1, 0.3, 1) infinite; opacity: 1; }
         .loading-spinner { position: absolute; left: 50%; bottom: 80px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%; border: 2px solid rgba(96,96,96,0.2); border-top-color: #606060; opacity: 0; animation: spinnerRotate 0.85s linear infinite; transition: opacity 0.5s ease-out; }
         #boot-screen.spinner-phase .loading-spinner { opacity: 1; }
-        @keyframes logoShine { to { background-position: 130% 130%; } }
+        @keyframes logoShine {
+            0% { background-position: -130% -130%; }
+            48% { background-position: 130% 130%; }
+            100% { background-position: 130% 130%; }
+        }
         @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
         /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: 0.45s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1); filter: none; opacity: 0; cursor: var(--cursor-default); }
+        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.08); filter: blur(34px) brightness(0.78); opacity: 0; cursor: var(--cursor-default); }
         body.lock-ready, body.lock-ready #wp-cont, body.lock-ready #wp-cont * { cursor: var(--cursor-default); }
         button, .chip, .slider, input[type="range"], [onclick] { cursor: var(--cursor-pointer) !important; }
         input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
