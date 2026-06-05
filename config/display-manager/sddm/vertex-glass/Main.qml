@@ -153,20 +153,24 @@ Rectangle {
         Text {
             id: dateText
             anchors.horizontalCenter: parent.horizontalCenter
-            color: "#FFFFFFFF"
+            color: "#D9FFFFFF"
             font.family: root.selectedFont
             font.pixelSize: 24
             font.weight: Font.Light
+            style: Text.Outline
+            styleColor: "#55000000"
         }
 
         Text {
             id: timeText
             anchors.horizontalCenter: parent.horizontalCenter
-            color: "#FFFFFFFF"
+            color: "#E0FFFFFF"
             font.family: root.selectedFont
             font.pixelSize: 142
             font.weight: Font.Light
             lineHeight: 0.86
+            style: Text.Outline
+            styleColor: "#66000000"
         }
     }
 
@@ -190,88 +194,87 @@ Rectangle {
             font.weight: Font.Normal
         }
 
-        Row {
-            id: systemWidgets
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 16
-
-            Item {
-                width: 24
-                height: 24
-                opacity: root.accessibilityBoost ? 0.95 : 0.62
-
-                Canvas {
-                    anchors.centerIn: parent
-                    width: 15
-                    height: 15
-                    onPaint: {
-                        var ctx = getContext("2d")
-                        ctx.clearRect(0, 0, width, height)
-                        ctx.strokeStyle = "#FFFFFFFF"
-                        ctx.lineWidth = 1.35
-                        ctx.lineCap = "round"
-                        ctx.lineJoin = "round"
-                        ctx.beginPath()
-                        ctx.arc(7.5, 2.8, 1.45, 0, Math.PI * 2)
-                        ctx.moveTo(2.4, 5.8)
-                        ctx.lineTo(12.6, 5.8)
-                        ctx.moveTo(7.5, 6)
-                        ctx.lineTo(7.5, 9.7)
-                        ctx.moveTo(4.9, 14)
-                        ctx.lineTo(7.5, 9.7)
-                        ctx.lineTo(10.1, 14)
-                        ctx.stroke()
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: root.accessibilityBoost = !root.accessibilityBoost
-                }
-            }
-
-            Item {
-                width: 30
-                height: 24
-                opacity: 0.66
-
-                Rectangle {
-                    width: 21
-                    height: 10
-                    radius: 3
-                    color: "transparent"
-                    border.width: 1
-                    border.color: "#FFFFFFFF"
-                    anchors.centerIn: parent
-
-                    Rectangle {
-                        width: 13
-                        height: 5
-                        radius: 1
-                        color: "#FFFFFFFF"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
-
-                Rectangle {
-                    width: 2
-                    height: 4
-                    radius: 1
-                    color: "#FFFFFFFF"
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.horizontalCenter
-                    anchors.leftMargin: 12
-                }
-            }
-        }
-
         Rectangle {
             width: 130
             height: 5
             radius: 3
             color: "#55FFFFFF"
+        }
+    }
+
+    Row {
+        id: systemWidgets
+        anchors.right: parent.right
+        anchors.rightMargin: 34
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        spacing: 15
+        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible ? 0.78 : 0
+        z: 11
+
+        Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
+
+        Item {
+            width: 24
+            height: 24
+
+            Canvas {
+                anchors.centerIn: parent
+                width: 17
+                height: 17
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.clearRect(0, 0, width, height)
+                    ctx.strokeStyle = "#FFFFFFFF"
+                    ctx.lineWidth = 1.35
+                    ctx.lineCap = "round"
+                    ctx.shadowColor = "rgba(0, 0, 0, 0.55)"
+                    ctx.shadowBlur = 4
+                    ctx.beginPath()
+                    ctx.moveTo(2.2, 6.5)
+                    ctx.bezierCurveTo(6.2, 3.4, 10.8, 3.4, 14.8, 6.5)
+                    ctx.moveTo(5.1, 9.9)
+                    ctx.bezierCurveTo(7.1, 8.4, 9.9, 8.4, 11.9, 9.9)
+                    ctx.moveTo(7.6, 13)
+                    ctx.bezierCurveTo(8.3, 12.6, 9, 12.6, 9.7, 13)
+                    ctx.stroke()
+                }
+            }
+        }
+
+        Item {
+            width: 30
+            height: 24
+
+            Rectangle {
+                width: 21
+                height: 10
+                radius: 3
+                color: "transparent"
+                border.width: 1
+                border.color: "#FFFFFFFF"
+                anchors.centerIn: parent
+
+                Rectangle {
+                    width: 13
+                    height: 5
+                    radius: 1
+                    color: "#FFFFFFFF"
+                    anchors.left: parent.left
+                    anchors.leftMargin: 3
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            Rectangle {
+                width: 2
+                height: 4
+                radius: 1
+                color: "#FFFFFFFF"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.horizontalCenter
+                anchors.leftMargin: 12
+            }
         }
     }
 
@@ -393,6 +396,105 @@ Rectangle {
                 }
             }
 
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 18
+
+                Item {
+                    width: 26
+                    height: 26
+                    opacity: root.accessibilityBoost ? 0.95 : 0.66
+
+                    Canvas {
+                        anchors.centerIn: parent
+                        width: 16
+                        height: 16
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            ctx.strokeStyle = "#FFFFFFFF"
+                            ctx.lineWidth = 1.35
+                            ctx.lineCap = "round"
+                            ctx.lineJoin = "round"
+                            ctx.beginPath()
+                            ctx.arc(8, 3, 1.5, 0, Math.PI * 2)
+                            ctx.moveTo(2.6, 6)
+                            ctx.lineTo(13.4, 6)
+                            ctx.moveTo(8, 6.1)
+                            ctx.lineTo(8, 10)
+                            ctx.moveTo(5.2, 15)
+                            ctx.lineTo(8, 10)
+                            ctx.lineTo(10.8, 15)
+                            ctx.stroke()
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: root.accessibilityBoost = !root.accessibilityBoost
+                    }
+                }
+
+                Item {
+                    width: 26
+                    height: 26
+                    opacity: 0.66
+
+                    Canvas {
+                        anchors.centerIn: parent
+                        width: 17
+                        height: 17
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            ctx.strokeStyle = "#FFFFFFFF"
+                            ctx.lineWidth = 1.35
+                            ctx.lineCap = "round"
+                            ctx.beginPath()
+                            ctx.moveTo(2.2, 6.5)
+                            ctx.bezierCurveTo(6.2, 3.4, 10.8, 3.4, 14.8, 6.5)
+                            ctx.moveTo(5.1, 9.9)
+                            ctx.bezierCurveTo(7.1, 8.4, 9.9, 8.4, 11.9, 9.9)
+                            ctx.moveTo(7.6, 13)
+                            ctx.bezierCurveTo(8.3, 12.6, 9, 12.6, 9.7, 13)
+                            ctx.stroke()
+                        }
+                    }
+                }
+
+                Item {
+                    width: 26
+                    height: 26
+                    opacity: 0.66
+
+                    Canvas {
+                        anchors.centerIn: parent
+                        width: 17
+                        height: 17
+                        onPaint: {
+                            var ctx = getContext("2d")
+                            ctx.clearRect(0, 0, width, height)
+                            ctx.strokeStyle = "#FFFFFFFF"
+                            ctx.lineWidth = 1.35
+                            ctx.lineCap = "round"
+                            ctx.beginPath()
+                            ctx.moveTo(8.5, 2.3)
+                            ctx.lineTo(8.5, 7.4)
+                            ctx.moveTo(5.1, 5.2)
+                            ctx.bezierCurveTo(2.7, 7.2, 2.8, 11.1, 5.4, 13.2)
+                            ctx.bezierCurveTo(7.5, 14.9, 10.7, 14.9, 12.8, 13.2)
+                            ctx.bezierCurveTo(15.4, 11.1, 15.5, 7.2, 13.1, 5.2)
+                            ctx.stroke()
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: sddm.powerOff()
+                    }
+                }
+            }
+
             Text {
                 text: "Cancel"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -430,7 +532,7 @@ Rectangle {
             height: Math.min(620, root.height - 96)
             radius: 6
             anchors.centerIn: parent
-            color: "#DD101116"
+            color: "#F607080B"
             border.width: 1
             border.color: "#22FFFFFF"
             clip: true
@@ -441,8 +543,8 @@ Rectangle {
 
                 Rectangle {
                     width: parent.width
-                    height: 34
-                    color: "#0AFFFFFF"
+                    height: 38
+                    color: "#FF0B0C10"
 
                     Text {
                         anchors.left: parent.left
@@ -455,21 +557,41 @@ Rectangle {
                         font.weight: Font.Normal
                     }
 
-                    Text {
-                        width: 46
-                        height: parent.height
+                    Rectangle {
+                        id: closeButton
+                        property bool hovered: false
+                        width: 30
+                        height: 30
                         anchors.right: parent.right
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        text: "x"
-                        color: "#95FFFFFF"
-                        font.family: root.selectedFont
-                        font.pixelSize: 14
-                        font.weight: Font.Light
+                        anchors.rightMargin: 6
+                        anchors.verticalCenter: parent.verticalCenter
+                        radius: 15
+                        color: hovered ? "#38A0A6B2" : "transparent"
+
+                        Canvas {
+                            anchors.centerIn: parent
+                            width: 16
+                            height: 16
+                            onPaint: {
+                                var ctx = getContext("2d")
+                                ctx.clearRect(0, 0, width, height)
+                                ctx.strokeStyle = "#DDFFFFFF"
+                                ctx.lineWidth = 0.9
+                                ctx.lineCap = "round"
+                                ctx.beginPath()
+                                ctx.moveTo(4.2, 4.2)
+                                ctx.lineTo(11.8, 11.8)
+                                ctx.moveTo(11.8, 4.2)
+                                ctx.lineTo(4.2, 11.8)
+                                ctx.stroke()
+                            }
+                        }
 
                         MouseArea {
                             anchors.fill: parent
                             hoverEnabled: true
+                            onEntered: closeButton.hovered = true
+                            onExited: closeButton.hovered = false
                             onClicked: root.customizeVisible = false
                         }
                     }
@@ -485,7 +607,7 @@ Rectangle {
 
                 Item {
                     width: parent.width
-                    height: parent.height - 34
+                    height: parent.height - 38
 
                     Column {
                         anchors.fill: parent
