@@ -64,7 +64,7 @@
         .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
         .lock-indicator::before { content: ""; position: absolute; inset: -18px -34px -16px; z-index: -1; background: radial-gradient(ellipse at center, rgba(7,10,16,0.24), rgba(7,10,16,0.08) 44%, transparent 72%); opacity: 0.72; pointer-events: none; }
         #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(199,203,212,0.74); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); }
-        #time-text { font-family: 'Vertex Clock', 'Space Grotesk', 'SF Pro Display', sans-serif; font-style: normal; font-weight: 360; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255,255,255,0.8); letter-spacing: 0.015em; line-height: 0.91; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
+        #time-text { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-style: normal; font-weight: 360; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255, 255, 255, 0.678); letter-spacing: 0.015em; line-height: 0.91; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
         /* --- BOTTOM UI --- */
         .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .unlock-msg { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
@@ -193,6 +193,7 @@
                 bootScreen.style.opacity = '0';
                 wallpaper.classList.add('wp-ready');
                 document.body.classList.add('lock-ready');
+                setTimeout(playBootRevealSound, 140);
                 setTimeout(() => bootScreen.style.display = 'none', 500);
             }, 50000);
 
@@ -212,6 +213,57 @@
             }, 4000);
             hintEl.classList.add('msg-active');
         });
+
+        function playBootRevealSound() {
+            if (window.__vertexBootRevealSoundPlayed) return;
+            window.__vertexBootRevealSoundPlayed = true;
+
+            const AudioEngine = window.AudioContext || window.webkitAudioContext;
+            if (!AudioEngine) return;
+
+            try {
+                const ctx = new AudioEngine({ latencyHint: 'interactive' });
+                const start = ctx.currentTime + 0.02;
+                const master = ctx.createGain();
+                const filter = ctx.createBiquadFilter();
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(5200, start);
+                filter.Q.setValueAtTime(0.2, start);
+                master.gain.setValueAtTime(0.0001, start);
+                master.gain.exponentialRampToValueAtTime(0.11, start + 0.05);
+                master.gain.exponentialRampToValueAtTime(0.0001, start + 0.82);
+                filter.connect(master);
+                master.connect(ctx.destination);
+
+                [
+                    { frequency: 392.0, delay: 0.00, duration: 0.34, gain: 0.34 },
+                    { frequency: 587.33, delay: 0.07, duration: 0.42, gain: 0.24 },
+                    { frequency: 783.99, delay: 0.16, duration: 0.48, gain: 0.16 }
+                ].forEach((voice) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    const t = start + voice.delay;
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(voice.frequency, t);
+                    gain.gain.setValueAtTime(0.0001, t);
+                    gain.gain.exponentialRampToValueAtTime(voice.gain, t + 0.035);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, t + voice.duration);
+                    osc.connect(gain);
+                    gain.connect(filter);
+                    osc.start(t);
+                    osc.stop(t + voice.duration + 0.05);
+                });
+
+                if (ctx.state === 'suspended') {
+                    ctx.resume().catch(() => {});
+                }
+                setTimeout(() => ctx.close().catch(() => {}), 1200);
+            } catch (_) {
+                window.__vertexBootRevealSoundPlayed = false;
+            }
+        }
 
         function updateClock() {
             const now = new Date();

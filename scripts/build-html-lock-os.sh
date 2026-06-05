@@ -24,6 +24,7 @@ PACKAGES=(
     ca-certificates
     tzdata
     chromium
+    alsa-utils
     xserver-xorg-core
     xserver-xorg-video-vesa
     xserver-xorg-video-fbdev
@@ -154,6 +155,7 @@ exec "$CHROMIUM" \
     --start-fullscreen \
     --no-sandbox \
     --no-first-run \
+    --autoplay-policy=no-user-gesture-required \
     --disable-infobars \
     --disable-translate \
     --disable-gpu \

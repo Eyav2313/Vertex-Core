@@ -32,14 +32,24 @@ fi
 
 ACCEL_ARGS=()
 CPU_ARGS=(-cpu qemu64)
+AUDIO_ARGS=()
 if [ -e /dev/kvm ]; then
     ACCEL_ARGS=(-enable-kvm)
     CPU_ARGS=(-cpu host)
 fi
 
+if [ "${VERTEX_QEMU_AUDIO:-0}" = "1" ]; then
+    AUDIO_ARGS=(
+        -audiodev "${VERTEX_QEMU_AUDIO_DRIVER:-sdl},id=vertexaudio"
+        -device intel-hda
+        -device hda-output,audiodev=vertexaudio
+    )
+fi
+
 exec qemu-system-x86_64 \
     "${ACCEL_ARGS[@]}" \
     "${CPU_ARGS[@]}" \
+    "${AUDIO_ARGS[@]}" \
     -name Vertex-HTML-Lock \
     -m "${VERTEX_HTML_LOCK_MEMORY:-3072M}" \
     -smp "${VERTEX_HTML_LOCK_CPUS:-2}" \

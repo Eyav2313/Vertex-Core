@@ -2,7 +2,8 @@ param(
     [string]$Memory = "3072M",
     [int]$Cpus = 2,
     [int]$Width = 1280,
-    [int]$Height = 720
+    [int]$Height = 720,
+    [switch]$NoAudio
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,6 +50,14 @@ $qemuArgs = @(
     "-monitor", "none"
     "-no-reboot"
 )
+
+if (-not $NoAudio) {
+    $qemuArgs += @(
+        "-audiodev", "dsound,id=vertexaudio"
+        "-device", "intel-hda"
+        "-device", "hda-output,audiodev=vertexaudio"
+    )
+}
 
 $argLine = ($qemuArgs | ForEach-Object {
     if ($_ -match '[\s"]') {

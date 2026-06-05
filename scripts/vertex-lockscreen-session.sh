@@ -41,6 +41,7 @@ exec "$CHROMIUM" \
     --start-fullscreen \
     --no-sandbox \
     --no-first-run \
+    --autoplay-policy=no-user-gesture-required \
     --disable-infobars \
     --disable-translate \
     --disable-gpu \
