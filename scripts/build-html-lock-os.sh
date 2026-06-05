@@ -34,6 +34,7 @@ PACKAGES=(
     fonts-liberation
     fonts-inter
     fonts-manrope
+    fontconfig
 )
 
 info() {
@@ -63,6 +64,7 @@ configure_rootfs() {
     mkdir -p \
         "$ROOTFS/usr/share/vertex/preview" \
         "$ROOTFS/usr/share/vertex/assets" \
+        "$ROOTFS/usr/share/fonts/truetype/vertex" \
         "$ROOTFS/usr/local/bin" \
         "$ROOTFS/etc/systemd/system/multi-user.target.wants" \
         "$ROOTFS/etc/X11/xorg.conf.d" \
@@ -70,6 +72,9 @@ configure_rootfs() {
 
     install_tree "$ROOT_DIR/preview" "$ROOTFS/usr/share/vertex/preview"
     install_tree "$ROOT_DIR/assets" "$ROOTFS/usr/share/vertex/assets"
+    install -m 0644 "$ROOT_DIR/assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf" \
+        "$ROOTFS/usr/share/fonts/truetype/vertex/SpaceGrotesk-Variable.ttf"
+    chroot "$ROOTFS" fc-cache -f >/dev/null 2>&1 || true
 
     cat > "$ROOTFS/etc/hostname" <<'EOF'
 Vertex

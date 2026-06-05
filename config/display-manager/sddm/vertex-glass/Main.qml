@@ -153,7 +153,7 @@ Rectangle {
             color: "#FFFFFFFF"
             font.family: root.selectedFont
             font.pixelSize: 24
-            font.weight: Font.Bold
+            font.weight: Font.Light
         }
 
         Text {
@@ -161,8 +161,8 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             color: "#FFFFFFFF"
             font.family: root.selectedFont
-            font.pixelSize: 150
-            font.weight: Font.Black
+            font.pixelSize: 142
+            font.weight: Font.Light
             lineHeight: 0.86
         }
     }

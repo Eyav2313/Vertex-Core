@@ -25,6 +25,7 @@ Depends:
  alacritty,
  firefox-esr,
  fonts-inter,
+ fontconfig,
  zsh,
  tmux,
  apparmor,

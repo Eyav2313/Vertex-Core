@@ -351,6 +351,7 @@ inject_vertex_config() {
         "$target_root/usr/share/vertex/branding" \
         "$target_root/usr/share/vertex/preview" \
         "$target_root/usr/share/vertex/wallpapers" \
+        "$target_root/usr/share/fonts/truetype/vertex" \
         "$target_root/usr/libexec/vertex"
 
     install -m 0644 "$hyprland_config" "$target_root/etc/skel/.config/hypr/hyprland.conf"
@@ -373,6 +374,11 @@ inject_vertex_config() {
     install_tree "$ROOT_DIR/config/display-manager/sddm/vertex-glass" "$target_root/usr/share/sddm/themes/vertex-glass"
     install_tree "$ROOT_DIR/preview" "$target_root/usr/share/vertex/preview"
     install_tree "$ROOT_DIR/assets" "$target_root/usr/share/vertex/assets"
+    if [ -f "$ROOT_DIR/assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf" ]; then
+        install -m 0644 "$ROOT_DIR/assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf" \
+            "$target_root/usr/share/fonts/truetype/vertex/SpaceGrotesk-Variable.ttf"
+        chroot "$target_root" fc-cache -f >/dev/null 2>&1 || true
+    fi
 
     cat > "$target_root/etc/sddm.conf.d/10-vertex-theme.conf" <<EOF
 [Theme]

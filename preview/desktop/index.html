@@ -9,6 +9,8 @@
         @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Light.ttf') format('truetype'); }
         @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Regular.ttf') format('truetype'); }
         @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Bold.ttf') format('truetype'); }
+        @font-face { font-family: 'Vertex Clock'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
+        @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
         @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
         @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
         @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
@@ -62,7 +64,7 @@
         .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
         .lock-indicator::before { content: ""; position: absolute; inset: -18px -34px -16px; z-index: -1; background: radial-gradient(ellipse at center, rgba(7,10,16,0.24), rgba(7,10,16,0.08) 44%, transparent 72%); opacity: 0.72; pointer-events: none; }
         #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(199,203,212,0.74); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); }
-        #time-text { font-family: 'SF Pro Display', sans-serif; font-style: normal; font-weight: 300; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255,255,255,0.76); letter-spacing: 0.6px; line-height: 0.91; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
+        #time-text { font-family: 'Vertex Clock', 'Space Grotesk', 'SF Pro Display', sans-serif; font-style: normal; font-weight: 360; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255,255,255,0.8); letter-spacing: 0.015em; line-height: 0.91; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
         /* --- BOTTOM UI --- */
         .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .unlock-msg { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
@@ -152,12 +154,10 @@
 
             <p class="section-header">Clock Fonts</p>
             <div class="chip-container">
+                <div class="chip" onclick="setFont('Vertex Clock')">Vertex</div>
+                <div class="chip" onclick="setFont('Space Grotesk')">Grotesk</div>
                 <div class="chip" onclick="setFont('Manrope')">Manrope</div>
-                <div class="chip" onclick="setFont('Outfit')">Outfit</div>
-                <div class="chip" onclick="setFont('Space Mono')">Mono</div>
-                <div class="chip" onclick="setFont('Bebas Neue')">Bebas</div>
-                <div class="chip" onclick="setFont('Playfair Display')">Serif</div>
-                <div class="chip" onclick="setFont('Inter')">Inter</div>
+                <div class="chip" onclick="setFont('SF Pro Display')">SF</div>
             </div>
 
             <button onclick="closePanel()" style="width:100%; padding:15px; border-radius:20px; border:none; background:white; color:black; font-weight:800; margin-top:30px; cursor:pointer;">Done</button>
