@@ -39,11 +39,10 @@
         #boot-screen.spinner-phase .loading-spinner { opacity: 1; }
         @keyframes logoShine {
             0% { background-position: -130% -130%; opacity: 0; }
-            12% { opacity: 1; }
-            42% { background-position: 52% 52%; opacity: 1; }
-            58% { background-position: 52% 52%; opacity: 0.8; }
-            70% { background-position: 52% 52%; opacity: 0; }
-            100% { background-position: 52% 52%; opacity: 0; }
+            10% { opacity: 1; }
+            46% { background-position: 130% 130%; opacity: 1; }
+            56% { background-position: 170% 170%; opacity: 0; }
+            100% { background-position: 170% 170%; opacity: 0; }
         }
         @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
@@ -61,7 +60,7 @@
         .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
         .lock-indicator::before { content: ""; position: absolute; inset: -18px -34px -16px; z-index: -1; background: radial-gradient(ellipse at center, rgba(7,10,16,0.24), rgba(7,10,16,0.08) 44%, transparent 72%); opacity: 0.72; pointer-events: none; }
         #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(199,203,212,0.74); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); }
-        #time-text { font-family: 'SF Pro Display', sans-serif; font-style: normal; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255,255,255,0.78); letter-spacing: 1px; line-height: 0.91; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 12px 30px rgba(0,0,0,0.2), 0 0 15px rgba(255,255,255,0.04); }
+        #time-text { font-family: 'Manrope', 'SF Pro Display', sans-serif; font-style: normal; font-weight: 200; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255,255,255,0.76); letter-spacing: 0.6px; line-height: 0.91; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); }
         /* --- BOTTOM UI --- */
         .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .unlock-msg { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
