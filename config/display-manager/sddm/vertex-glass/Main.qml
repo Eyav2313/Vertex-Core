@@ -228,15 +228,19 @@ Rectangle {
                     ctx.strokeStyle = "#FFFFFFFF"
                     ctx.lineWidth = 1.35
                     ctx.lineCap = "round"
+                    ctx.lineJoin = "round"
                     ctx.shadowColor = "rgba(0, 0, 0, 0.55)"
                     ctx.shadowBlur = 4
                     ctx.beginPath()
-                    ctx.moveTo(2.2, 6.5)
-                    ctx.bezierCurveTo(6.2, 3.4, 10.8, 3.4, 14.8, 6.5)
-                    ctx.moveTo(5.1, 9.9)
-                    ctx.bezierCurveTo(7.1, 8.4, 9.9, 8.4, 11.9, 9.9)
-                    ctx.moveTo(7.6, 13)
-                    ctx.bezierCurveTo(8.3, 12.6, 9, 12.6, 9.7, 13)
+                    ctx.arc(8.5, 8.5, 6.3, 0, Math.PI * 2)
+                    ctx.moveTo(2.2, 8.5)
+                    ctx.lineTo(14.8, 8.5)
+                    ctx.moveTo(8.5, 2.2)
+                    ctx.bezierCurveTo(10.3, 4.2, 11.1, 6.3, 11.1, 8.5)
+                    ctx.bezierCurveTo(11.1, 10.7, 10.3, 12.8, 8.5, 14.8)
+                    ctx.moveTo(8.5, 2.2)
+                    ctx.bezierCurveTo(6.7, 4.2, 5.9, 6.3, 5.9, 8.5)
+                    ctx.bezierCurveTo(5.9, 10.7, 6.7, 12.8, 8.5, 14.8)
                     ctx.stroke()
                 }
             }
@@ -397,8 +401,13 @@ Rectangle {
             }
 
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter
+                parent: loginModule
+                anchors.right: loginModule.right
+                anchors.rightMargin: 34
+                anchors.bottom: loginModule.bottom
+                anchors.bottomMargin: 30
                 spacing: 18
+                z: 12
 
                 Item {
                     width: 26
@@ -450,13 +459,17 @@ Rectangle {
                             ctx.strokeStyle = "#FFFFFFFF"
                             ctx.lineWidth = 1.35
                             ctx.lineCap = "round"
+                            ctx.lineJoin = "round"
                             ctx.beginPath()
-                            ctx.moveTo(2.2, 6.5)
-                            ctx.bezierCurveTo(6.2, 3.4, 10.8, 3.4, 14.8, 6.5)
-                            ctx.moveTo(5.1, 9.9)
-                            ctx.bezierCurveTo(7.1, 8.4, 9.9, 8.4, 11.9, 9.9)
-                            ctx.moveTo(7.6, 13)
-                            ctx.bezierCurveTo(8.3, 12.6, 9, 12.6, 9.7, 13)
+                            ctx.arc(8.5, 8.5, 6.3, 0, Math.PI * 2)
+                            ctx.moveTo(2.2, 8.5)
+                            ctx.lineTo(14.8, 8.5)
+                            ctx.moveTo(8.5, 2.2)
+                            ctx.bezierCurveTo(10.3, 4.2, 11.1, 6.3, 11.1, 8.5)
+                            ctx.bezierCurveTo(11.1, 10.7, 10.3, 12.8, 8.5, 14.8)
+                            ctx.moveTo(8.5, 2.2)
+                            ctx.bezierCurveTo(6.7, 4.2, 5.9, 6.3, 5.9, 8.5)
+                            ctx.bezierCurveTo(5.9, 10.7, 6.7, 12.8, 8.5, 14.8)
                             ctx.stroke()
                         }
                     }
@@ -532,7 +545,7 @@ Rectangle {
             height: Math.min(620, root.height - 96)
             radius: 6
             anchors.centerIn: parent
-            color: "#F607080B"
+            color: "#FF010103"
             border.width: 1
             border.color: "#22FFFFFF"
             clip: true
@@ -544,7 +557,7 @@ Rectangle {
                 Rectangle {
                     width: parent.width
                     height: 38
-                    color: "#FF0B0C10"
+                    color: "#FF020204"
 
                     Text {
                         anchors.left: parent.left
@@ -619,7 +632,7 @@ Rectangle {
                             height: 166
                             radius: 6
                             clip: true
-                            color: "#111319"
+                            color: "#050507"
                             border.width: 1
                             border.color: "#12FFFFFF"
 
@@ -632,7 +645,7 @@ Rectangle {
 
                             Rectangle {
                                 anchors.fill: parent
-                                color: "#44000000"
+                                color: "#66000000"
                             }
 
                             Column {

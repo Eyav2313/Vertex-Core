@@ -22,6 +22,9 @@
             --bg: url('../../assets/wallpapers/vertex-lock-background.png'); 
             --f-size: clamp(6rem, 24vw, 10rem);
             --time-opacity: 1;
+            --cursor-default: url('../../assets/cursors/vertex-arrow.png') 1 1, auto;
+            --cursor-pointer: url('../../assets/cursors/vertex-hand.png') 11 2, pointer;
+            --cursor-input: url('../../assets/cursors/vertex-input.png') 10 12, text;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }
@@ -48,25 +51,16 @@
         @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
         /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.08); filter: blur(34px) brightness(0.78); opacity: 0; cursor: none; }
-        body.lock-ready, body.lock-ready #wp-cont, body.lock-ready #wp-cont * { cursor: none !important; }
+        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.08); filter: blur(34px) brightness(0.78); opacity: 0; cursor: var(--cursor-default); }
+        body.lock-ready, body.lock-ready * { cursor: var(--cursor-default); }
+        button, .chip, .slider, input[type="range"], [onclick] { cursor: var(--cursor-pointer) !important; }
+        input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
         .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
         .wp-lock-blur { filter: blur(18px) brightness(0.68) !important; transform: scale(1.02) !important; }
         body.accessibility-boost #wp-cont { filter: contrast(1.08) brightness(0.94); }
         body.accessibility-boost #time-text { color: rgba(255,255,255,0.9); text-shadow: 0 2px 10px rgba(0,0,0,0.3), 0 0 16px rgba(255,255,255,0.06); }
         html.preview-capture #boot-screen { display: none; }
         html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
-
-        /* --- SYSTEM WIDGETS --- */
-        /* --- ADAPTIVE CURSOR --- */
-        #vertex-cursor { --x: -80px; --y: -80px; position: fixed; left: 0; top: 0; width: 22px; height: 22px; z-index: 20000; pointer-events: none; color: #fff; opacity: 0; transform: translate3d(var(--x), var(--y), 0); transition: opacity 0.16s ease, width 0.12s ease, height 0.12s ease; mix-blend-mode: difference; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.9)) drop-shadow(0 7px 14px rgba(0,0,0,0.34)); }
-        body.lock-ready #vertex-cursor { opacity: 1; }
-        #vertex-cursor svg { width: 100%; height: 100%; overflow: visible; }
-        #cursor-arrow, #cursor-hand, #cursor-input { display: none; }
-        #vertex-cursor.is-default #cursor-arrow, #vertex-cursor.is-pointer #cursor-hand, #vertex-cursor.is-input #cursor-input { display: block; }
-        #vertex-cursor.is-pointer { width: 24px; height: 24px; transform: translate3d(calc(var(--x) - 8px), calc(var(--y) - 2px), 0); }
-        #vertex-cursor.is-input { width: 22px; height: 24px; transform: translate3d(calc(var(--x) - 10px), calc(var(--y) - 12px), 0); }
-        html.preview-capture #vertex-cursor { display: none; }
 
         /* --- SYSTEM WIDGETS --- */
         .system-widgets { position: absolute; right: 34px; bottom: 30px; z-index: 30; display: flex; align-items: center; justify-content: center; gap: 15px; opacity: 0; transform: translateY(6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); mix-blend-mode: difference; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
@@ -93,7 +87,7 @@
 
         /* --- HIGH TRANSPARENCY CUSTOMIZATION WINDOW --- */
         #custom-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.44);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.62);
             display: flex; align-items: center; justify-content: center; 
             z-index: 9800; opacity: 0; visibility: hidden; transition: 0.42s ease; backdrop-filter: blur(10px);
         }
@@ -101,20 +95,20 @@
         
         #custom-window {
             width: min(520px, calc(100vw - 32px)); max-height: min(82vh, 680px); overflow: hidden;
-            background: #07080b; backdrop-filter: blur(18px) saturate(140%);
+            background: #010103; backdrop-filter: blur(16px) saturate(130%);
             border: 1px solid rgba(255,255,255,0.12); border-radius: 6px;
             transform: scale(0.96) translateY(8px); transition: 0.42s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 28px 80px rgba(0,0,0,0.52); font-family: 'Manrope', sans-serif;
         }
         #custom-overlay.active #custom-window { transform: scale(1) translateY(0); }
-        .window-titlebar { height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: #0b0c10; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .window-titlebar { height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: #030305; border-bottom: 1px solid rgba(255,255,255,0.07); }
         .window-titlebar span { font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.78); }
         .window-close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: rgba(255,255,255,0.66); display: grid; place-items: center; }
         .window-close:hover { background: rgba(160,166,178,0.22); color: rgba(255,255,255,0.96); }
         .window-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 0.95; }
         .custom-content { padding: 18px; overflow-y: auto; max-height: calc(min(82vh, 680px) - 38px); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.28) transparent; }
-        .custom-preview { position: relative; height: 170px; border-radius: 6px; overflow: hidden; background: var(--bg) center/cover; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035); }
-        .custom-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.34)); }
+        .custom-preview { position: relative; height: 170px; border-radius: 6px; overflow: hidden; background: var(--bg) center/cover; border: 1px solid rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025); }
+        .custom-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.48)); }
         .preview-clock { position: absolute; top: 18px; left: 0; right: 0; z-index: 1; text-align: center; opacity: var(--time-opacity); }
         .preview-date { font-size: 0.52rem; font-weight: 300; color: rgba(199,203,212,0.76); }
         .preview-time { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-size: 2.3rem; font-weight: 360; line-height: 0.92; color: rgba(255,255,255,0.72); letter-spacing: 0.02em; }
@@ -136,7 +130,7 @@
         .submit-btn { width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center; color: rgba(9,11,16,0.92); background: rgba(255,255,255,0.9); box-shadow: 0 8px 22px rgba(0,0,0,0.24), inset 0 -1px 0 rgba(0,0,0,0.08); transition: transform 0.22s ease, background 0.22s ease; }
         .submit-btn:hover { transform: translateX(1px) scale(1.03); background: #fff; }
         .submit-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .login-utilities { display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 14px; color: rgba(255,255,255,0.64); }
+        .login-utilities { position: fixed; right: 34px; bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 0; color: rgba(255,255,255,0.64); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
         .login-utility { width: 26px; height: 26px; border: 0; background: transparent; color: currentColor; display: grid; place-items: center; padding: 0; transition: color 0.22s ease, transform 0.22s ease; }
         .login-utility:hover, .login-utility.active { color: rgba(255,255,255,0.92); transform: translateY(-1px); }
         .login-utility svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
@@ -147,6 +141,7 @@
         #login-module.active { opacity: 1; visibility: visible; }
         @media (max-width: 720px) {
             .system-widgets { right: 18px; bottom: 24px; gap: 14px; }
+            .login-utilities { right: 18px; bottom: 24px; gap: 14px; }
             .widget-icon { width: 22px; height: 22px; }
             .battery-widget { width: 28px; }
             .lock-indicator { margin-top: 9.5vh; }
@@ -184,10 +179,10 @@
         <div class="system-widgets" aria-label="System status">
             <button class="widget-icon" id="network-widget" type="button" title="Network" aria-label="Network status">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4.8 9.3c4.3-3.5 10.1-3.5 14.4 0"></path>
-                    <path d="M8 12.8c2.5-2 5.5-2 8 0"></path>
-                    <path d="M10.9 16.2c0.9-0.6 1.8-0.6 2.7 0"></path>
-                    <path d="M12 19h0"></path>
+                    <circle cx="12" cy="12" r="8.2"></circle>
+                    <path d="M4.8 12h14.4"></path>
+                    <path d="M12 3.8c2.1 2.3 3.1 5 3.1 8.2s-1 5.9-3.1 8.2"></path>
+                    <path d="M12 3.8c-2.1 2.3-3.1 5-3.1 8.2s1 5.9 3.1 8.2"></path>
                 </svg>
             </button>
             <button class="widget-icon battery-widget" type="button" title="Battery" aria-label="Battery status">
@@ -260,10 +255,10 @@
                 </button>
                 <button class="login-utility" type="button" title="Network" aria-label="Network">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M4.8 9.3c4.3-3.5 10.1-3.5 14.4 0"></path>
-                        <path d="M8 12.8c2.5-2 5.5-2 8 0"></path>
-                        <path d="M10.9 16.2c0.9-0.6 1.8-0.6 2.7 0"></path>
-                        <path d="M12 19h0"></path>
+                        <circle cx="12" cy="12" r="8.2"></circle>
+                        <path d="M4.8 12h14.4"></path>
+                        <path d="M12 3.8c2.1 2.3 3.1 5 3.1 8.2s-1 5.9-3.1 8.2"></path>
+                        <path d="M12 3.8c-2.1 2.3-3.1 5-3.1 8.2s1 5.9 3.1 8.2"></path>
                     </svg>
                 </button>
                 <button class="login-utility" type="button" title="Power" aria-label="Power">
@@ -275,14 +270,6 @@
             </div>
             <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
         </div>
-    </div>
-
-    <div id="vertex-cursor" class="is-default" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-            <path id="cursor-arrow" d="M3 2.6v18.2l5.2-5.1 3.2 6.3 3-1.5-3.2-6.1h7.3L3 2.6z" fill="currentColor"></path>
-            <path id="cursor-hand" d="M7.6 12.3V5.4a1.2 1.2 0 0 1 2.4 0v5.1M10 10.2V4.1a1.2 1.2 0 0 1 2.4 0v6M12.4 10.3V5.2a1.2 1.2 0 0 1 2.4 0v6.1M14.8 11.6V7.4a1.2 1.2 0 0 1 2.4 0v7.8c0 3.1-2.1 5.4-5.2 5.4H10c-1.5 0-2.7-0.6-3.7-1.7L3.9 16a1.3 1.3 0 0 1 1.8-1.8l1.9 1.7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path id="cursor-input" d="M9 3h6M12 3v18M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-        </svg>
     </div>
 
     <script>
@@ -310,7 +297,6 @@
             initGestures();
             initBatteryWidget();
             initNetworkWidget();
-            initVertexCursor();
 
             // Hint Swap
             const hintEl = document.getElementById('hint-text');
@@ -480,33 +466,6 @@
             update();
             window.addEventListener('online', update);
             window.addEventListener('offline', update);
-        }
-
-        function initVertexCursor() {
-            const cursor = document.getElementById('vertex-cursor');
-            if (!cursor || !matchMedia('(pointer: fine)').matches) return;
-
-            const pointerTargets = 'button, .chip, .slider, input[type="range"], [onclick], a';
-            const inputTargets = 'input:not([type="range"]), textarea, [contenteditable="true"]';
-
-            const setMode = (target) => {
-                cursor.classList.remove('is-default', 'is-pointer', 'is-input');
-                if (target.closest(inputTargets)) {
-                    cursor.classList.add('is-input');
-                } else if (target.closest(pointerTargets)) {
-                    cursor.classList.add('is-pointer');
-                } else {
-                    cursor.classList.add('is-default');
-                }
-            };
-
-            window.addEventListener('pointermove', (event) => {
-                cursor.style.setProperty('--x', `${event.clientX}px`);
-                cursor.style.setProperty('--y', `${event.clientY}px`);
-                setMode(event.target);
-            });
-            window.addEventListener('pointerenter', () => cursor.style.opacity = '1');
-            window.addEventListener('pointerleave', () => cursor.style.opacity = '0');
         }
 
         function showLogin() {
