@@ -88,13 +88,12 @@
         .battery-body { width: 21px; height: 10px; border: 1.35px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
         .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; border-radius: 1px; background: currentColor; }
         .battery-fill { display: block; width: var(--battery-level, 72%); height: 100%; border-radius: 1.5px; background: currentColor; }
-        .side-rail { position: absolute; right: 32px; top: 50%; z-index: 31; display: flex; flex-direction: column; gap: 14px; opacity: 0; transform: translate(8px, -50%); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); mix-blend-mode: difference; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
-        body.lock-ready .side-rail { opacity: 1; transform: translate(0, -50%); }
-        body.login-open .side-rail, body.custom-open .side-rail { opacity: 0; transform: translate(8px, -50%); pointer-events: none; }
+        .side-rail { display: none; }
         .rail-button { width: 28px; height: 28px; border: 0; display: grid; place-items: center; color: rgba(255,255,255,0.62); background: transparent; padding: 0; transition: transform 0.22s ease, color 0.22s ease; }
         .rail-button:hover, .rail-button.active { transform: translateX(-1px); color: rgba(255,255,255,0.95); }
         .rail-button svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .rail-button.power-trigger svg { width: 20px; height: 20px; }
+        #accessibility-toggle { display: none; }
         .utility-popover { position: fixed; right: 76px; top: 50%; z-index: 9805; width: 236px; padding: 7px 0; overflow: hidden; border-radius: 7px; background: linear-gradient(180deg, rgba(91,104,112,0.68), rgba(80,84,64,0.58) 58%, rgba(14,79,104,0.62)); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 26px 70px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.14); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); opacity: 0; transform: translateY(calc(-50% + 10px)) scale(0.985); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; }
         .utility-popover.active { opacity: 1; transform: translateY(-50%) scale(1); visibility: visible; }
         .utility-option { width: 100%; min-height: 28px; border: 0; background: transparent; color: rgba(255,255,255,0.92); display: flex; align-items: center; gap: 8px; padding: 0 14px; font-family: var(--font); font-size: 0.78rem; font-weight: 520; text-align: left; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
@@ -780,6 +779,7 @@
             closeAccessibilityPanel();
             closePowerPanel();
             const panel = document.getElementById('utility-popover');
+            if (!panel) return;
             panel.classList.toggle('active');
         }
 
@@ -811,6 +811,7 @@
             closeNetworkPanel();
             closeAccessibilityPanel();
             const panel = document.getElementById('power-popover');
+            if (!panel) return;
             const active = !panel.classList.contains('active');
             panel.classList.toggle('active', active);
             document.querySelectorAll('.power-trigger').forEach((button) => button.classList.toggle('active', active));
