@@ -56,7 +56,7 @@
         @keyframes spinnerRotate { to { transform: rotate(360deg); } }
 
         /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.08); filter: blur(34px) brightness(0.78); opacity: 0; cursor: var(--cursor-default); }
+        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.35s cubic-bezier(0.16, 1, 0.3, 1), transform 1.35s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.18); filter: blur(46px) brightness(0.62); opacity: 0; cursor: var(--cursor-default); }
         body.lock-ready, body.lock-ready * { cursor: var(--cursor-default); }
         button, button *, .chip, .chip *, .slider, input[type="range"], [onclick], [onclick] *, [role="button"], [role="button"] * { cursor: var(--cursor-pointer) !important; }
         input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
@@ -64,7 +64,7 @@
         .cursor-wait-spinner { position: fixed; left: 0; top: 0; z-index: 10020; width: 22px; height: 22px; opacity: 0; pointer-events: none; transform: translate(14px, 14px); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.62)); transition: opacity 0.16s ease; }
         .cursor-wait-spinner::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,0.16); border-top-color: rgba(255,255,255,0.86); animation: spinnerRotate 0.82s linear infinite; }
         .cursor-wait-spinner.active { opacity: 0.92; }
-        .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; animation: lockReveal 1.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; animation: lockReveal 1.95s cubic-bezier(0.16, 1, 0.3, 1) both; }
         .wp-lock-blur { filter: blur(18px) brightness(0.68) !important; transform: scale(1.02) !important; }
         body.accessibility-boost #wp-cont { filter: contrast(1.18) brightness(0.88) saturate(0.86) !important; }
         body.accessibility-boost #time-text { color: rgba(255,255,255,0.94); text-shadow: 0 2px 10px rgba(0,0,0,0.34), 0 0 18px rgba(255,255,255,0.08); }
@@ -88,27 +88,39 @@
         .battery-body { width: 21px; height: 10px; border: 1.35px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
         .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; border-radius: 1px; background: currentColor; }
         .battery-fill { display: block; width: var(--battery-level, 72%); height: 100%; border-radius: 1.5px; background: currentColor; }
-        .utility-popover { position: absolute; right: 34px; bottom: 76px; z-index: 34; width: 244px; background: rgba(2,2,3,0.96); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 22px 58px rgba(0,0,0,0.68), inset 0 1px 0 rgba(255,255,255,0.03); opacity: 0; transform: translateY(10px) scale(0.98); visibility: hidden; transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s; }
-        .utility-popover.active { opacity: 1; transform: translateY(0) scale(1); visibility: visible; }
-        .utility-option { width: 100%; min-height: 42px; border: 0; background: transparent; color: rgba(255,255,255,0.78); display: flex; align-items: center; gap: 10px; padding: 0 13px; font-family: var(--font); font-size: 0.78rem; font-weight: 350; text-align: left; }
-        .utility-option:hover, .utility-option.active { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.95); }
-        .utility-option svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .utility-option .menu-arrow { margin-left: auto; opacity: 0.48; font-size: 0.84rem; }
-        .utility-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
-        .accessibility-popover { right: 292px; bottom: 76px; width: 212px; padding: 4px 0; background: rgba(5,5,6,0.985); }
-        .accessibility-popover .utility-option { min-height: 34px; padding: 0 10px; gap: 8px; font-size: 0.74rem; }
-        .accessibility-popover .utility-option:hover, .accessibility-popover .utility-option.active { background: rgba(0,95,184,0.82); color: rgba(255,255,255,0.98); }
+        .side-rail { position: absolute; right: 32px; top: 50%; z-index: 31; display: flex; flex-direction: column; gap: 14px; opacity: 0; transform: translate(8px, -50%); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); mix-blend-mode: difference; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
+        body.lock-ready .side-rail { opacity: 1; transform: translate(0, -50%); }
+        body.login-open .side-rail, body.custom-open .side-rail { opacity: 0; transform: translate(8px, -50%); pointer-events: none; }
+        .rail-button { width: 28px; height: 28px; border: 0; display: grid; place-items: center; color: rgba(255,255,255,0.62); background: transparent; padding: 0; transition: transform 0.22s ease, color 0.22s ease; }
+        .rail-button:hover, .rail-button.active { transform: translateX(-1px); color: rgba(255,255,255,0.95); }
+        .rail-button svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .rail-button.power-trigger svg { width: 20px; height: 20px; }
+        .utility-popover { position: fixed; right: 76px; top: 50%; z-index: 9805; width: 236px; padding: 7px 0; overflow: hidden; border-radius: 7px; background: linear-gradient(180deg, rgba(91,104,112,0.68), rgba(80,84,64,0.58) 58%, rgba(14,79,104,0.62)); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 26px 70px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.14); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); opacity: 0; transform: translateY(calc(-50% + 10px)) scale(0.985); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; }
+        .utility-popover.active { opacity: 1; transform: translateY(-50%) scale(1); visibility: visible; }
+        .utility-option { width: 100%; min-height: 28px; border: 0; background: transparent; color: rgba(255,255,255,0.92); display: flex; align-items: center; gap: 8px; padding: 0 14px; font-family: var(--font); font-size: 0.78rem; font-weight: 520; text-align: left; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+        .utility-option:hover, .utility-option.active { background: rgba(0,108,215,0.86); color: rgba(255,255,255,1); }
+        .utility-option svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .utility-option .shortcut { margin-left: auto; color: rgba(255,255,255,0.58); font-size: 0.72rem; font-weight: 400; }
+        .utility-divider { height: 1px; background: rgba(255,255,255,0.14); margin: 6px 0; }
+        .accessibility-popover { right: 132px; top: auto; bottom: 76px; width: 210px; transform: translateY(10px) scale(0.985); }
+        .accessibility-popover.active { transform: translateY(0) scale(1); }
+        .accessibility-popover .utility-option { min-height: 28px; padding: 0 14px; gap: 8px; font-size: 0.76rem; }
         .accessibility-popover .utility-option svg { width: 14px; height: 14px; }
-        .power-popover { right: 34px; bottom: 76px; width: 190px; padding: 4px 0; background: rgba(5,5,6,0.985); }
-        .power-popover .utility-option { min-height: 36px; padding: 0 11px; gap: 9px; font-size: 0.76rem; }
-        .power-popover .utility-option:hover { background: rgba(0,95,184,0.82); color: rgba(255,255,255,0.98); }
+        .power-popover { right: 76px; top: auto; bottom: 34px; width: 184px; transform: translateY(10px) scale(0.985); }
+        .power-popover.active { transform: translateY(0) scale(1); }
+        .power-popover .utility-option { min-height: 33px; padding: 0 10px; gap: 9px; font-size: 0.74rem; }
         .power-popover .utility-option svg { width: 15px; height: 15px; }
         .power-status { min-height: 18px; padding: 3px 11px 7px; font-size: 0.68rem; color: rgba(255,255,255,0.48); }
-        .network-popover { right: 78px; width: 260px; }
+        body.login-open .accessibility-popover, body.login-open .network-popover, body.login-open .power-popover { left: 34px; right: auto; top: auto; bottom: 76px; }
+        body.login-open .accessibility-popover { width: 210px; }
+        body.login-open .network-popover { width: 236px; }
+        body.login-open .power-popover { width: 184px; }
+        .network-popover { right: 78px; top: auto; bottom: 76px; width: 236px; transform: translateY(10px) scale(0.985); }
+        .network-popover.active { transform: translateY(0) scale(1); }
         .network-title { padding: 12px 13px 8px; font-size: 0.68rem; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(255,255,255,0.48); }
         .network-list { padding: 0 0 6px; }
-        .network-row { min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 13px; color: rgba(255,255,255,0.8); font-size: 0.78rem; }
-        .network-row:hover { background: rgba(255,255,255,0.075); }
+        .network-row { min-height: 28px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 14px; color: rgba(255,255,255,0.92); font-size: 0.76rem; font-weight: 520; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
+        .network-row:hover { background: rgba(0,95,184,0.78); color: rgba(255,255,255,0.98); }
         .network-row span:last-child { color: rgba(255,255,255,0.42); font-size: 0.7rem; }
 
         /* --- CLOCK --- */
@@ -137,19 +149,19 @@
         
         #custom-window {
             position: absolute; top: 50%; left: 50%; width: min(560px, calc(100vw - 32px)); max-height: min(82vh, 720px); overflow: hidden;
-            background: #010101; backdrop-filter: none;
+            background: rgba(9,9,11,0.58); backdrop-filter: blur(30px) saturate(155%); -webkit-backdrop-filter: blur(30px) saturate(155%);
             border: 1px solid rgba(255,255,255,0.12); border-radius: 0;
             transform: translate(-50%, calc(-50% + 12px)); transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 34px 96px rgba(0,0,0,0.78), 0 8px 24px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.025); font-family: 'Manrope', sans-serif;
         }
         #custom-overlay.active #custom-window { transform: translate(-50%, -50%); }
-        .window-titlebar { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: #020202; border-bottom: 1px solid rgba(255,255,255,0.08); user-select: none; }
+        .window-titlebar { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: rgba(3,3,4,0.72); border-bottom: 1px solid rgba(255,255,255,0.08); user-select: none; }
         .window-titlebar[data-drag-handle] { cursor: var(--cursor-pointer); }
         .window-titlebar span { font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.78); }
         .window-close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: rgba(255,255,255,0.66); display: grid; place-items: center; }
         .window-close:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.96); }
         .window-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 0.95; }
-        .custom-content { padding: 18px; overflow-y: auto; max-height: calc(min(82vh, 720px) - 40px); background: linear-gradient(180deg, rgba(7,7,8,0.99), rgba(3,3,4,0.99)); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.24) transparent; }
+        .custom-content { padding: 18px; overflow-y: auto; max-height: calc(min(82vh, 720px) - 40px); background: linear-gradient(180deg, rgba(12,12,14,0.58), rgba(4,4,6,0.68)); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.24) transparent; }
         .custom-preview { position: relative; height: 170px; border-radius: 0; overflow: hidden; background: var(--bg) center/cover; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.018); }
         .custom-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.48)); }
         .preview-clock { position: absolute; top: 18px; left: 0; right: 0; z-index: 1; text-align: center; opacity: var(--time-opacity); }
@@ -185,15 +197,15 @@
         .submit-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .password-error { min-height: 18px; margin-top: 8px; font-size: 0.72rem; font-weight: 350; color: rgba(255,108,108,0.92); opacity: 0; transform: translateY(-2px); transition: opacity 0.22s ease, transform 0.22s ease; }
         .password-error.active { opacity: 1; transform: translateY(0); }
-        .login-utilities { position: fixed; right: 34px; bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 0; color: rgba(255,255,255,0.64); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
-        .login-utility { width: 26px; height: 26px; border: 0; background: transparent; color: currentColor; display: grid; place-items: center; padding: 0; transition: color 0.22s ease, transform 0.22s ease; }
+        .login-utilities { position: fixed; left: 34px; bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 0; color: rgba(255,255,255,0.64); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
+        .login-utility { width: 32px; height: 32px; border: 0; background: transparent; color: currentColor; display: grid; place-items: center; padding: 0; transition: color 0.22s ease, transform 0.22s ease; }
         .login-utility:hover, .login-utility.active { color: rgba(255,255,255,0.92); transform: translateY(-1px); }
-        .login-utility svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .login-utility svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .error-shake { border-color: #ff4d4d !important; background: rgba(255, 77, 77, 0.2) !important; animation: shake 0.4s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         @keyframes lockReveal {
-            0% { opacity: 0; transform: scale(1.13); filter: blur(36px) brightness(0.58); }
-            45% { opacity: 1; filter: blur(12px) brightness(0.78); }
+            0% { opacity: 0; transform: scale(1.18); filter: blur(46px) brightness(0.58); }
+            44% { opacity: 1; filter: blur(18px) brightness(0.8); }
             100% { opacity: 1; transform: scale(1); filter: blur(0) brightness(1); }
         }
         @keyframes uiFloatIn {
@@ -204,13 +216,25 @@
 
         #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
         #login-module.active { opacity: 1; visibility: visible; }
+        .login-card { text-align: center; opacity: 0; transform: scale(0.88); filter: blur(24px); transition: opacity 0.62s ease, transform 0.72s cubic-bezier(0.16, 1, 0.3, 1), filter 0.72s cubic-bezier(0.16, 1, 0.3, 1); }
+        #login-module.active .login-card { opacity: 1; transform: scale(1); filter: blur(0); }
+        .power-transition { position: fixed; inset: 0; z-index: 22000; display: grid; place-items: center; background: #000; color: rgba(255,255,255,0.82); opacity: 0; visibility: hidden; transition: opacity 0.55s ease, visibility 0.55s ease; cursor: none; }
+        body.powering-down, body.powering-down * { cursor: none !important; }
+        .power-transition.active { opacity: 1; visibility: visible; }
+        .power-transition-content { text-align: center; transform: scale(0.98); opacity: 0; transition: opacity 0.55s 0.16s ease, transform 0.7s 0.16s cubic-bezier(0.16, 1, 0.3, 1); }
+        .power-transition.active .power-transition-content { opacity: 1; transform: scale(1); }
+        .power-transition-title { font-family: 'SF Pro Display', 'Manrope', sans-serif; font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; letter-spacing: 0.28em; text-transform: uppercase; }
+        .power-transition-subtitle { margin-top: 12px; font-size: 0.74rem; font-weight: 300; letter-spacing: 0.08em; color: rgba(255,255,255,0.48); }
+        .power-cut-line { width: 96px; height: 1px; margin: 22px auto 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.68), transparent); opacity: 0.72; }
         @media (max-width: 720px) {
             .system-widgets { right: 18px; bottom: 24px; gap: 14px; }
-            .login-utilities { right: 18px; bottom: 24px; gap: 14px; }
-            .utility-popover { right: 18px; bottom: 72px; width: min(244px, calc(100vw - 36px)); }
-            .network-popover { right: 54px; width: min(260px, calc(100vw - 36px)); }
-            .accessibility-popover { right: 18px; bottom: 122px; width: min(212px, calc(100vw - 36px)); }
-            .power-popover { right: 18px; bottom: 72px; width: min(190px, calc(100vw - 36px)); }
+            .side-rail { right: 18px; gap: 12px; }
+            .login-utilities { left: 18px; bottom: 24px; gap: 14px; }
+            .utility-popover { right: 54px; top: 50%; width: min(214px, calc(100vw - 72px)); }
+            .network-popover { right: 54px; bottom: 72px; width: min(236px, calc(100vw - 72px)); }
+            .accessibility-popover { right: 92px; bottom: 72px; width: min(210px, calc(100vw - 36px)); }
+            .power-popover { right: 54px; bottom: 26px; width: min(184px, calc(100vw - 72px)); }
+            body.login-open .accessibility-popover, body.login-open .network-popover, body.login-open .power-popover { left: 18px; bottom: 72px; }
             .widget-icon { width: 22px; height: 22px; }
             .widget-icon svg { width: 15px; height: 15px; }
             #network-widget svg { width: 18px; height: 18px; }
@@ -253,12 +277,12 @@
             <div class="home-bar"></div>
         </div>
         <div class="system-widgets" aria-label="System status">
-            <button class="widget-icon" id="utility-toggle" type="button" title="Controls" aria-label="Controls" onclick="toggleUtilityPanel(event)">
+            <button class="widget-icon" id="accessibility-toggle" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibilityMenu(event)">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 7h14"></path>
-                    <path d="M5 17h14"></path>
-                    <circle cx="9" cy="7" r="2"></circle>
-                    <circle cx="15" cy="17" r="2"></circle>
+                    <circle cx="12" cy="4.5" r="1.8"></circle>
+                    <path d="M5.6 8.2h12.8"></path>
+                    <path d="M12 8.4v5.1"></path>
+                    <path d="M8.5 20.5l3.5-7 3.5 7"></path>
                 </svg>
             </button>
             <button class="widget-icon" id="network-widget" type="button" title="Network" aria-label="Network status" onclick="toggleNetworkPanel(event)">
@@ -273,6 +297,22 @@
                 <span class="battery-body" aria-hidden="true"><span class="battery-fill" id="battery-fill"></span></span>
             </button>
         </div>
+        <div class="side-rail" aria-label="Lock screen actions">
+            <button class="rail-button" id="utility-toggle" type="button" title="Controls" aria-label="Controls" onclick="toggleUtilityPanel(event)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 7h14"></path>
+                    <path d="M5 17h14"></path>
+                    <circle cx="9" cy="7" r="2"></circle>
+                    <circle cx="15" cy="17" r="2"></circle>
+                </svg>
+            </button>
+            <button class="rail-button power-trigger" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3v7"></path>
+                    <path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path>
+                </svg>
+            </button>
+        </div>
         <div class="utility-popover" id="utility-popover" aria-label="Vertex controls">
             <button class="utility-option" type="button" onclick="openPanel()">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -282,16 +322,13 @@
                     <circle cx="15" cy="16" r="2"></circle>
                 </svg>
                 <span>Appearance</span>
+                <span class="shortcut">⌘,</span>
             </button>
-            <button class="utility-option" id="accessibility-option" type="button" onclick="toggleAccessibilityMenu(event)">
+            <button class="utility-option" type="button" onclick="toggleWidget('hint', this)">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="4.5" r="1.8"></circle>
-                    <path d="M5.6 8.2h12.8"></path>
-                    <path d="M12 8.4v5.1"></path>
-                    <path d="M8.5 20.5l3.5-7 3.5 7"></path>
+                    <path d="M6 6h12v9H9l-3 3z"></path>
                 </svg>
-                <span>Accessibility</span>
-                <span class="menu-arrow">›</span>
+                <span>Quiet Hints</span>
             </button>
             <div class="utility-divider"></div>
             <button class="utility-option" type="button" onclick="showLogin()">
@@ -300,6 +337,7 @@
                     <path d="M13 6l6 6-6 6"></path>
                 </svg>
                 <span>Open Login</span>
+                <span class="shortcut">↩</span>
             </button>
         </div>
         <div class="utility-popover network-popover" id="network-popover" aria-label="Networks">
@@ -395,7 +433,7 @@
     </div>
 
     <div id="login-module">
-        <div style="text-align:center">
+        <div class="login-card">
             <div style="width:46px; height:46px; background:rgba(255,255,255,0.1); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px);">
                 <img src="../../assets/branding/vertex-logo.png" alt="Vertex logo" style="width:28px;height:28px;object-fit:contain;">
             </div>
@@ -411,29 +449,54 @@
             </div>
             <div class="password-error" id="password-error" role="status" aria-live="polite"></div>
             <div class="login-utilities" aria-label="Login utilities">
-                <button class="login-utility" id="power-toggle" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
+                <button class="login-utility" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibilityMenu(event)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="4.5" r="1.8"></circle>
+                        <path d="M5.6 8.2h12.8"></path>
+                        <path d="M12 8.4v5.1"></path>
+                        <path d="M8.5 20.5l3.5-7 3.5 7"></path>
+                    </svg>
+                </button>
+                <button class="login-utility network-utility" type="button" title="Network" aria-label="Network" onclick="toggleNetworkPanel(event)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8.2"></circle>
+                        <path d="M4.8 12h14.4"></path>
+                        <path d="M12 3.8c2.1 2.3 3.1 5 3.1 8.2s-1 5.9-3.1 8.2"></path>
+                        <path d="M12 3.8c-2.1 2.3-3.1 5-3.1 8.2s1 5.9 3.1 8.2"></path>
+                    </svg>
+                </button>
+                <button class="login-utility power-trigger" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 3v7"></path>
                         <path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path>
                     </svg>
                 </button>
             </div>
-            <div class="utility-popover power-popover" id="power-popover" aria-label="Power menu">
-                <button class="utility-option" type="button" onclick="requestPowerAction('sleep')">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 15.5A7.5 7.5 0 0 1 8.5 5a7.5 7.5 0 1 0 10.5 10.5z"></path></svg>
-                    <span>Sleep</span>
-                </button>
-                <button class="utility-option" type="button" onclick="requestPowerAction('restart')">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.1-5"></path><path d="M19 5v7h-7"></path></svg>
-                    <span>Restart</span>
-                </button>
-                <button class="utility-option" type="button" onclick="requestPowerAction('shutdown')">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v7"></path><path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path></svg>
-                    <span>Shut down</span>
-                </button>
-                <div class="power-status" id="power-status">Vertex power controls</div>
-            </div>
             <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
+        </div>
+    </div>
+
+    <div class="utility-popover power-popover" id="power-popover" aria-label="Power menu">
+        <button class="utility-option" type="button" onclick="requestPowerAction('sleep')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 15.5A7.5 7.5 0 0 1 8.5 5a7.5 7.5 0 1 0 10.5 10.5z"></path></svg>
+            <span>Sleep</span>
+        </button>
+        <button class="utility-option" type="button" onclick="requestPowerAction('restart')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.1-5"></path><path d="M19 5v7h-7"></path></svg>
+            <span>Restart</span>
+        </button>
+        <button class="utility-option" type="button" onclick="requestPowerAction('shutdown')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v7"></path><path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path></svg>
+            <span>Shut down</span>
+        </button>
+        <div class="power-status" id="power-status">Vertex power controls</div>
+    </div>
+
+    <div class="power-transition" id="power-transition" aria-hidden="true">
+        <div class="power-transition-content">
+            <div class="power-transition-title" id="power-transition-title">POWER CUT</div>
+            <div class="power-transition-subtitle" id="power-transition-subtitle">Vertex shutdown sequence</div>
+            <div class="power-cut-line"></div>
         </div>
     </div>
 
@@ -631,11 +694,11 @@
                     closeNetworkPanel();
                 }
                 const accessibility = document.getElementById('accessibility-popover');
-                if (accessibility.classList.contains('active') && !e.target.closest('#accessibility-popover') && !e.target.closest('#accessibility-option')) {
+                if (accessibility.classList.contains('active') && !e.target.closest('#accessibility-popover') && !e.target.closest('#accessibility-toggle')) {
                     closeAccessibilityPanel();
                 }
                 const power = document.getElementById('power-popover');
-                if (power.classList.contains('active') && !e.target.closest('#power-popover') && !e.target.closest('#power-toggle')) {
+                if (power.classList.contains('active') && !e.target.closest('#power-popover') && !e.target.closest('.power-trigger')) {
                     closePowerPanel();
                 }
                 if (appearanceOpening) return;
@@ -649,6 +712,7 @@
                 const customOpen = document.getElementById('custom-overlay').classList.contains('active');
                 const loginOpen = document.getElementById('login-module').classList.contains('active');
                 if (e.key === 'Escape' && customOpen) closePanel();
+                if (e.key === 'Escape') closePowerPanel();
                 if (appearanceOpening) return;
                 if (e.key === 'Enter' && !customOpen && !loginOpen) showLogin();
             });
@@ -747,31 +811,49 @@
             closeNetworkPanel();
             closeAccessibilityPanel();
             const panel = document.getElementById('power-popover');
-            const button = document.getElementById('power-toggle');
             const active = !panel.classList.contains('active');
             panel.classList.toggle('active', active);
-            if (button) button.classList.toggle('active', active);
+            document.querySelectorAll('.power-trigger').forEach((button) => button.classList.toggle('active', active));
         }
 
         function closePowerPanel() {
             const panel = document.getElementById('power-popover');
-            const button = document.getElementById('power-toggle');
             if (panel) panel.classList.remove('active');
-            if (button) button.classList.remove('active');
+            document.querySelectorAll('.power-trigger').forEach((button) => button.classList.remove('active'));
         }
 
         function requestPowerAction(action) {
             const status = document.getElementById('power-status');
             const labels = { sleep: 'Sleep requested', restart: 'Restart requested', shutdown: 'Shutdown requested' };
             if (status) status.textContent = labels[action] || 'Power action requested';
-            window.setTimeout(closePowerPanel, 900);
+            window.setTimeout(() => showPowerTransition(action), 420);
+        }
+
+        function showPowerTransition(action) {
+            closeUtilityPanel();
+            closeNetworkPanel();
+            closeAccessibilityPanel();
+            closePowerPanel();
+            const overlay = document.getElementById('power-transition');
+            const title = document.getElementById('power-transition-title');
+            const subtitle = document.getElementById('power-transition-subtitle');
+            const states = {
+                sleep: ['SLEEP', 'Vertex display power suspended'],
+                restart: ['RESTARTING', 'Vertex kernel handoff sequence'],
+                shutdown: ['POWER CUT', 'Vertex shutdown sequence']
+            };
+            const [nextTitle, nextSubtitle] = states[action] || states.shutdown;
+            title.textContent = nextTitle;
+            subtitle.textContent = nextSubtitle;
+            document.body.classList.add('powering-down');
+            overlay.classList.add('active');
         }
 
         function toggleAccessibilityMenu(event) {
             if (event) event.stopPropagation();
             closeNetworkPanel();
             const panel = document.getElementById('accessibility-popover');
-            const trigger = document.getElementById('accessibility-option');
+            const trigger = document.getElementById('accessibility-toggle');
             const active = !panel.classList.contains('active');
             panel.classList.toggle('active', active);
             if (trigger) trigger.classList.toggle('active', active);
@@ -779,7 +861,7 @@
 
         function closeAccessibilityPanel() {
             const panel = document.getElementById('accessibility-popover');
-            const trigger = document.getElementById('accessibility-option');
+            const trigger = document.getElementById('accessibility-toggle');
             if (panel) panel.classList.remove('active');
             if (trigger) trigger.classList.remove('active');
         }
@@ -968,7 +1050,7 @@
             clearPasswordError();
             document.body.classList.add('login-open');
             document.getElementById('wp-cont').classList.add('wp-lock-blur');
-            document.getElementById('login-module').classList.add('active');
+            requestAnimationFrame(() => document.getElementById('login-module').classList.add('active'));
         }
         function hideLogin() {
             document.body.classList.remove('login-open');
