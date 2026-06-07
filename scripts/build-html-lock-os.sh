@@ -19,6 +19,9 @@ PACKAGES=(
     systemd-sysv
     dbus
     udev
+    iproute2
+    network-manager
+    wireless-tools
     linux-image-amd64
     initramfs-tools
     ca-certificates
@@ -158,12 +161,11 @@ exec "$CHROMIUM" \
     --autoplay-policy=no-user-gesture-required \
     --disable-infobars \
     --disable-translate \
-    --disable-gpu \
-    --disable-gpu-compositing \
-    --disable-accelerated-2d-canvas \
-    --disable-zero-copy \
-    --disable-dev-shm-usage \
-    --disable-features=TranslateUI \
+    --disable-background-networking \
+    --disable-component-update \
+    --disable-renderer-backgrounding \
+    --disable-background-timer-throttling \
+    --disable-features=TranslateUI,MediaRouter,OptimizationHints \
     --hide-scrollbars \
     --window-size="${VERTEX_LOCKSCREEN_WIDTH:-1280},${VERTEX_LOCKSCREEN_HEIGHT:-720}" \
     --force-device-scale-factor=1 \

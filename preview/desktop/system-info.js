@@ -1,0 +1,1 @@
+window.VERTEX_SYSTEM_INFO = window.VERTEX_SYSTEM_INFO || {};

@@ -1,6 +1,6 @@
 param(
-    [string]$Memory = "3072M",
-    [int]$Cpus = 2,
+    [string]$Memory = "4096M",
+    [int]$Cpus = 4,
     [int]$Width = 1280,
     [int]$Height = 720,
     [switch]$NoAudio

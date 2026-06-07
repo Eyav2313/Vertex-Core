@@ -12,13 +12,15 @@ Rectangle {
     property bool bootDone: false
     property bool loginVisible: false
     property bool customizeVisible: false
+    property bool customizePending: false
+    property bool powerMenuVisible: false
     property bool accessibilityBoost: false
     property bool loginError: false
     property int shakeOffset: 0
     property int hintIndex: 0
     property string selectedFont: config.font
     property string backgroundSource: config.background
-    readonly property var hints: ["Click anywhere to unlock", "Press Enter to unlock", "Hold anywhere to personalize"]
+    readonly property var hints: ["Click anywhere to unlock", "Press Enter to unlock", "Open controls from the lower-right"]
 
     function refreshClock() {
         var now = new Date()
@@ -48,8 +50,18 @@ Rectangle {
     }
 
     Timer {
+        id: customizeOpenTimer
+        interval: 2000
+        repeat: false
+        onTriggered: {
+            root.customizePending = false
+            root.customizeVisible = true
+        }
+    }
+
+    Timer {
         interval: 4000
-        running: root.bootDone && !root.loginVisible && !root.customizeVisible
+        running: root.bootDone && !root.loginVisible && !root.customizeVisible && !root.customizePending
         repeat: true
         onTriggered: root.hintIndex = (root.hintIndex + 1) % root.hints.length
     }
@@ -60,7 +72,7 @@ Rectangle {
         source: root.backgroundSource
         fillMode: Image.PreserveAspectCrop
         opacity: root.bootDone ? 1 : 0
-        scale: root.loginVisible || root.customizeVisible ? 1.05 : (root.bootDone ? 1 : 1.1)
+        scale: root.loginVisible ? 1.05 : (root.bootDone ? 1 : 1.1)
 
         Behavior on opacity { NumberAnimation { duration: 1200; easing.type: Easing.OutCubic } }
         Behavior on scale { NumberAnimation { duration: 1200; easing.type: Easing.OutCubic } }
@@ -68,7 +80,7 @@ Rectangle {
 
     Rectangle {
         anchors.fill: parent
-        color: root.loginVisible || root.customizeVisible ? "#99000000" : (root.accessibilityBoost ? "#33000000" : "#22000000")
+        color: root.loginVisible ? "#99000000" : (root.accessibilityBoost ? "#33000000" : "#22000000")
         opacity: root.bootDone ? 1 : 0
         Behavior on color { ColorAnimation { duration: 550; easing.type: Easing.OutCubic } }
     }
@@ -77,14 +89,9 @@ Rectangle {
         anchors.fill: parent
         enabled: root.bootDone
         onClicked: {
-            if (!root.customizeVisible && !root.loginVisible) {
+            if (!root.customizeVisible && !root.customizePending && !root.loginVisible) {
                 root.loginVisible = true
                 passwordBox.forceActiveFocus()
-            }
-        }
-        onPressAndHold: {
-            if (!root.loginVisible) {
-                root.customizeVisible = true
             }
         }
     }
@@ -180,7 +187,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 25
         spacing: 10
-        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible ? 1 : 0
+        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible && !root.customizePending ? 1 : 0
         z: 10
 
         Behavior on opacity { NumberAnimation { duration: 800; easing.type: Easing.OutCubic } }
@@ -209,7 +216,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         spacing: 15
-        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible ? 0.78 : 0
+        opacity: root.bootDone && !root.loginVisible && !root.customizeVisible && !root.customizePending ? 0.78 : 0
         z: 11
 
         Behavior on opacity { NumberAnimation { duration: 700; easing.type: Easing.OutCubic } }
@@ -220,8 +227,46 @@ Rectangle {
 
             Canvas {
                 anchors.centerIn: parent
-                width: 17
-                height: 17
+                width: 15
+                height: 15
+                onPaint: {
+                    var ctx = getContext("2d")
+                    ctx.clearRect(0, 0, width, height)
+                    ctx.strokeStyle = "#FFFFFFFF"
+                    ctx.lineWidth = 1.45
+                    ctx.lineCap = "round"
+                    ctx.shadowColor = "rgba(0, 0, 0, 0.55)"
+                    ctx.shadowBlur = 4
+                    ctx.beginPath()
+                    ctx.moveTo(2.2, 4.5)
+                    ctx.lineTo(12.8, 4.5)
+                    ctx.moveTo(2.2, 10.5)
+                    ctx.lineTo(12.8, 10.5)
+                    ctx.stroke()
+                    ctx.beginPath()
+                    ctx.arc(6, 4.5, 1.6, 0, Math.PI * 2)
+                    ctx.arc(10, 10.5, 1.6, 0, Math.PI * 2)
+                    ctx.stroke()
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    root.customizePending = true
+                    customizeOpenTimer.restart()
+                }
+            }
+        }
+
+        Item {
+            width: 24
+            height: 24
+
+            Canvas {
+                anchors.centerIn: parent
+                width: 18
+                height: 18
                 onPaint: {
                     var ctx = getContext("2d")
                     ctx.clearRect(0, 0, width, height)
@@ -232,15 +277,15 @@ Rectangle {
                     ctx.shadowColor = "rgba(0, 0, 0, 0.55)"
                     ctx.shadowBlur = 4
                     ctx.beginPath()
-                    ctx.arc(8.5, 8.5, 6.3, 0, Math.PI * 2)
-                    ctx.moveTo(2.2, 8.5)
-                    ctx.lineTo(14.8, 8.5)
-                    ctx.moveTo(8.5, 2.2)
-                    ctx.bezierCurveTo(10.3, 4.2, 11.1, 6.3, 11.1, 8.5)
-                    ctx.bezierCurveTo(11.1, 10.7, 10.3, 12.8, 8.5, 14.8)
-                    ctx.moveTo(8.5, 2.2)
-                    ctx.bezierCurveTo(6.7, 4.2, 5.9, 6.3, 5.9, 8.5)
-                    ctx.bezierCurveTo(5.9, 10.7, 6.7, 12.8, 8.5, 14.8)
+                    ctx.arc(9, 9, 6.6, 0, Math.PI * 2)
+                    ctx.moveTo(2.4, 9)
+                    ctx.lineTo(15.6, 9)
+                    ctx.moveTo(9, 2.4)
+                    ctx.bezierCurveTo(10.9, 4.4, 11.7, 6.7, 11.7, 9)
+                    ctx.bezierCurveTo(11.7, 11.3, 10.9, 13.6, 9, 15.6)
+                    ctx.moveTo(9, 2.4)
+                    ctx.bezierCurveTo(7.1, 4.4, 6.3, 6.7, 6.3, 9)
+                    ctx.bezierCurveTo(6.3, 11.3, 7.1, 13.6, 9, 15.6)
                     ctx.stroke()
                 }
             }
@@ -283,6 +328,48 @@ Rectangle {
     }
 
     Item {
+        id: customizeWait
+        width: 24
+        height: 24
+        anchors.right: parent.right
+        anchors.rightMargin: 34
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        opacity: root.customizePending ? 0.9 : 0
+        visible: opacity > 0
+        z: 12
+
+        Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+        RotationAnimation on rotation {
+            running: root.customizePending
+            loops: Animation.Infinite
+            from: 0
+            to: 360
+            duration: 820
+        }
+
+        Canvas {
+            anchors.centerIn: parent
+            width: 22
+            height: 22
+            onPaint: {
+                var ctx = getContext("2d")
+                ctx.clearRect(0, 0, width, height)
+                ctx.lineWidth = 2
+                ctx.lineCap = "round"
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.18)"
+                ctx.beginPath()
+                ctx.arc(11, 11, 8, 0, Math.PI * 2)
+                ctx.stroke()
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.86)"
+                ctx.beginPath()
+                ctx.arc(11, 11, 8, -Math.PI / 2, Math.PI / 5)
+                ctx.stroke()
+            }
+        }
+    }
+
+    Item {
         id: loginModule
         anchors.fill: parent
         visible: opacity > 0
@@ -293,6 +380,7 @@ Rectangle {
 
         MouseArea {
             anchors.fill: parent
+            onClicked: root.powerMenuVisible = false
         }
 
         Column {
@@ -316,6 +404,15 @@ Rectangle {
                     fillMode: Image.PreserveAspectFit
                     smooth: true
                 }
+            }
+
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: userBox.currentText && userBox.currentText.length > 0 ? userBox.currentText : "Nuren Zarif Haque"
+                color: "#C8FFFFFF"
+                font.family: root.selectedFont
+                font.pixelSize: 14
+                font.weight: Font.Normal
             }
 
             ComboBox {
@@ -359,6 +456,9 @@ Rectangle {
                     font.pixelSize: 13
                     color: "#FFFFFFFF"
                     focus: root.loginVisible
+                    onTextChanged: {
+                        if (root.loginError && text.length > 0) root.loginError = false
+                    }
                     onAccepted: root.doLogin()
                 }
 
@@ -400,6 +500,17 @@ Rectangle {
                 }
             }
 
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: root.loginError ? "Incorrect password. Try again." : ""
+                color: "#EAFF6C6C"
+                font.family: root.selectedFont
+                font.pixelSize: 11
+                opacity: root.loginError ? 1 : 0
+
+                Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+            }
+
             Row {
                 parent: loginModule
                 anchors.right: loginModule.right
@@ -408,72 +519,6 @@ Rectangle {
                 anchors.bottomMargin: 30
                 spacing: 18
                 z: 12
-
-                Item {
-                    width: 26
-                    height: 26
-                    opacity: root.accessibilityBoost ? 0.95 : 0.66
-
-                    Canvas {
-                        anchors.centerIn: parent
-                        width: 16
-                        height: 16
-                        onPaint: {
-                            var ctx = getContext("2d")
-                            ctx.clearRect(0, 0, width, height)
-                            ctx.strokeStyle = "#FFFFFFFF"
-                            ctx.lineWidth = 1.35
-                            ctx.lineCap = "round"
-                            ctx.lineJoin = "round"
-                            ctx.beginPath()
-                            ctx.arc(8, 3, 1.5, 0, Math.PI * 2)
-                            ctx.moveTo(2.6, 6)
-                            ctx.lineTo(13.4, 6)
-                            ctx.moveTo(8, 6.1)
-                            ctx.lineTo(8, 10)
-                            ctx.moveTo(5.2, 15)
-                            ctx.lineTo(8, 10)
-                            ctx.lineTo(10.8, 15)
-                            ctx.stroke()
-                        }
-                    }
-
-                    MouseArea {
-                        anchors.fill: parent
-                        onClicked: root.accessibilityBoost = !root.accessibilityBoost
-                    }
-                }
-
-                Item {
-                    width: 26
-                    height: 26
-                    opacity: 0.66
-
-                    Canvas {
-                        anchors.centerIn: parent
-                        width: 17
-                        height: 17
-                        onPaint: {
-                            var ctx = getContext("2d")
-                            ctx.clearRect(0, 0, width, height)
-                            ctx.strokeStyle = "#FFFFFFFF"
-                            ctx.lineWidth = 1.35
-                            ctx.lineCap = "round"
-                            ctx.lineJoin = "round"
-                            ctx.beginPath()
-                            ctx.arc(8.5, 8.5, 6.3, 0, Math.PI * 2)
-                            ctx.moveTo(2.2, 8.5)
-                            ctx.lineTo(14.8, 8.5)
-                            ctx.moveTo(8.5, 2.2)
-                            ctx.bezierCurveTo(10.3, 4.2, 11.1, 6.3, 11.1, 8.5)
-                            ctx.bezierCurveTo(11.1, 10.7, 10.3, 12.8, 8.5, 14.8)
-                            ctx.moveTo(8.5, 2.2)
-                            ctx.bezierCurveTo(6.7, 4.2, 5.9, 6.3, 5.9, 8.5)
-                            ctx.bezierCurveTo(5.9, 10.7, 6.7, 12.8, 8.5, 14.8)
-                            ctx.stroke()
-                        }
-                    }
-                }
 
                 Item {
                     width: 26
@@ -503,7 +548,74 @@ Rectangle {
 
                     MouseArea {
                         anchors.fill: parent
-                        onClicked: sddm.powerOff()
+                        onClicked: root.powerMenuVisible = !root.powerMenuVisible
+                    }
+                }
+            }
+
+            Rectangle {
+                parent: loginModule
+                width: 190
+                height: 126
+                anchors.right: loginModule.right
+                anchors.rightMargin: 34
+                anchors.bottom: loginModule.bottom
+                anchors.bottomMargin: 74
+                color: "#FC050506"
+                border.width: 1
+                border.color: "#20FFFFFF"
+                opacity: root.powerMenuVisible ? 1 : 0
+                visible: opacity > 0
+                z: 30
+
+                Behavior on opacity { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    spacing: 0
+
+                    Repeater {
+                        model: [
+                            { label: "Sleep", action: "sleep" },
+                            { label: "Restart", action: "restart" },
+                            { label: "Shut down", action: "shutdown" }
+                        ]
+
+                        delegate: Rectangle {
+                            property bool hovered: false
+                            width: parent.width
+                            height: 36
+                            color: hovered ? "#D0005FB8" : "transparent"
+
+                            Text {
+                                anchors.left: parent.left
+                                anchors.leftMargin: 12
+                                anchors.verticalCenter: parent.verticalCenter
+                                text: modelData.label
+                                color: "#E8FFFFFF"
+                                font.family: root.selectedFont
+                                font.pixelSize: 12
+                                font.weight: Font.Normal
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                onEntered: parent.hovered = true
+                                onExited: parent.hovered = false
+                                onClicked: {
+                                    root.powerMenuVisible = false
+                                    if (modelData.action === "sleep") {
+                                        sddm.suspend()
+                                    } else if (modelData.action === "restart") {
+                                        sddm.reboot()
+                                    } else {
+                                        sddm.powerOff()
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -519,6 +631,7 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         root.loginVisible = false
+                        root.powerMenuVisible = false
                         passwordBox.text = ""
                     }
                 }
@@ -543,11 +656,12 @@ Rectangle {
             id: customWindow
             width: Math.min(520, root.width - 48)
             height: Math.min(620, root.height - 96)
-            radius: 6
-            anchors.centerIn: parent
-            color: "#FF010103"
+            radius: 0
+            x: Math.max(16, (root.width - width) / 2)
+            y: Math.max(16, (root.height - height) / 2)
+            color: "#FF010101"
             border.width: 1
-            border.color: "#22FFFFFF"
+            border.color: "#24FFFFFF"
             clip: true
 
             Column {
@@ -556,8 +670,17 @@ Rectangle {
 
                 Rectangle {
                     width: parent.width
-                    height: 38
-                    color: "#FF020204"
+                    height: 40
+                    color: "#FF020202"
+
+                    MouseArea {
+                        anchors.fill: parent
+                        drag.target: customWindow
+                        drag.minimumX: 8
+                        drag.maximumX: root.width - customWindow.width - 8
+                        drag.minimumY: 8
+                        drag.maximumY: root.height - customWindow.height - 8
+                    }
 
                     Text {
                         anchors.left: parent.left
@@ -579,7 +702,7 @@ Rectangle {
                         anchors.rightMargin: 6
                         anchors.verticalCenter: parent.verticalCenter
                         radius: 15
-                        color: hovered ? "#38A0A6B2" : "transparent"
+                        color: hovered ? "#1EFFFFFF" : "transparent"
 
                         Canvas {
                             anchors.centerIn: parent
@@ -620,7 +743,7 @@ Rectangle {
 
                 Item {
                     width: parent.width
-                    height: parent.height - 38
+                    height: parent.height - 40
 
                     Column {
                         anchors.fill: parent
@@ -630,9 +753,9 @@ Rectangle {
                         Rectangle {
                             width: parent.width
                             height: 166
-                            radius: 6
+                            radius: 0
                             clip: true
-                            color: "#050507"
+                            color: "#030303"
                             border.width: 1
                             border.color: "#12FFFFFF"
 
@@ -719,9 +842,9 @@ Rectangle {
                                     width: 76
                                     height: 30
                                     radius: 6
-                                    color: "#12FFFFFF"
+                                    color: "#0EFFFFFF"
                                     border.width: 1
-                                    border.color: "#12FFFFFF"
+                                    border.color: "#18FFFFFF"
 
                                     Text {
                                         anchors.centerIn: parent
@@ -756,9 +879,9 @@ Rectangle {
                                     width: 82
                                     height: 30
                                     radius: 6
-                                    color: "#12FFFFFF"
+                                    color: "#0EFFFFFF"
                                     border.width: 1
-                                    border.color: "#12FFFFFF"
+                                    border.color: "#18FFFFFF"
 
                                     Text {
                                         anchors.centerIn: parent
@@ -849,7 +972,7 @@ Rectangle {
 
     Timer {
         id: clearError
-        interval: 500
+        interval: 2500
         repeat: false
         onTriggered: root.loginError = false
     }

@@ -51,8 +51,8 @@ exec qemu-system-x86_64 \
     "${CPU_ARGS[@]}" \
     "${AUDIO_ARGS[@]}" \
     -name Vertex-HTML-Lock \
-    -m "${VERTEX_HTML_LOCK_MEMORY:-3072M}" \
-    -smp "${VERTEX_HTML_LOCK_CPUS:-2}" \
+    -m "${VERTEX_HTML_LOCK_MEMORY:-4096M}" \
+    -smp "${VERTEX_HTML_LOCK_CPUS:-4}" \
     -machine pc \
     -accel tcg,thread=multi \
     -kernel "$KERNEL" \
