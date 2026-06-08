@@ -1,0 +1,23 @@
+@font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../../assets/fonts/manrope/Manrope-ExtraLight.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../../assets/fonts/manrope/Manrope-Light.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../../assets/fonts/manrope/Manrope-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../../assets/fonts/manrope/Manrope-Bold.ttf') format('truetype'); }
+        @font-face { font-family: 'Vertex Clock'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
+        @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 500; font-display: swap; src: url('../../../assets/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF') format('opentype'); }
+        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../../assets/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF') format('opentype'); }
+        :root { 
+            --font: 'Manrope', 'Inter', 'Outfit', sans-serif;
+            --accent: #fff; 
+            --bg: url('../../../assets/wallpapers/vertex-lock-background.png'); 
+            --f-size: clamp(6rem, 24vw, 10rem);
+            --time-opacity: 1;
+            --cursor-default: url('../../../assets/cursors/vertex-arrow.png') 1 1, auto;
+            --cursor-pointer: url('../../../assets/cursors/vertex-hand.png') 11 2, pointer;
+            --cursor-input: url('../../../assets/cursors/vertex-input.png') 10 12, text;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }

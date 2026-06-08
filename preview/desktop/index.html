@@ -4,254 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vertex Lock Screen | Zarif</title>
-    <style>
-        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-ExtraLight.ttf') format('truetype'); }
-        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Light.ttf') format('truetype'); }
-        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Regular.ttf') format('truetype'); }
-        @font-face { font-family: 'Manrope'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/manrope/Manrope-Bold.ttf') format('truetype'); }
-        @font-face { font-family: 'Vertex Clock'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
-        @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 300 700; font-display: swap; src: url('../../assets/fonts/space-grotesk/SpaceGrotesk-Variable.ttf') format('truetype'); }
-        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 200; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
-        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 300; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
-        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 400; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype'); }
-        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 500; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYMEDIUM.OTF') format('opentype'); }
-        @font-face { font-family: 'SF Pro Display'; font-style: normal; font-weight: 700; font-display: swap; src: url('../../assets/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF') format('opentype'); }
-        :root { 
-            --font: 'Manrope', 'Inter', 'Outfit', sans-serif;
-            --accent: #fff; 
-            --bg: url('../../assets/wallpapers/vertex-lock-background.png'); 
-            --f-size: clamp(6rem, 24vw, 10rem);
-            --time-opacity: 1;
-            --cursor-default: url('../../assets/cursors/vertex-arrow.png') 1 1, auto;
-            --cursor-pointer: url('../../assets/cursors/vertex-hand.png') 11 2, pointer;
-            --cursor-input: url('../../assets/cursors/vertex-input.png') 10 12, text;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
-        body, html { height: 100vh; overflow: hidden; background: #000; font-family: var(--font); color: white; }
-
-        /* --- BOOT SCREEN --- */
-        @property --logo-shine-stop {
-            syntax: '<percentage>';
-            inherits: false;
-            initial-value: 0%;
-        }
-        #boot-screen { position: fixed; inset: 0; z-index: 10000; overflow: hidden; background: #000; cursor: none; transition: opacity 0.85s ease-out; }
-        #boot-screen.boot-exit { opacity: 0; }
-        .boot-console { position: absolute; left: 22px; top: 18px; width: min(620px, calc(100vw - 44px)); font-family: "Lucida Console", Consolas, "Courier New", monospace; font-size: 10px; line-height: 1.45; letter-spacing: 0; color: rgba(206,216,224,0.68); opacity: 0; transition: opacity 0.28s ease; text-shadow: 0 0 1px rgba(255,255,255,0.18); white-space: pre-wrap; image-rendering: pixelated; }
-        .boot-console.active { opacity: 1; }
-        .boot-console-line { opacity: 0; transform: translateY(2px); animation: bootLineIn 0.18s steps(2, end) forwards; }
-        .loading-stage { position: absolute; inset: 0; display: grid; place-items: center; }
-        .boot-logo { position: relative; width: 88px; height: 88px; opacity: 0; display: grid; place-items: center; isolation: isolate; transition: opacity 0.5s ease-out; }
-        .vertex-logo { width: 88px; height: 88px; object-fit: contain; }
-        #boot-screen.logo-phase .boot-logo { opacity: 1; }
-        .boot-logo::after { --logo-shine-stop: 0%; content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom right, transparent calc(var(--logo-shine-stop) - 15%), rgba(255,255,255,0.6) var(--logo-shine-stop), transparent calc(var(--logo-shine-stop) + 15%)); -webkit-mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; mask: url('../../assets/branding/vertex-logo.png') center / contain no-repeat; opacity: 0; pointer-events: none; }
-        #boot-screen.logo-phase .boot-logo::after { animation: logoShine 2s linear infinite; opacity: 1; }
-        .loading-spinner { position: absolute; left: 50%; bottom: 80px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%; border: 2px solid rgba(96,96,96,0.2); border-top-color: #606060; opacity: 0; animation: spinnerRotate 0.85s linear infinite; transition: opacity 0.5s ease-out; }
-        #boot-screen.spinner-phase .loading-spinner { opacity: 1; }
-        @keyframes bootLineIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes logoShine {
-            from { --logo-shine-stop: 0%; }
-            to { --logo-shine-stop: 100%; }
-        }
-        @keyframes spinnerRotate { to { transform: rotate(360deg); } }
-
-        /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.35s cubic-bezier(0.16, 1, 0.3, 1), transform 1.35s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.18); filter: blur(46px) brightness(0.62); opacity: 0; cursor: var(--cursor-default); }
-        body.lock-ready, body.lock-ready * { cursor: var(--cursor-default); }
-        button, button *, .chip, .chip *, .slider, input[type="range"], [onclick], [onclick] *, [role="button"], [role="button"] * { cursor: var(--cursor-pointer) !important; }
-        input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
-        body.wait-cursor-active, body.wait-cursor-active * { cursor: var(--cursor-default) !important; }
-        .cursor-wait-spinner { position: fixed; left: 0; top: 0; z-index: 10020; width: 22px; height: 22px; opacity: 0; pointer-events: none; transform: translate(14px, 14px); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.62)); transition: opacity 0.16s ease; }
-        .cursor-wait-spinner::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,255,255,0.16); border-top-color: rgba(255,255,255,0.86); animation: spinnerRotate 0.82s linear infinite; }
-        .cursor-wait-spinner.active { opacity: 0.92; }
-        .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; animation: lockReveal 1.95s cubic-bezier(0.16, 1, 0.3, 1) both; }
-        .wp-lock-blur { filter: blur(18px) brightness(0.68) !important; transform: scale(1.02) !important; }
-        body.accessibility-boost #wp-cont { filter: contrast(1.18) brightness(0.88) saturate(0.86) !important; }
-        body.accessibility-boost #time-text { color: rgba(255,255,255,0.94); text-shadow: 0 2px 10px rgba(0,0,0,0.34), 0 0 18px rgba(255,255,255,0.08); }
-        body.accessibility-boost #date-text, body.accessibility-boost .unlock-msg { color: rgba(255,255,255,0.9); }
-        body.a11y-large .unlock-msg, body.a11y-large .utility-option, body.a11y-large .network-row { font-size: 0.92rem; }
-        body.a11y-large #date-text { font-size: clamp(0.9rem, 1.35vw, 1rem); }
-        body.keyboard-focus button:focus-visible, body.keyboard-focus input:focus-visible, body.keyboard-focus .chip:focus-visible { outline: 2px solid rgba(0,120,215,0.9); outline-offset: 3px; }
-        body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-        html.preview-capture #boot-screen { display: none; }
-        html.preview-capture #wp-cont { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; }
-
-        /* --- SYSTEM WIDGETS --- */
-        .system-widgets { position: absolute; right: 34px; bottom: 30px; z-index: 30; display: flex; align-items: center; justify-content: center; gap: 15px; opacity: 0; transform: translateY(6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); mix-blend-mode: difference; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
-        body.lock-ready .system-widgets { opacity: 1; transform: translateY(0); }
-        body.login-open .system-widgets, body.custom-open .system-widgets { opacity: 0; transform: translateY(6px); pointer-events: none; }
-        .widget-icon { width: 24px; height: 24px; border: 0; display: grid; place-items: center; color: rgba(255,255,255,0.66); background: transparent; padding: 0; transition: transform 0.22s ease, color 0.22s ease; }
-        .widget-icon:hover, .widget-icon.active { transform: translateY(-1px); color: rgba(255,255,255,0.9); }
-        .widget-icon svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        #network-widget svg { width: 18px; height: 18px; }
-        .battery-widget { width: 30px; }
-        .battery-body { width: 21px; height: 10px; border: 1.35px solid currentColor; border-radius: 3px; padding: 2px; position: relative; opacity: 0.94; }
-        .battery-body::after { content: ""; position: absolute; right: -4px; top: 3px; width: 2px; height: 4px; border-radius: 1px; background: currentColor; }
-        .battery-fill { display: block; width: var(--battery-level, 72%); height: 100%; border-radius: 1.5px; background: currentColor; }
-        .side-rail { display: none; }
-        .rail-button { width: 28px; height: 28px; border: 0; display: grid; place-items: center; color: rgba(255,255,255,0.62); background: transparent; padding: 0; transition: transform 0.22s ease, color 0.22s ease; }
-        .rail-button:hover, .rail-button.active { transform: translateX(-1px); color: rgba(255,255,255,0.95); }
-        .rail-button svg { width: 17px; height: 17px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .rail-button.power-trigger svg { width: 20px; height: 20px; }
-        #accessibility-toggle { display: none; }
-        .utility-popover { position: fixed; right: 76px; top: 50%; z-index: 9805; width: 236px; padding: 7px 0; overflow: hidden; border-radius: 7px; background: linear-gradient(180deg, rgba(91,104,112,0.68), rgba(80,84,64,0.58) 58%, rgba(14,79,104,0.62)); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 26px 70px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.14); backdrop-filter: blur(28px) saturate(145%); -webkit-backdrop-filter: blur(28px) saturate(145%); opacity: 0; transform: translateY(calc(-50% + 10px)) scale(0.985); visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s; }
-        .utility-popover.active { opacity: 1; transform: translateY(-50%) scale(1); visibility: visible; }
-        .utility-option { width: 100%; min-height: 28px; border: 0; background: transparent; color: rgba(255,255,255,0.92); display: flex; align-items: center; gap: 8px; padding: 0 14px; font-family: var(--font); font-size: 0.78rem; font-weight: 520; text-align: left; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
-        .utility-option:hover, .utility-option.active { background: rgba(0,108,215,0.86); color: rgba(255,255,255,1); }
-        .utility-option svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .utility-option .shortcut { margin-left: auto; color: rgba(255,255,255,0.58); font-size: 0.72rem; font-weight: 400; }
-        .utility-divider { height: 1px; background: rgba(255,255,255,0.14); margin: 6px 0; }
-        .accessibility-popover { right: 132px; top: auto; bottom: 76px; width: 210px; transform: translateY(10px) scale(0.985); }
-        .accessibility-popover.active { transform: translateY(0) scale(1); }
-        .accessibility-popover .utility-option { min-height: 28px; padding: 0 14px; gap: 8px; font-size: 0.76rem; }
-        .accessibility-popover .utility-option svg { width: 14px; height: 14px; }
-        .power-popover { right: 76px; top: auto; bottom: 34px; width: 184px; transform: translateY(10px) scale(0.985); }
-        .power-popover.active { transform: translateY(0) scale(1); }
-        .power-popover .utility-option { min-height: 33px; padding: 0 10px; gap: 9px; font-size: 0.74rem; }
-        .power-popover .utility-option svg { width: 15px; height: 15px; }
-        .power-status { min-height: 18px; padding: 3px 11px 7px; font-size: 0.68rem; color: rgba(255,255,255,0.48); }
-        body.login-open .accessibility-popover, body.login-open .network-popover, body.login-open .power-popover { left: 34px; right: auto; top: auto; bottom: 76px; }
-        body.login-open .accessibility-popover { width: 210px; }
-        body.login-open .network-popover { width: 236px; }
-        body.login-open .power-popover { width: 184px; }
-        .network-popover { right: 78px; top: auto; bottom: 76px; width: 236px; transform: translateY(10px) scale(0.985); }
-        .network-popover.active { transform: translateY(0) scale(1); }
-        .network-title { padding: 12px 13px 8px; font-size: 0.68rem; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(255,255,255,0.48); }
-        .network-list { padding: 0 0 6px; }
-        .network-row { min-height: 28px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 14px; color: rgba(255,255,255,0.92); font-size: 0.76rem; font-weight: 520; text-shadow: 0 1px 2px rgba(0,0,0,0.35); }
-        .network-row:hover { background: rgba(0,95,184,0.78); color: rgba(255,255,255,0.98); }
-        .network-row span:last-child { color: rgba(255,255,255,0.42); font-size: 0.7rem; }
-
-        /* --- CLOCK --- */
-        .lock-indicator { position: relative; width: fit-content; margin: 10vh auto 0; padding: 10px 18px 12px; text-align: center; pointer-events: none; transition: 0.6s; z-index: 10; opacity: var(--time-opacity); }
-        .lock-indicator::before { content: ""; position: absolute; inset: -18px -34px -16px; z-index: -1; background: radial-gradient(ellipse at center, rgba(7,10,16,0.24), rgba(7,10,16,0.08) 44%, transparent 72%); opacity: 0.72; pointer-events: none; }
-        #date-text { font-family: 'Manrope', sans-serif; font-size: clamp(0.78rem, 1.18vw, 0.9rem); font-weight: 300; letter-spacing: 0.24px; color: rgba(255,255,255,0.72); margin-bottom: 2px; text-shadow: 0 2px 14px rgba(0,0,0,0.24); mix-blend-mode: difference; }
-        #time-text { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-style: normal; font-weight: 360; font-size: clamp(4.55rem, 9.8vw, 6.05rem); color: rgba(255, 255, 255, 0.74); letter-spacing: 0.015em; line-height: 0.91; font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; text-shadow: 0 2px 8px rgba(0,0,0,0.16), 0 12px 28px rgba(0,0,0,0.18), 0 0 10px rgba(255,255,255,0.035); mix-blend-mode: difference; }
-        body.hide-date #date-text, body.hide-date .preview-date { display: none; }
-        body.hide-hint .unlock-msg { display: none; }
-        body.hide-homebar .home-bar, body.hide-homebar .preview-bar { display: none; }
-        body.hide-network #network-widget, body.hide-network .network-utility { display: none; }
-        body.hide-battery .battery-widget { display: none; }
-        /* --- BOTTOM UI --- */
-        .bottom-shelf { position: absolute; bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .unlock-msg { font-family: var(--font); font-size: 0.85rem; font-weight: 300; opacity: 0; transform: translateY(10px); transition: 0.8s; color: rgba(255,255,255,0.7); }
-        .msg-active { opacity: 1; transform: translateY(0); }
-        .home-bar { width: 130px; height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; }
-
-        /* --- HIGH TRANSPARENCY CUSTOMIZATION WINDOW --- */
-        #custom-overlay {
-            position: fixed; inset: 0; background: transparent;
-            display: block;
-            z-index: 9800; opacity: 0; visibility: hidden; transition: opacity 0.28s ease, visibility 0.28s ease; backdrop-filter: none;
-        }
-        #custom-overlay.active { opacity: 1; visibility: visible; }
-        
-        #custom-window {
-            position: absolute; top: 50%; left: 50%; width: min(560px, calc(100vw - 32px)); max-height: min(82vh, 720px); overflow: hidden;
-            background: rgba(9,9,11,0.58); backdrop-filter: blur(30px) saturate(155%); -webkit-backdrop-filter: blur(30px) saturate(155%);
-            border: 1px solid rgba(255,255,255,0.12); border-radius: 0;
-            transform: translate(-50%, calc(-50% + 12px)); transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 34px 96px rgba(0,0,0,0.78), 0 8px 24px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.025); font-family: 'Manrope', sans-serif;
-        }
-        #custom-overlay.active #custom-window { transform: translate(-50%, -50%); }
-        .window-titlebar { height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: rgba(3,3,4,0.72); border-bottom: 1px solid rgba(255,255,255,0.08); user-select: none; }
-        .window-titlebar[data-drag-handle] { cursor: var(--cursor-pointer); }
-        .window-titlebar span { font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.78); }
-        .window-close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: rgba(255,255,255,0.66); display: grid; place-items: center; }
-        .window-close:hover { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.96); }
-        .window-close svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 0.95; }
-        .custom-content { padding: 18px; overflow-y: auto; max-height: calc(min(82vh, 720px) - 40px); background: linear-gradient(180deg, rgba(12,12,14,0.58), rgba(4,4,6,0.68)); scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.24) transparent; }
-        .custom-preview { position: relative; height: 170px; border-radius: 0; overflow: hidden; background: var(--bg) center/cover; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.018); }
-        .custom-preview::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0.48)); }
-        .preview-clock { position: absolute; top: 18px; left: 0; right: 0; z-index: 1; text-align: center; opacity: var(--time-opacity); }
-        .preview-date { font-size: 0.52rem; font-weight: 300; color: rgba(199,203,212,0.76); }
-        .preview-time { font-family: 'SF Pro Display', 'Vertex Clock', 'Space Grotesk', sans-serif; font-size: 2.3rem; font-weight: 360; line-height: 0.92; color: rgba(255,255,255,0.72); letter-spacing: 0.02em; }
-        .preview-bar { position: absolute; left: 50%; bottom: 14px; z-index: 1; width: 70px; height: 3px; border-radius: 2px; transform: translateX(-50%); background: rgba(255,255,255,0.28); }
-
-        .section-header { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.11em; opacity: 0.58; margin: 18px 0 10px; text-transform: uppercase; }
-        .chip-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
-        .chip { padding: 8px 12px; background: rgba(255,255,255,0.065); border-radius: 0; cursor: pointer; white-space: nowrap; font-size: 0.78rem; font-weight: 400; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.82); }
-        .chip:hover { background: rgba(255,255,255,0.12); }
-        .control-line { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; margin: 10px 0; color: rgba(255,255,255,0.78); font-size: 0.8rem; font-weight: 350; }
-        .control-line input[type="range"] { width: 190px; margin: 0; }
-        .toggle-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .toggle-btn { height: 34px; border: 1px solid rgba(255,255,255,0.1); border-radius: 0; background: rgba(255,255,255,0.055); color: rgba(255,255,255,0.78); font-family: var(--font); font-size: 0.76rem; font-weight: 350; }
-        .toggle-btn.active { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.94); }
-        .system-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .system-metric { min-height: 44px; border: 1px solid rgba(255,255,255,0.085); background: rgba(255,255,255,0.038); padding: 8px 10px; }
-        .metric-label { display: block; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.38); }
-        .metric-value { display: block; margin-top: 3px; font-size: 0.8rem; color: rgba(255,255,255,0.82); font-weight: 350; }
-        
-        /* Slider for Time Transparency */
-        .slider { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; -webkit-appearance: none; cursor: pointer; margin: 10px 0; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: white; border-radius: 50%; }
-
-        /* --- PASSWORD ERROR --- */
-        .profile-name { margin: 0 0 14px; font-size: 0.86rem; font-weight: 350; letter-spacing: 0.01em; color: rgba(255,255,255,0.78); text-shadow: 0 2px 14px rgba(0,0,0,0.3); }
-        .pass-group { height: 42px; display: flex; align-items: center; background: rgba(255,255,255,0.065); padding: 5px 6px 5px 16px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 14px 38px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.035); backdrop-filter: blur(18px); transition: 0.3s; }
-        #pass-in { width: 210px; height: 30px; border: 0; background: transparent; color: rgba(255,255,255,0.92); font-family: var(--font); font-size: 0.9rem; font-weight: 300; letter-spacing: 0.02em; }
-        #pass-in::placeholder { color: rgba(255,255,255,0.46); }
-        .submit-btn { width: 30px; height: 30px; border: 0; border-radius: 50%; display: grid; place-items: center; color: rgba(9,11,16,0.92); background: rgba(255,255,255,0.9); box-shadow: 0 8px 22px rgba(0,0,0,0.24), inset 0 -1px 0 rgba(0,0,0,0.08); transition: transform 0.22s ease, background 0.22s ease; }
-        .submit-btn:hover { transform: translateX(1px) scale(1.03); background: #fff; }
-        .submit-btn svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 2.1; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .password-error { min-height: 18px; margin-top: 8px; font-size: 0.72rem; font-weight: 350; color: rgba(255,108,108,0.92); opacity: 0; transform: translateY(-2px); transition: opacity 0.22s ease, transform 0.22s ease; }
-        .password-error.active { opacity: 1; transform: translateY(0); }
-        .login-utilities { position: fixed; left: 34px; bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 0; color: rgba(255,255,255,0.64); filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45)); }
-        .login-utility { width: 32px; height: 32px; border: 0; background: transparent; color: currentColor; display: grid; place-items: center; padding: 0; transition: color 0.22s ease, transform 0.22s ease; }
-        .login-utility:hover, .login-utility.active { color: rgba(255,255,255,0.92); transform: translateY(-1px); }
-        .login-utility svg { width: 21px; height: 21px; stroke: currentColor; stroke-width: 1.55; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-        .error-shake { border-color: #ff4d4d !important; background: rgba(255, 77, 77, 0.2) !important; animation: shake 0.4s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-        @keyframes lockReveal {
-            0% { opacity: 0; transform: scale(1.18); filter: blur(46px) brightness(0.58); }
-            44% { opacity: 1; filter: blur(18px) brightness(0.8); }
-            100% { opacity: 1; transform: scale(1); filter: blur(0) brightness(1); }
-        }
-        @keyframes uiFloatIn {
-            from { opacity: 0; transform: translateY(18px) scale(0.985); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        body.lock-ready .lock-indicator, body.lock-ready .bottom-shelf { animation: uiFloatIn 1.1s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
-        #login-module { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: 0.5s; }
-        #login-module.active { opacity: 1; visibility: visible; }
-        .login-card { text-align: center; opacity: 0; transform: scale(0.88); filter: blur(24px); transition: opacity 0.62s ease, transform 0.72s cubic-bezier(0.16, 1, 0.3, 1), filter 0.72s cubic-bezier(0.16, 1, 0.3, 1); }
-        #login-module.active .login-card { opacity: 1; transform: scale(1); filter: blur(0); }
-        .power-transition { position: fixed; inset: 0; z-index: 22000; display: grid; place-items: center; background: #000; color: rgba(255,255,255,0.82); opacity: 0; visibility: hidden; transition: opacity 0.55s ease, visibility 0.55s ease; cursor: none; }
-        body.powering-down, body.powering-down * { cursor: none !important; }
-        .power-transition.active { opacity: 1; visibility: visible; }
-        .power-transition-content { text-align: center; transform: scale(0.98); opacity: 0; transition: opacity 0.55s 0.16s ease, transform 0.7s 0.16s cubic-bezier(0.16, 1, 0.3, 1); }
-        .power-transition.active .power-transition-content { opacity: 1; transform: scale(1); }
-        .power-transition-title { font-family: 'SF Pro Display', 'Manrope', sans-serif; font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; letter-spacing: 0.28em; text-transform: uppercase; }
-        .power-transition-subtitle { margin-top: 12px; font-size: 0.74rem; font-weight: 300; letter-spacing: 0.08em; color: rgba(255,255,255,0.48); }
-        .power-cut-line { width: 96px; height: 1px; margin: 22px auto 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.68), transparent); opacity: 0.72; }
-        @media (max-width: 720px) {
-            .system-widgets { right: 18px; bottom: 24px; gap: 14px; }
-            .side-rail { right: 18px; gap: 12px; }
-            .login-utilities { left: 18px; bottom: 24px; gap: 14px; }
-            .utility-popover { right: 54px; top: 50%; width: min(214px, calc(100vw - 72px)); }
-            .network-popover { right: 54px; bottom: 72px; width: min(236px, calc(100vw - 72px)); }
-            .accessibility-popover { right: 92px; bottom: 72px; width: min(210px, calc(100vw - 36px)); }
-            .power-popover { right: 54px; bottom: 26px; width: min(184px, calc(100vw - 72px)); }
-            body.login-open .accessibility-popover, body.login-open .network-popover, body.login-open .power-popover { left: 18px; bottom: 72px; }
-            .widget-icon { width: 22px; height: 22px; }
-            .widget-icon svg { width: 15px; height: 15px; }
-            #network-widget svg { width: 18px; height: 18px; }
-            .battery-widget { width: 28px; }
-            #custom-window { width: min(560px, calc(100vw - 32px)); }
-            .control-line { grid-template-columns: 1fr; gap: 8px; }
-            .control-line input[type="range"], .toggle-grid, .system-grid { width: 100%; }
-            .lock-indicator { margin-top: 9.5vh; }
-            #time-text { font-size: clamp(4.2rem, 19vw, 5.5rem); letter-spacing: 0.6px; }
-            #date-text { font-size: 0.76rem; }
-            #pass-in { width: 184px; }
-        }
-    </style>
-    <script>
-        if (new URLSearchParams(window.location.search).has('preview')) {
-            document.documentElement.classList.add('preview-capture');
-        }
-    </script>
+    <link rel="stylesheet" href="shared/base.css">
+    <link rel="stylesheet" href="boot/boot.css">
+    <link rel="stylesheet" href="shared/background.css">
+    <link rel="stylesheet" href="system/status.css">
+    <link rel="stylesheet" href="lockscreen/lockscreen.css">
+    <link rel="stylesheet" href="appearance/appearance.css">
+    <link rel="stylesheet" href="login/login.css">
+    <link rel="stylesheet" href="keyboard/keyboard.css">
+    <link rel="stylesheet" href="power/power.css">
+    <link rel="stylesheet" href="shared/responsive.css">
+    <script src="shared/preview-capture.js"></script>
 </head>
 <body>
 
@@ -265,6 +28,14 @@
         <div class="loading-spinner" aria-hidden="true"></div>
     </div>
     <div class="cursor-wait-spinner" id="cursor-wait-spinner" aria-hidden="true"></div>
+    <div class="charge-aura" id="charge-aura" aria-live="polite" aria-hidden="true">
+        <div class="charge-aura-ring" aria-hidden="true"></div>
+        <div class="charge-aura-core">
+            <div class="charge-aura-icon" id="charge-aura-icon">ϟ</div>
+            <div class="charge-aura-title" id="charge-aura-title">Charging</div>
+            <div class="charge-aura-subtitle" id="charge-aura-subtitle">Power connected</div>
+        </div>
+    </div>
 
     <div id="wp-cont">
         <div class="lock-indicator" id="ui-main">
@@ -272,43 +43,24 @@
             <h1 id="time-text">00:00</h1>
         </div>
         <div class="bottom-shelf">
-            <div class="unlock-msg" id="hint-text">Click anywhere to unlock</div>
+            <div class="unlock-msg" id="hint-text">Press Enter or click the wallpaper</div>
             <div class="home-bar"></div>
         </div>
         <div class="system-widgets" aria-label="System status">
-            <button class="widget-icon" id="accessibility-toggle" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibilityMenu(event)">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="4.5" r="1.8"></circle>
-                    <path d="M5.6 8.2h12.8"></path>
-                    <path d="M12 8.4v5.1"></path>
-                    <path d="M8.5 20.5l3.5-7 3.5 7"></path>
-                </svg>
-            </button>
             <button class="widget-icon" id="network-widget" type="button" title="Network" aria-label="Network status" onclick="toggleNetworkPanel(event)">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="12" r="8.2"></circle>
-                    <path d="M4.8 12h14.4"></path>
-                    <path d="M12 3.8c2.1 2.3 3.1 5 3.1 8.2s-1 5.9-3.1 8.2"></path>
-                    <path d="M12 3.8c-2.1 2.3-3.1 5-3.1 8.2s1 5.9 3.1 8.2"></path>
+                    <path d="M4.8 8.9c4.25-3.55 10.15-3.55 14.4 0"></path>
+                    <path d="M7.85 12.05c2.55-2.05 5.75-2.05 8.3 0"></path>
+                    <path d="M10.55 15.25c.9-.62 2-.62 2.9 0"></path>
+                    <circle cx="12" cy="18" r="0.72" fill="currentColor" stroke="none"></circle>
                 </svg>
             </button>
-            <button class="widget-icon battery-widget" type="button" title="Battery" aria-label="Battery status">
-                <span class="battery-body" aria-hidden="true"><span class="battery-fill" id="battery-fill"></span></span>
-            </button>
-        </div>
-        <div class="side-rail" aria-label="Lock screen actions">
-            <button class="rail-button" id="utility-toggle" type="button" title="Controls" aria-label="Controls" onclick="toggleUtilityPanel(event)">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M5 7h14"></path>
-                    <path d="M5 17h14"></path>
-                    <circle cx="9" cy="7" r="2"></circle>
-                    <circle cx="15" cy="17" r="2"></circle>
-                </svg>
-            </button>
-            <button class="rail-button power-trigger" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 3v7"></path>
-                    <path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path>
+            <button class="widget-icon battery-widget" id="battery-widget" type="button" title="Battery" aria-label="Battery status" onclick="toggleBatteryPanel(event)">
+                <svg viewBox="0 0 28 18" aria-hidden="true">
+                    <rect class="battery-shell" x="2.4" y="4.2" width="19.8" height="9.6" rx="2.35"></rect>
+                    <path class="battery-shell" d="M24.5 7.2v3.6"></path>
+                    <rect class="battery-fill" id="battery-fill" x="5" y="6.7" width="15.1" height="4.6" rx="1.25"></rect>
+                    <path class="battery-charge" d="M14.25 3.7 10.55 9h2.65l-1.65 5.2 4.35-6.05h-2.7z"></path>
                 </svg>
             </button>
         </div>
@@ -321,7 +73,7 @@
                     <circle cx="15" cy="16" r="2"></circle>
                 </svg>
                 <span>Appearance</span>
-                <span class="shortcut">⌘,</span>
+                <span class="shortcut">Ã¢Å’Ëœ,</span>
             </button>
             <button class="utility-option" type="button" onclick="toggleWidget('hint', this)">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -336,16 +88,31 @@
                     <path d="M13 6l6 6-6 6"></path>
                 </svg>
                 <span>Open Login</span>
-                <span class="shortcut">↩</span>
+                <span class="shortcut">Ã¢â€ Â©</span>
             </button>
         </div>
         <div class="utility-popover network-popover" id="network-popover" aria-label="Networks">
-            <div class="network-title">Networks</div>
+            <div class="panel-title">Wi-Fi</div>
             <div class="network-list" id="network-list">
-                <div class="network-row"><span>Detecting network</span><span>...</span></div>
+                <div class="panel-label">Connected</div>
+                <div class="panel-row"><div class="row-text"><span class="row-title">Detecting network</span><span class="row-subtitle">Checking connection state</span></div><span class="row-status">...</span></div>
+            </div>
+        </div>
+        <div class="utility-popover battery-popover" id="battery-popover" aria-label="Battery">
+            <div class="panel-title">Battery</div>
+            <div class="battery-summary">
+                <div class="battery-percent" id="battery-percent">72%</div>
+                <div class="battery-caption" id="battery-caption">Battery available</div>
+            </div>
+            <div class="battery-meter"><span class="battery-meter-fill" id="battery-meter-fill"></span></div>
+            <div class="panel-divider"></div>
+            <div class="panel-section">
+                <div class="panel-row"><div class="row-text"><span class="row-title">Power profile</span><span class="row-subtitle">Balanced desktop mode</span></div><span class="row-status">Auto</span></div>
             </div>
         </div>
         <div class="utility-popover accessibility-popover" id="accessibility-popover" aria-label="Accessibility">
+            <div class="panel-title">Accessibility</div>
+            <div class="panel-label">Vision</div>
             <button class="utility-option" type="button" data-a11y-toggle="contrast" onclick="toggleAccessibilityFeature('contrast', this)">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 4v16"></path></svg>
                 <span>High Contrast</span>
@@ -354,6 +121,8 @@
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18h3l4-12 4 12h3"></path><path d="M8 14h8"></path></svg>
                 <span>Larger Text</span>
             </button>
+            <div class="panel-divider"></div>
+            <div class="panel-label">Interaction</div>
             <button class="utility-option" type="button" data-a11y-toggle="motion" onclick="toggleAccessibilityFeature('motion', this)">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h8"></path><path d="M10 7l5 5-5 5"></path><path d="M18 5v14"></path></svg>
                 <span>Reduce Motion</span>
@@ -433,8 +202,8 @@
 
     <div id="login-module">
         <div class="login-card">
-            <div style="width:46px; height:46px; background:rgba(255,255,255,0.1); border-radius:50%; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(20px);">
-                <img src="../../assets/branding/vertex-logo.png" alt="Vertex logo" style="width:28px;height:28px;object-fit:contain;">
+            <div class="login-avatar">
+                <img src="../../assets/branding/vertex-logo.png" alt="Vertex logo">
             </div>
             <div class="profile-name">Nuren Zarif Haque</div>
             <div class="pass-group" id="pass-wrap">
@@ -447,648 +216,159 @@
                 </button>
             </div>
             <div class="password-error" id="password-error" role="status" aria-live="polite"></div>
-            <div class="login-utilities" aria-label="Login utilities">
-                <button class="login-utility" type="button" title="Accessibility" aria-label="Accessibility" onclick="toggleAccessibilityMenu(event)">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="4.5" r="1.8"></circle>
-                        <path d="M5.6 8.2h12.8"></path>
-                        <path d="M12 8.4v5.1"></path>
-                        <path d="M8.5 20.5l3.5-7 3.5 7"></path>
-                    </svg>
-                </button>
-                <button class="login-utility network-utility" type="button" title="Network" aria-label="Network" onclick="toggleNetworkPanel(event)">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="12" r="8.2"></circle>
-                        <path d="M4.8 12h14.4"></path>
-                        <path d="M12 3.8c2.1 2.3 3.1 5 3.1 8.2s-1 5.9-3.1 8.2"></path>
-                        <path d="M12 3.8c-2.1 2.3-3.1 5-3.1 8.2s1 5.9 3.1 8.2"></path>
-                    </svg>
-                </button>
-                <button class="login-utility power-trigger" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 3v7"></path>
-                        <path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path>
-                    </svg>
-                </button>
-            </div>
-            <p onclick="hideLogin()" style="margin-top:20px; opacity:0.4; cursor:pointer;">Cancel</p>
+            <button class="cancel-btn" type="button" onclick="hideLogin()">Cancel</button>
+        </div>
+        <div class="login-actions" aria-label="Login utilities">
+            <button class="login-utility-action keyboard-trigger" type="button" title="Virtual keyboard" aria-label="Virtual keyboard" onclick="toggleVirtualKeyboard(event)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3.5" y="6.5" width="17" height="11" rx="2"></rect>
+                    <path d="M6.5 10h.01M9.5 10h.01M12.5 10h.01M15.5 10h.01M18.5 10h.01"></path>
+                    <path d="M7 14h10"></path>
+                </svg>
+            </button>
+            <button class="login-utility-action power-trigger" type="button" title="Power" aria-label="Power" onclick="togglePowerPanel(event)">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3.35v7.15"></path>
+                    <path d="M7.25 6.95a7 7 0 1 0 9.5 0"></path>
+                </svg>
+            </button>
         </div>
     </div>
 
-    <div class="utility-popover power-popover" id="power-popover" aria-label="Power menu">
-        <button class="utility-option" type="button" onclick="requestPowerAction('sleep')">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 15.5A7.5 7.5 0 0 1 8.5 5a7.5 7.5 0 1 0 10.5 10.5z"></path></svg>
-            <span>Sleep</span>
+    <div class="virtual-keyboard" id="virtual-keyboard" aria-label="Virtual keyboard" aria-hidden="true">
+        <div class="keyboard-toolbar">
+            <div class="keyboard-tools" aria-hidden="true">
+                <button class="keyboard-tool" type="button" tabindex="-1">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="10" rx="2"></rect><path d="M7 10h.01M10 10h.01M13 10h.01M16 10h.01M8 14h8"></path></svg>
+                </button>
+                <button class="keyboard-tool" type="button" tabindex="-1">
+                    <svg viewBox="0 0 24 24"><path d="M12 4v9"></path><path d="M8 9v4a4 4 0 0 0 8 0V9"></path><path d="M6 13a6 6 0 0 0 12 0"></path><path d="M12 19v2"></path></svg>
+                </button>
+                <button class="keyboard-tool" type="button" tabindex="-1">
+                    <svg viewBox="0 0 24 24"><path d="M9 5h6l1 2h2v15H6V7h2z"></path><path d="M9 11h6M9 15h5"></path></svg>
+                </button>
+            </div>
+            <div class="keyboard-title">Vertex Keyboard</div>
+            <button class="keyboard-tool keyboard-close" type="button" onclick="closeVirtualKeyboard()" aria-label="Close keyboard">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+            </button>
+        </div>
+        <div class="key-row top-row">
+            <button class="vk-key" type="button" data-hint="1" data-key="q">Q</button>
+            <button class="vk-key" type="button" data-hint="2" data-key="w">W</button>
+            <button class="vk-key" type="button" data-hint="3" data-key="e">E</button>
+            <button class="vk-key" type="button" data-hint="4" data-key="r">R</button>
+            <button class="vk-key" type="button" data-hint="5" data-key="t">T</button>
+            <button class="vk-key" type="button" data-hint="6" data-key="y">Y</button>
+            <button class="vk-key" type="button" data-hint="7" data-key="u">U</button>
+            <button class="vk-key" type="button" data-hint="8" data-key="i">I</button>
+            <button class="vk-key" type="button" data-hint="9" data-key="o">O</button>
+            <button class="vk-key" type="button" data-hint="0" data-key="p">P</button>
+            <button class="vk-key wide" type="button" data-action="backspace">Backspace</button>
+        </div>
+        <div class="key-row home-row">
+            <button class="vk-key" type="button" data-key="a">A</button>
+            <button class="vk-key" type="button" data-key="s">S</button>
+            <button class="vk-key" type="button" data-key="d">D</button>
+            <button class="vk-key" type="button" data-key="f">F</button>
+            <button class="vk-key" type="button" data-key="g">G</button>
+            <button class="vk-key" type="button" data-key="h">H</button>
+            <button class="vk-key" type="button" data-key="j">J</button>
+            <button class="vk-key" type="button" data-key="k">K</button>
+            <button class="vk-key" type="button" data-key="l">L</button>
+            <button class="vk-key" type="button" data-key="'">'</button>
+            <button class="vk-key wide" type="button" data-action="enter">Enter</button>
+        </div>
+        <div class="key-row bottom-row">
+            <button class="vk-key wide" type="button" data-action="shift">Shift</button>
+            <button class="vk-key" type="button" data-key="z">Z</button>
+            <button class="vk-key" type="button" data-key="x">X</button>
+            <button class="vk-key" type="button" data-key="c">C</button>
+            <button class="vk-key" type="button" data-key="v">V</button>
+            <button class="vk-key" type="button" data-key="b">B</button>
+            <button class="vk-key" type="button" data-key="n">N</button>
+            <button class="vk-key" type="button" data-key="m">M</button>
+            <button class="vk-key" type="button" data-key=",">,</button>
+            <button class="vk-key" type="button" data-key=".">.</button>
+            <button class="vk-key" type="button" data-key="?">?</button>
+            <button class="vk-key wide" type="button" data-action="shift">Shift</button>
+        </div>
+        <div class="key-row control-row">
+            <button class="vk-key wide" type="button" data-action="symbols">&123</button>
+            <button class="vk-key wide" type="button" data-action="control">Ctrl</button>
+            <button class="vk-key wide" type="button" data-action="emoji">:)</button>
+            <button class="vk-key space" type="button" data-key=" ">Space</button>
+            <button class="vk-key wide" type="button" data-action="left">&lt;</button>
+            <button class="vk-key wide" type="button" data-action="right">&gt;</button>
+            <button class="vk-key wide" type="button">ENG</button>
+        </div>
+    </div>
+
+    <div class="utility-popover power-popover system-menu" id="power-popover" aria-label="System menu">
+        <div class="system-volume-row" aria-label="Volume">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h3l5 4V6l-5 4z"></path><path d="M16 9.5a4 4 0 0 1 0 5"></path></svg>
+            <div class="system-slider" aria-hidden="true"></div>
+        </div>
+        <div class="system-menu-divider"></div>
+        <button class="system-menu-row" type="button" onclick="toggleNetworkPanel(event)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17h16"></path><path d="M7 13h10"></path><path d="M10 9h4"></path><circle cx="12" cy="19" r=".7" fill="currentColor" stroke="none"></circle></svg>
+            <span id="system-menu-network-label">Network</span>
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
-        <button class="utility-option" type="button" onclick="requestPowerAction('restart')">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.1-5"></path><path d="M19 5v7h-7"></path></svg>
-            <span>Restart</span>
+        <button class="system-menu-row" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v4"></path><path d="M5.6 19a8 8 0 1 1 12.8 0"></path><path d="M8.8 15.5h6.4"></path></svg>
+            <span>Balanced</span>
+            <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"></path></svg>
         </button>
-        <button class="utility-option" type="button" onclick="requestPowerAction('shutdown')">
+        <div class="system-menu-divider"></div>
+        <button class="system-menu-row" type="button" onclick="openPanel()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14"></path><path d="M5 16h14"></path><circle cx="9" cy="8" r="2"></circle><circle cx="15" cy="16" r="2"></circle></svg>
+            <span>Settings</span>
+            <span></span>
+        </button>
+        <button class="system-menu-row" type="button" onclick="showLogin()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+            <span>Lock</span>
+            <span></span>
+        </button>
+        <button class="system-menu-row" type="button" onclick="requestPowerAction('suspend')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8.5A6.5 6.5 0 0 0 16.5 18"></path><path d="M16.5 4.5A6.5 6.5 0 0 1 7 14"></path></svg>
+            <span>Suspend</span>
+            <span></span>
+        </button>
+        <button class="system-menu-row" type="button" onclick="requestPowerAction('restart')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 1 0 1.2 5"></path><path d="M18 4v5h-5"></path></svg>
+            <span>Restart...</span>
+            <span></span>
+        </button>
+        <button class="system-menu-row" type="button" onclick="requestPowerAction('shutdown')">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v7"></path><path d="M7.2 6.8a7 7 0 1 0 9.6 0"></path></svg>
-            <span>Shut down</span>
+            <span>Shut Down...</span>
+            <span></span>
         </button>
-        <div class="power-status" id="power-status">Vertex power controls</div>
+        <div class="power-status" id="power-status" hidden></div>
     </div>
 
     <div class="power-transition" id="power-transition" aria-hidden="true">
+        <div class="shutdown-console" id="shutdown-console" aria-hidden="true"></div>
         <div class="power-transition-content">
-            <div class="power-transition-title" id="power-transition-title">POWER CUT</div>
-            <div class="power-transition-subtitle" id="power-transition-subtitle">Vertex shutdown sequence</div>
+            <div class="power-transition-title" id="power-transition-title">POWER OFF</div>
+            <div class="power-transition-subtitle" id="power-transition-subtitle">System shutdown in progress</div>
             <div class="power-cut-line"></div>
         </div>
     </div>
-
     <script src="system-info.js"></script>
-    <script>
-        let hintIdx = 0;
-        const hints = ["Click anywhere to unlock", "Press Enter to unlock", "Open controls from the lower-right"];
-        document.addEventListener('DOMContentLoaded', () => {
-            const bootScreen = document.getElementById('boot-screen');
-            const wallpaper = document.getElementById('wp-cont');
-
-            runAdaptiveBoot(bootScreen, wallpaper);
-
-            updateClock();
-            setInterval(updateClock, 1000);
-            initGestures();
-            initBatteryWidget();
-            initNetworkWidget();
-            initSystemMetrics();
-            initDraggableWindow();
-
-            // Hint Swap
-            const hintEl = document.getElementById('hint-text');
-            setInterval(() => {
-                hintEl.classList.remove('msg-active');
-                setTimeout(() => {
-                    hintIdx = (hintIdx + 1) % hints.length;
-                    hintEl.innerText = hints[hintIdx];
-                    hintEl.classList.add('msg-active');
-                }, 800);
-            }, 4000);
-            hintEl.classList.add('msg-active');
-        });
-
-        function delay(ms) {
-            return new Promise((resolve) => setTimeout(resolve, ms));
-        }
-
-        function getBootProfile() {
-            const cores = navigator.hardwareConcurrency || 2;
-            const memory = navigator.deviceMemory || 4;
-            const score = (cores * 0.62) + (memory * 0.72);
-            const fast = score >= 8;
-            const slow = score < 4.5;
-
-            return {
-                consoleMs: fast ? 1450 : slow ? 2350 : 1850,
-                logoMs: fast ? 3600 : slow ? 5600 : 4400,
-                spinnerMs: fast ? 1450 : slow ? 2500 : 1850,
-                cores,
-                memory
-            };
-        }
-
-        function preloadImage(src) {
-            return new Promise((resolve) => {
-                const image = new Image();
-                image.onload = resolve;
-                image.onerror = resolve;
-                image.src = src;
-            });
-        }
-
-        async function runAdaptiveBoot(bootScreen, wallpaper) {
-            const profile = getBootProfile();
-            const consoleEl = document.getElementById('boot-console');
-            const width = Math.round(window.screen?.width || window.innerWidth);
-            const height = Math.round(window.screen?.height || window.innerHeight);
-            const bootLines = [
-                `vertex: probing ${profile.cores} logical cpu threads`,
-                `vertex: mapping display ${width}x${height} framebuffer`,
-                `vertex: loading ui compositor and input stack`,
-                `vertex: memory class ${profile.memory}gb, adaptive boot profile ready`
-            ];
-
-            consoleEl.classList.add('active');
-            for (const line of bootLines) {
-                const row = document.createElement('div');
-                row.className = 'boot-console-line';
-                row.textContent = line;
-                consoleEl.appendChild(row);
-                await delay(profile.consoleMs / bootLines.length);
-            }
-            await delay(220);
-            consoleEl.classList.remove('active');
-            await delay(260);
-
-            bootScreen.classList.add('logo-phase');
-            const assetWait = Promise.all([
-                preloadImage('../../assets/branding/vertex-logo.png'),
-                preloadImage('../../assets/wallpapers/vertex-lock-background.png')
-            ]);
-            const start = performance.now();
-            await Promise.race([assetWait, delay(1400)]);
-            await delay(Math.max(0, profile.logoMs - (performance.now() - start)));
-
-            bootScreen.classList.remove('logo-phase');
-            bootScreen.classList.add('spinner-phase');
-            await delay(profile.spinnerMs);
-
-            bootScreen.classList.add('boot-exit');
-            wallpaper.classList.add('wp-ready');
-            document.body.classList.add('lock-ready');
-            setTimeout(playBootRevealSound, 160);
-            setTimeout(() => bootScreen.style.display = 'none', 900);
-        }
-
-        function playBootRevealSound() {
-            if (window.__vertexBootRevealSoundPlayed) return;
-            window.__vertexBootRevealSoundPlayed = true;
-
-            const AudioEngine = window.AudioContext || window.webkitAudioContext;
-            if (!AudioEngine) return;
-
-            try {
-                const ctx = new AudioEngine({ latencyHint: 'interactive' });
-                const start = ctx.currentTime + 0.02;
-                const master = ctx.createGain();
-                const filter = ctx.createBiquadFilter();
-
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(5200, start);
-                filter.Q.setValueAtTime(0.2, start);
-                master.gain.setValueAtTime(0.0001, start);
-                master.gain.exponentialRampToValueAtTime(0.11, start + 0.05);
-                master.gain.exponentialRampToValueAtTime(0.0001, start + 0.82);
-                filter.connect(master);
-                master.connect(ctx.destination);
-
-                [
-                    { frequency: 392.0, delay: 0.00, duration: 0.34, gain: 0.34 },
-                    { frequency: 587.33, delay: 0.07, duration: 0.42, gain: 0.24 },
-                    { frequency: 783.99, delay: 0.16, duration: 0.48, gain: 0.16 }
-                ].forEach((voice) => {
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    const t = start + voice.delay;
-
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(voice.frequency, t);
-                    gain.gain.setValueAtTime(0.0001, t);
-                    gain.gain.exponentialRampToValueAtTime(voice.gain, t + 0.035);
-                    gain.gain.exponentialRampToValueAtTime(0.0001, t + voice.duration);
-                    osc.connect(gain);
-                    gain.connect(filter);
-                    osc.start(t);
-                    osc.stop(t + voice.duration + 0.05);
-                });
-
-                if (ctx.state === 'suspended') {
-                    ctx.resume().catch(() => {});
-                }
-                setTimeout(() => ctx.close().catch(() => {}), 1200);
-            } catch (_) {
-                window.__vertexBootRevealSoundPlayed = false;
-            }
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const time = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-            const date = new Intl.DateTimeFormat(undefined, {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric'
-            }).format(now);
-            document.getElementById('time-text').innerText = time;
-            document.getElementById('date-text').innerText = date;
-
-            const previewTime = document.getElementById('preview-time');
-            const previewDate = document.getElementById('preview-date');
-            if (previewTime) previewTime.innerText = time;
-            if (previewDate) previewDate.innerText = date;
-        }
-
-        function initGestures() {
-            let pressStarted = 0;
-            const isLockSurface = (e) => {
-                if (e.target.closest('.system-widgets') || e.target.closest('.utility-popover') || e.target.closest('#custom-window') || e.target.closest('#login-module')) return false;
-                return e.target.id === 'wp-cont' || e.target.closest('#ui-main') || e.target.closest('.bottom-shelf');
-            };
-
-            window.addEventListener('pointerdown', (e) => {
-                if (isLockSurface(e)) {
-                    pressStarted = Date.now();
-                }
-            });
-            window.addEventListener('click', (e) => {
-                const utility = document.getElementById('utility-popover');
-                if (utility.classList.contains('active') && !e.target.closest('#utility-popover') && !e.target.closest('#utility-toggle')) {
-                    closeUtilityPanel();
-                }
-                const network = document.getElementById('network-popover');
-                if (network.classList.contains('active') && !e.target.closest('#network-popover') && !e.target.closest('#network-widget')) {
-                    closeNetworkPanel();
-                }
-                const accessibility = document.getElementById('accessibility-popover');
-                if (accessibility.classList.contains('active') && !e.target.closest('#accessibility-popover') && !e.target.closest('#accessibility-toggle')) {
-                    closeAccessibilityPanel();
-                }
-                const power = document.getElementById('power-popover');
-                if (power.classList.contains('active') && !e.target.closest('#power-popover') && !e.target.closest('.power-trigger')) {
-                    closePowerPanel();
-                }
-                if (appearanceOpening) return;
-                if (!isLockSurface(e)) return;
-                if (Date.now() - pressStarted > 850) return;
-                if (!document.getElementById('custom-overlay').classList.contains('active')) {
-                    showLogin();
-                }
-            });
-            window.addEventListener('keydown', (e) => {
-                const customOpen = document.getElementById('custom-overlay').classList.contains('active');
-                const loginOpen = document.getElementById('login-module').classList.contains('active');
-                if (e.key === 'Escape' && customOpen) closePanel();
-                if (e.key === 'Escape') closePowerPanel();
-                if (appearanceOpening) return;
-                if (e.key === 'Enter' && !customOpen && !loginOpen) showLogin();
-            });
-        }
-
-        let appearanceOpening = false;
-        let appearanceTimer = null;
-        let lastPointer = { x: window.innerWidth - 92, y: window.innerHeight - 82 };
-
-        function moveWaitSpinner(x = lastPointer.x, y = lastPointer.y) {
-            lastPointer = { x, y };
-            const spinner = document.getElementById('cursor-wait-spinner');
-            if (!spinner) return;
-            spinner.style.left = `${Math.max(0, Math.min(window.innerWidth - 32, x))}px`;
-            spinner.style.top = `${Math.max(0, Math.min(window.innerHeight - 32, y))}px`;
-        }
-
-        window.addEventListener('pointermove', (event) => {
-            moveWaitSpinner(event.clientX, event.clientY);
-        });
-
-        function setAppearanceWait(active) {
-            const spinner = document.getElementById('cursor-wait-spinner');
-            document.body.classList.toggle('wait-cursor-active', active);
-            if (spinner) spinner.classList.toggle('active', active);
-            if (active) moveWaitSpinner();
-        }
-
-        function openPanel() {
-            if (appearanceOpening || document.getElementById('custom-overlay').classList.contains('active')) return;
-            closeUtilityPanel();
-            closeNetworkPanel();
-            closeAccessibilityPanel();
-            closePowerPanel();
-            appearanceOpening = true;
-            setAppearanceWait(true);
-            appearanceTimer = window.setTimeout(() => {
-                appearanceOpening = false;
-                setAppearanceWait(false);
-                const win = document.getElementById('custom-window');
-                if (win) {
-                    win.style.removeProperty('left');
-                    win.style.removeProperty('top');
-                    win.style.removeProperty('right');
-                    win.style.removeProperty('transform');
-                }
-                document.body.classList.add('custom-open');
-                document.getElementById('custom-overlay').classList.add('active');
-            }, 2000);
-        }
-        function closePanel() {
-            if (appearanceTimer) {
-                window.clearTimeout(appearanceTimer);
-                appearanceTimer = null;
-            }
-            appearanceOpening = false;
-            setAppearanceWait(false);
-            document.body.classList.remove('custom-open');
-            document.getElementById('custom-overlay').classList.remove('active');
-        }
-
-        function toggleUtilityPanel(event) {
-            if (event) event.stopPropagation();
-            closeNetworkPanel();
-            closeAccessibilityPanel();
-            closePowerPanel();
-            const panel = document.getElementById('utility-popover');
-            if (!panel) return;
-            panel.classList.toggle('active');
-        }
-
-        function closeUtilityPanel() {
-            const panel = document.getElementById('utility-popover');
-            if (panel) panel.classList.remove('active');
-            closeAccessibilityPanel();
-            closePowerPanel();
-        }
-
-        function toggleNetworkPanel(event) {
-            if (event) event.stopPropagation();
-            closeUtilityPanel();
-            closeAccessibilityPanel();
-            closePowerPanel();
-            renderNetworkList();
-            const panel = document.getElementById('network-popover');
-            panel.classList.toggle('active');
-        }
-
-        function closeNetworkPanel() {
-            const panel = document.getElementById('network-popover');
-            if (panel) panel.classList.remove('active');
-        }
-
-        function togglePowerPanel(event) {
-            if (event) event.stopPropagation();
-            closeUtilityPanel();
-            closeNetworkPanel();
-            closeAccessibilityPanel();
-            const panel = document.getElementById('power-popover');
-            if (!panel) return;
-            const active = !panel.classList.contains('active');
-            panel.classList.toggle('active', active);
-            document.querySelectorAll('.power-trigger').forEach((button) => button.classList.toggle('active', active));
-        }
-
-        function closePowerPanel() {
-            const panel = document.getElementById('power-popover');
-            if (panel) panel.classList.remove('active');
-            document.querySelectorAll('.power-trigger').forEach((button) => button.classList.remove('active'));
-        }
-
-        function requestPowerAction(action) {
-            const status = document.getElementById('power-status');
-            const labels = { sleep: 'Sleep requested', restart: 'Restart requested', shutdown: 'Shutdown requested' };
-            if (status) status.textContent = labels[action] || 'Power action requested';
-            window.setTimeout(() => showPowerTransition(action), 420);
-        }
-
-        function showPowerTransition(action) {
-            closeUtilityPanel();
-            closeNetworkPanel();
-            closeAccessibilityPanel();
-            closePowerPanel();
-            const overlay = document.getElementById('power-transition');
-            const title = document.getElementById('power-transition-title');
-            const subtitle = document.getElementById('power-transition-subtitle');
-            const states = {
-                sleep: ['SLEEP', 'Vertex display power suspended'],
-                restart: ['RESTARTING', 'Vertex kernel handoff sequence'],
-                shutdown: ['POWER CUT', 'Vertex shutdown sequence']
-            };
-            const [nextTitle, nextSubtitle] = states[action] || states.shutdown;
-            title.textContent = nextTitle;
-            subtitle.textContent = nextSubtitle;
-            document.body.classList.add('powering-down');
-            overlay.classList.add('active');
-        }
-
-        function toggleAccessibilityMenu(event) {
-            if (event) event.stopPropagation();
-            closeNetworkPanel();
-            const panel = document.getElementById('accessibility-popover');
-            const trigger = document.getElementById('accessibility-toggle');
-            const active = !panel.classList.contains('active');
-            panel.classList.toggle('active', active);
-            if (trigger) trigger.classList.toggle('active', active);
-        }
-
-        function closeAccessibilityPanel() {
-            const panel = document.getElementById('accessibility-popover');
-            const trigger = document.getElementById('accessibility-toggle');
-            if (panel) panel.classList.remove('active');
-            if (trigger) trigger.classList.remove('active');
-        }
-
-        function setFont(f) {
-            document.getElementById('time-text').style.fontFamily = f;
-            const previewTime = document.getElementById('preview-time');
-            if (previewTime) previewTime.style.fontFamily = f;
-        }
-        function setWP(url) { document.documentElement.style.setProperty('--bg', `url('${url}')`); }
-        function setTimeOpacity(val) { document.documentElement.style.setProperty('--time-opacity', val); }
-        function toggleWidget(name, button) {
-            const className = `hide-${name}`;
-            document.body.classList.toggle(className);
-            if (button) button.classList.toggle('active', !document.body.classList.contains(className));
-        }
-        function toggleAccessibilityFeature(feature, button) {
-            const classes = {
-                contrast: 'accessibility-boost',
-                large: 'a11y-large',
-                motion: 'reduce-motion',
-                hint: 'hide-hint',
-                keyboard: 'keyboard-focus'
-            };
-            const className = classes[feature];
-            if (!className) return;
-            document.body.classList.toggle(className);
-            if (button) button.classList.toggle('active', document.body.classList.contains(className));
-        }
-
-        function toggleAccessibility(button) {
-            toggleAccessibilityFeature('contrast', button);
-        }
-
-        function initBatteryWidget() {
-            const fill = document.getElementById('battery-fill');
-            if (!fill) return;
-
-            const setLevel = (level) => {
-                const percent = Math.max(8, Math.min(100, Math.round(level * 100)));
-                fill.style.setProperty('--battery-level', `${percent}%`);
-            };
-
-            setLevel(0.72);
-            const info = window.VERTEX_SYSTEM_INFO || {};
-            if (typeof info.batteryPercent === 'number') {
-                setLevel(info.batteryPercent / 100);
-                return;
-            }
-            if (!navigator.getBattery) return;
-
-            navigator.getBattery().then((battery) => {
-                const update = () => setLevel(battery.level);
-                update();
-                battery.addEventListener('levelchange', update);
-                battery.addEventListener('chargingchange', update);
-            }).catch(() => {});
-        }
-
-        function initNetworkWidget() {
-            const network = document.getElementById('network-widget');
-            if (!network) return;
-
-            const update = () => {
-                const info = window.VERTEX_SYSTEM_INFO || {};
-                const connected = info.network?.connected ?? navigator.onLine;
-                network.style.opacity = connected ? '1' : '0.46';
-                network.title = connected ? (info.network?.name ? `Connected: ${info.network.name}` : 'Network connected') : 'Network offline';
-                network.setAttribute('aria-label', network.title);
-                const metric = document.getElementById('metric-network');
-                if (metric) metric.textContent = connected ? (info.network?.name || 'Online') : 'Offline';
-            };
-
-            update();
-            window.addEventListener('online', update);
-            window.addEventListener('offline', update);
-        }
-
-        function renderNetworkList() {
-            const list = document.getElementById('network-list');
-            if (!list) return;
-
-            const info = window.VERTEX_SYSTEM_INFO || {};
-            const networks = Array.isArray(info.networks) ? info.networks : [];
-            const rows = networks.length ? networks : [{
-                name: info.network?.name || (navigator.onLine ? 'Current network' : 'No network'),
-                status: info.network?.connected || navigator.onLine ? 'connected' : 'offline'
-            }];
-
-            list.innerHTML = rows.map((item) => {
-                const name = item.name || 'Unknown network';
-                const status = item.status || (item.connected ? 'connected' : '');
-                return `<div class="network-row"><span>${escapeHtml(name)}</span><span>${escapeHtml(status)}</span></div>`;
-            }).join('');
-        }
-
-        function escapeHtml(value) {
-            return String(value).replace(/[&<>"']/g, (char) => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            }[char]));
-        }
-
-        function initSystemMetrics() {
-            const set = (id, value) => {
-                const el = document.getElementById(id);
-                if (el) el.textContent = value;
-            };
-            const info = window.VERTEX_SYSTEM_INFO || {};
-            const display = info.display || `${Math.round(window.screen?.width || window.innerWidth)} x ${Math.round(window.screen?.height || window.innerHeight)}`;
-            set('metric-cpu', info.cpu || `${navigator.hardwareConcurrency || 2} threads`);
-            set('metric-memory', info.memory || (navigator.deviceMemory ? `${navigator.deviceMemory} GB class` : 'Browser limited'));
-            set('metric-disk', info.disk || 'Browser limited');
-            set('metric-display', display);
-            set('metric-network', info.network?.connected ? (info.network.name || 'Online') : (navigator.onLine ? 'Online' : 'Offline'));
-            set('metric-kernel', info.kernel || 'Browser limited');
-            set('metric-platform', info.platform || navigator.platform || 'Linux');
-
-            const updatePower = (battery) => {
-                const level = `${Math.round(battery.level * 100)}%`;
-                set('metric-power', battery.charging ? `${level}, charging` : level);
-            };
-
-            if (info.battery) {
-                set('metric-power', info.battery);
-            } else if (navigator.getBattery) {
-                navigator.getBattery().then((battery) => {
-                    updatePower(battery);
-                    battery.addEventListener('levelchange', () => updatePower(battery));
-                    battery.addEventListener('chargingchange', () => updatePower(battery));
-                }).catch(() => set('metric-power', 'AC / unknown'));
-            } else {
-                set('metric-power', 'AC / unknown');
-            }
-        }
-
-        function initDraggableWindow() {
-            const win = document.getElementById('custom-window');
-            const handle = win?.querySelector('[data-drag-handle]');
-            if (!win || !handle) return;
-
-            let dragging = false;
-            let offsetX = 0;
-            let offsetY = 0;
-
-            handle.addEventListener('pointerdown', (event) => {
-                if (event.target.closest('button')) return;
-                dragging = true;
-                const rect = win.getBoundingClientRect();
-                offsetX = event.clientX - rect.left;
-                offsetY = event.clientY - rect.top;
-                win.style.left = `${rect.left}px`;
-                win.style.top = `${rect.top}px`;
-                win.style.right = 'auto';
-                win.style.transform = 'none';
-                handle.setPointerCapture(event.pointerId);
-            });
-
-            handle.addEventListener('pointermove', (event) => {
-                if (!dragging) return;
-                const maxX = window.innerWidth - win.offsetWidth - 8;
-                const maxY = window.innerHeight - win.offsetHeight - 8;
-                const nextX = Math.max(8, Math.min(maxX, event.clientX - offsetX));
-                const nextY = Math.max(8, Math.min(maxY, event.clientY - offsetY));
-                win.style.left = `${nextX}px`;
-                win.style.top = `${nextY}px`;
-                win.style.right = 'auto';
-            });
-
-            handle.addEventListener('pointerup', (event) => {
-                dragging = false;
-                try { handle.releasePointerCapture(event.pointerId); } catch (_) {}
-            });
-            handle.addEventListener('pointercancel', () => dragging = false);
-        }
-
-        function showLogin() {
-            closePanel();
-            closeUtilityPanel();
-            closeNetworkPanel();
-            closeAccessibilityPanel();
-            closePowerPanel();
-            clearPasswordError();
-            document.body.classList.add('login-open');
-            document.getElementById('wp-cont').classList.add('wp-lock-blur');
-            requestAnimationFrame(() => document.getElementById('login-module').classList.add('active'));
-        }
-        function hideLogin() {
-            document.body.classList.remove('login-open');
-            document.getElementById('wp-cont').classList.remove('wp-lock-blur');
-            document.getElementById('login-module').classList.remove('active');
-            clearPasswordError();
-            closePowerPanel();
-        }
-
-        function clearPasswordError() {
-            const error = document.getElementById('password-error');
-            const wrap = document.getElementById('pass-wrap');
-            if (error) {
-                error.textContent = "";
-                error.classList.remove('active');
-            }
-            if (wrap) wrap.classList.remove('error-shake');
-        }
-
-        function checkPass() {
-            const wrap = document.getElementById('pass-wrap');
-            const input = document.getElementById('pass-in');
-            if(input.value === "1234") {
-                hideLogin();
-                alert("Welcome Zarif!");
-            } else {
-                const error = document.getElementById('password-error');
-                if (error) {
-                    error.textContent = "Incorrect password. Try again.";
-                    error.classList.add('active');
-                }
-                wrap.classList.add('error-shake');
-                setTimeout(() => wrap.classList.remove('error-shake'), 400);
-                input.value = "";
-                input.focus();
-            }
-        }
-    </script>
+    <script src="shared/utils.js"></script>
+    <script src="boot/boot.js"></script>
+    <script src="appearance/appearance.js"></script>
+    <script src="panels/panels.js"></script>
+    <script src="keyboard/keyboard.js"></script>
+    <script src="power/power.js"></script>
+    <script src="panels/accessibility.js"></script>
+    <script src="system/status.js"></script>
+    <script src="appearance/drag.js"></script>
+    <script src="lockscreen/lockscreen.js"></script>
+    <script src="login/login.js"></script>
+    <script src="shared/bootstrap.js"></script>
 </body>
 </html>

@@ -1,0 +1,83 @@
+/* --- SYSTEM WIDGETS --- */
+        .system-widgets { position: absolute; right: 34px; bottom: 25px; z-index: 30; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 0; border: 0; border-radius: 0; background: transparent; opacity: 0; transform: translateY(6px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+        body.lock-ready .system-widgets { opacity: 1; transform: translateY(0); }
+        body.custom-open .system-widgets, body.keyboard-open .system-widgets { opacity: 0; transform: translateY(6px); pointer-events: none; }
+        .widget-icon { width: 28px; height: 26px; border: 0; border-radius: 0; display: grid; place-items: center; color: rgba(235,240,244,0.84); background: transparent; padding: 0; transition: color 0.18s ease, transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), filter 0.18s ease; }
+        .widget-icon:hover, .widget-icon.active { color: rgba(255,255,255,1); background: transparent; transform: translateY(-1px); filter: drop-shadow(0 0 9px rgba(190,225,255,0.32)) drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+        .widget-icon svg { width: 15px; height: 15px; stroke: currentColor; stroke-width: 1.75; fill: none; stroke-linecap: round; stroke-linejoin: round; shape-rendering: geometricPrecision; }
+        .widget-icon svg * { vector-effect: non-scaling-stroke; }
+        #network-widget { width: 32px; height: 26px; }
+        #network-widget svg { width: 18px; height: 18px; stroke-width: 1.8; }
+        .battery-widget { width: 34px; }
+        .battery-widget svg { width: 24px; height: 16px; stroke-width: 1.7; }
+        .battery-shell { opacity: 0.94; }
+        .battery-fill { transform-box: fill-box; transform-origin: left center; transform: scaleX(var(--battery-level-scale, 0.72)); fill: currentColor; opacity: 0.9; transition: transform 0.35s ease; }
+        .battery-widget.unknown { color: rgba(255,255,255,0.38); }
+        .battery-widget.unknown .battery-fill { opacity: 0; }
+        .battery-charge { opacity: 0; fill: #92ff9c; stroke: rgba(0,0,0,0.34); stroke-width: 0.38; transform-origin: center; transition: opacity 0.22s ease, transform 0.22s ease; filter: drop-shadow(0 0 6px rgba(146,255,156,0.78)); }
+        .battery-widget.charging { color: rgba(214,255,222,0.98); }
+        .battery-widget.charging .battery-fill { fill: rgba(151,255,165,0.92); filter: drop-shadow(0 0 5px rgba(151,255,165,0.48)); }
+        .battery-widget.charging .battery-charge { opacity: 1; transform: scale(1.1); }
+        .charge-aura { position: fixed; left: 50%; top: 50%; z-index: 9700; width: 320px; height: 220px; display: grid; place-items: center; pointer-events: none; opacity: 0; visibility: hidden; transform: translate(-50%, -50%) scale(0.9); transition: opacity 0.45s ease, visibility 0.45s ease, transform 0.62s cubic-bezier(0.16, 1, 0.3, 1); }
+        .charge-aura.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
+        .charge-aura::before { content: ""; position: absolute; inset: 16px 0; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(142,255,156,0.2) 0%, rgba(142,255,156,0.08) 34%, rgba(142,255,156,0) 68%); filter: blur(10px); opacity: 0.9; transform: scale(0.86); transition: background 0.3s ease; }
+        .charge-aura.unplugged::before { background: radial-gradient(ellipse at center, rgba(195,215,255,0.18) 0%, rgba(195,215,255,0.07) 34%, rgba(195,215,255,0) 68%); }
+        .charge-aura-ring { position: absolute; width: 112px; height: 112px; border-radius: 50%; border: 1px solid rgba(190,255,202,0.22); box-shadow: 0 0 34px rgba(142,255,156,0.2), inset 0 0 26px rgba(142,255,156,0.08); animation: chargeRingPulse 1.7s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+        .charge-aura.unplugged .charge-aura-ring { border-color: rgba(215,225,255,0.2); box-shadow: 0 0 30px rgba(170,195,255,0.14), inset 0 0 24px rgba(170,195,255,0.06); }
+        .charge-aura-core { position: relative; min-width: 170px; text-align: center; color: rgba(255,255,255,0.94); text-shadow: 0 2px 18px rgba(0,0,0,0.42), 0 0 16px rgba(142,255,156,0.18); }
+        .charge-aura-icon { width: 42px; height: 42px; margin: 0 auto 10px; display: grid; place-items: center; border-radius: 50%; color: rgba(7,12,10,0.96); background: rgba(224,255,229,0.92); box-shadow: 0 0 28px rgba(142,255,156,0.34), inset 0 1px 0 rgba(255,255,255,0.65); font-family: 'SF Pro Display', 'Manrope', sans-serif; font-size: 1.35rem; font-weight: 700; line-height: 1; }
+        .charge-aura.unplugged .charge-aura-icon { color: rgba(12,15,22,0.96); background: rgba(230,236,255,0.9); box-shadow: 0 0 24px rgba(170,195,255,0.22), inset 0 1px 0 rgba(255,255,255,0.62); }
+        .charge-aura-title { font-family: 'SF Pro Display', 'Manrope', sans-serif; font-size: 1.05rem; font-weight: 500; letter-spacing: 0.02em; }
+        .charge-aura-subtitle { margin-top: 5px; font-size: 0.72rem; font-weight: 350; letter-spacing: 0.04em; color: rgba(220,228,235,0.68); }
+        @keyframes chargeRingPulse {
+            0% { opacity: 0; transform: scale(0.72); }
+            35% { opacity: 0.82; }
+            100% { opacity: 0; transform: scale(1.28); }
+        }
+        .utility-popover { position: fixed; right: 34px; top: auto; bottom: 76px; z-index: 9805; width: 260px; padding: 12px 0; overflow: hidden; border-radius: 0; background: rgba(12,13,16,0.62); border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 18px 44px rgba(0,0,0,0.52), inset 0 1px 0 rgba(255,255,255,0.06); backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%); opacity: 0; transform: translateY(8px) scale(0.99); visibility: hidden; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s; }
+        .utility-popover.active { opacity: 1; transform: translateY(0) scale(1); visibility: visible; }
+        .utility-option { width: 100%; min-height: 42px; border: 0; background: transparent; color: rgba(244,247,250,0.92); display: flex; align-items: center; gap: 12px; padding: 0 18px; font-family: var(--font); font-size: 0.8rem; font-weight: 480; text-align: left; text-shadow: none; }
+        .utility-option:hover, .utility-option.active { background: rgba(54,130,190,0.28); color: rgba(255,255,255,1); }
+        .utility-option svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; shape-rendering: geometricPrecision; }
+        .utility-option .shortcut { display: none; }
+        .utility-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 10px 0; }
+        .panel-title { padding: 0 18px 10px; font-size: 0.82rem; font-weight: 650; color: rgba(255,255,255,0.95); letter-spacing: 0.01em; }
+        .panel-section { padding: 0; }
+        .panel-label { padding: 0 18px 7px; font-size: 0.62rem; font-weight: 650; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(184,194,205,0.58); }
+        .panel-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 0; }
+        .panel-row { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; color: rgba(244,247,250,0.92); font-size: 0.8rem; font-weight: 480; }
+        .panel-row:hover { background: rgba(54,130,190,0.28); color: rgba(255,255,255,1); }
+        .row-text { min-width: 0; display: grid; gap: 2px; }
+        .row-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .row-subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: rgba(190,200,210,0.58); font-size: 0.7rem; font-weight: 400; }
+        .row-status { flex: 0 0 auto; color: rgba(190,200,210,0.58); font-size: 0.7rem; }
+        .accessibility-popover { right: 92px; width: 244px; }
+        .accessibility-popover .utility-option { min-height: 42px; padding: 0 18px; gap: 12px; font-size: 0.8rem; }
+        .accessibility-popover .utility-option svg { width: 18px; height: 18px; }
+        .power-popover { right: 34px; width: 218px; }
+        .power-popover .utility-option { min-height: 44px; padding: 0 18px; gap: 12px; font-size: 0.84rem; font-weight: 540; }
+        .power-popover .utility-option svg { width: 20px; height: 20px; }
+        .power-status { min-height: 18px; padding: 6px 18px 2px; font-size: 0.68rem; color: rgba(190,200,210,0.54); }
+        .power-popover.system-menu { width: 218px; padding: 4px 0; border-radius: 0; background: rgba(11,12,15,0.68); color: rgba(244,247,250,0.94); border-color: rgba(255,255,255,0.13); box-shadow: 0 18px 48px rgba(0,0,0,0.56), inset 0 1px 0 rgba(255,255,255,0.075); backdrop-filter: blur(24px) saturate(140%); -webkit-backdrop-filter: blur(24px) saturate(140%); }
+        .system-menu-row { width: 100%; min-height: 28px; border: 0; background: transparent; color: rgba(244,247,250,0.92); display: grid; grid-template-columns: 17px 1fr auto; align-items: center; column-gap: 7px; padding: 0 10px; font-family: var(--font); font-size: 0.72rem; font-weight: 500; text-align: left; }
+        .system-menu-row:hover { background: rgba(54,130,190,0.28); color: rgba(255,255,255,1); }
+        .system-menu-row svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.65; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .system-menu-row .chevron { width: 11px; height: 11px; opacity: 0.54; }
+        .system-menu-divider { height: 1px; margin: 3px 0; background: rgba(255,255,255,0.1); }
+        .system-volume-row { min-height: 28px; display: grid; grid-template-columns: 17px 1fr; align-items: center; gap: 7px; padding: 0 10px; color: rgba(244,247,250,0.9); }
+        .system-volume-row svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 1.65; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .system-slider { position: relative; height: 14px; }
+        .system-slider::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 3px; border-radius: 2px; background: linear-gradient(90deg, rgba(255,255,255,0.86) 0 30%, rgba(255,255,255,0.18) 30%); }
+        .system-slider::after { content: ""; position: absolute; left: 30%; top: 3px; width: 9px; height: 9px; margin-left: -4px; border-radius: 50%; background: #f7f7f7; border: 1px solid rgba(0,0,0,0.24); box-shadow: 0 1px 4px rgba(0,0,0,0.36); }
+        .battery-popover { right: 34px; width: 244px; }
+        .battery-summary { padding: 0 18px 12px; }
+        .battery-percent { font-size: 1.28rem; font-weight: 560; color: rgba(255,255,255,0.96); line-height: 1; }
+        .battery-caption { margin-top: 4px; font-size: 0.72rem; color: rgba(190,200,210,0.62); }
+        .battery-meter { height: 4px; margin: 0 18px 12px; background: rgba(255,255,255,0.14); overflow: hidden; border-radius: 999px; }
+        .battery-meter-fill { display: block; width: var(--battery-level, 72%); height: 100%; background: rgba(255,255,255,0.86); transition: width 0.35s ease, background 0.24s ease; }
+        .battery-meter-fill.charging { background: linear-gradient(90deg, rgba(142,255,156,0.92), rgba(224,255,229,0.98)); }
+        body.login-open .accessibility-popover { width: 244px; }
+        body.login-open .network-popover { width: 292px; }
+        body.login-open .power-popover { width: 218px; }
+        .network-popover { right: 64px; width: 292px; }
+        .network-list { padding: 0; }
