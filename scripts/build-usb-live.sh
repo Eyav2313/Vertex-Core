@@ -120,8 +120,9 @@ fi
 if command -v grub-mkfont >/dev/null 2>&1; then
     FONT_SOURCE="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
     [ -f /usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf ] && FONT_SOURCE="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"
+    [ -f /mnt/c/Windows/Fonts/CascadiaMono.ttf ] && FONT_SOURCE="/mnt/c/Windows/Fonts/CascadiaMono.ttf"
     if [ -f "$FONT_SOURCE" ]; then
-        grub-mkfont -s 24 -o "$ESP_MNT/boot/grub/fonts/vertex-boot.pf2" "$FONT_SOURCE"
+        grub-mkfont -s 22 -o "$ESP_MNT/boot/grub/fonts/vertex-boot.pf2" "$FONT_SOURCE"
     fi
 fi
 
