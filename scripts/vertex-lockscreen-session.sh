@@ -118,6 +118,15 @@ if [ -n "$OUTPUT" ]; then
         xrandr --output "$OUTPUT" --auto >/dev/null 2>&1 || true
 fi
 
+DISPLAY_GEOMETRY="$(xdpyinfo 2>/dev/null | awk '/dimensions:/{print $2; exit}' || true)"
+if [ -n "$DISPLAY_GEOMETRY" ]; then
+    LOCK_WIDTH="${DISPLAY_GEOMETRY%x*}"
+    LOCK_HEIGHT="${DISPLAY_GEOMETRY#*x}"
+else
+    LOCK_WIDTH="${VERTEX_LOCKSCREEN_WIDTH:-1920}"
+    LOCK_HEIGHT="${VERTEX_LOCKSCREEN_HEIGHT:-1080}"
+fi
+
 CHROMIUM="$(command -v chromium || command -v chromium-browser || true)"
 [ -n "$CHROMIUM" ] || {
     echo "chromium is not installed" >&2
@@ -139,7 +148,8 @@ exec "$CHROMIUM" \
     --disable-background-timer-throttling \
     --disable-features=TranslateUI,MediaRouter,OptimizationHints \
     --hide-scrollbars \
-    --window-size="${VERTEX_LOCKSCREEN_WIDTH:-1920},${VERTEX_LOCKSCREEN_HEIGHT:-1080}" \
+    --window-position=0,0 \
+    --window-size="${LOCK_WIDTH},${LOCK_HEIGHT}" \
     --force-device-scale-factor=1 \
     --overscroll-history-navigation=0 \
     --user-data-dir=/tmp/vertex-chromium \

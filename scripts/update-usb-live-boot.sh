@@ -4,6 +4,7 @@ set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-live-usb.img}"
 GRUB_CFG_TEMPLATE="$ROOT_DIR/config/boot/grub/vertex-usb-grub.cfg"
+GRUB_THEME_DIR="$ROOT_DIR/config/boot/grub/themes/vertex"
 WORK_DIR="${VERTEX_USB_WORK_DIR:-/var/tmp/vertex-usb-live}"
 ESP_MNT="$WORK_DIR/esp-update"
 GRUB_WORK="$WORK_DIR/grub-update"
@@ -58,10 +59,21 @@ done
 [ -b "$ESP_PART" ] || die "Loop partition did not appear: $ESP_PART"
 
 mount "$ESP_PART" "$ESP_MNT"
-mkdir -p "$ESP_MNT/EFI/BOOT" "$ESP_MNT/boot/vertex" "$ESP_MNT/boot/grub"
+mkdir -p "$ESP_MNT/EFI/BOOT" "$ESP_MNT/boot/vertex" "$ESP_MNT/boot/grub/fonts" "$ESP_MNT/boot/grub/themes/vertex" "$ESP_MNT/boot/grub/x86_64-efi"
 cp "$KERNEL_IMAGE" "$ESP_MNT/boot/vertex/vmlinuz"
 cp "$INITRD_IMAGE" "$ESP_MNT/boot/vertex/initrd.img"
 cp "$GRUB_CFG_TEMPLATE" "$ESP_MNT/boot/grub/grub.cfg"
+if [ -f /usr/share/grub/unicode.pf2 ]; then
+    cp /usr/share/grub/unicode.pf2 "$ESP_MNT/boot/grub/fonts/unicode.pf2"
+fi
+for module in bitmap bufio png; do
+    if [ -f "/usr/lib/grub/x86_64-efi/${module}.mod" ]; then
+        cp "/usr/lib/grub/x86_64-efi/${module}.mod" "$ESP_MNT/boot/grub/x86_64-efi/${module}.mod"
+    fi
+done
+if [ -d "$GRUB_THEME_DIR" ]; then
+    cp -r "$GRUB_THEME_DIR"/. "$ESP_MNT/boot/grub/themes/vertex/"
+fi
 
 cat > "$GRUB_WORK/embedded.cfg" <<EOF
 search --no-floppy --label $ESP_LABEL --set=root
@@ -72,8 +84,13 @@ EOF
 grub-mkstandalone \
     -O x86_64-efi \
     -o "$ESP_MNT/EFI/BOOT/BOOTX64.EFI" \
-    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test" \
+    --modules="all_video efi_gop efi_uga font gfxterm gfxmenu png part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt efifwsetup echo sleep read test" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
+
+cat > "$ESP_MNT/startup.nsh" <<'EOF'
+fs0:
+\EFI\BOOT\BOOTX64.EFI
+EOF
 
 sync
 printf '[vertex-usb] Updated EFI boot files in %s\n' "$IMAGE"

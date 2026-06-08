@@ -2,8 +2,8 @@ param(
     [string]$Image = "",
     [string]$Memory = "2048M",
     [int]$Cpus = 2,
-    [int]$Width = 1920,
-    [int]$Height = 1080,
+    [int]$Width = 1280,
+    [int]$Height = 720,
     [switch]$UseWhpx
 )
 
@@ -48,7 +48,7 @@ if (-not $OvmfCode) {
 }
 
 New-Item -ItemType Directory -Force -Path $OutDir, $LogDir | Out-Null
-if ($OvmfVarsTemplate -and -not (Test-Path $OvmfVars)) {
+if ($OvmfVarsTemplate) {
     Copy-Item -Force $OvmfVarsTemplate $OvmfVars
 }
 
@@ -69,15 +69,14 @@ $qemuArgs = @(
     "-m", $Memory
     "-smp", "$Cpus"
 ) + $accelArgs + $firmwareArgs + @(
+    "-drive", "file=$Image,format=raw,if=ide,cache=writeback"
     "-usb"
     "-device", "usb-kbd"
     "-device", "usb-tablet"
-    "-drive", "id=vertexusb,file=$Image,if=none,format=raw,cache=writeback"
-    "-device", "usb-storage,drive=vertexusb,removable=on"
     "-boot", "order=c,menu=off,strict=on"
     "-device", "VGA,vgamem_mb=64,xres=$Width,yres=$Height"
     "-net", "none"
-    "-display", "gtk,zoom-to-fit=on"
+    "-display", "gtk,zoom-to-fit=off"
     "-serial", "file:$SerialLog"
     "-monitor", "none"
     "-no-reboot"

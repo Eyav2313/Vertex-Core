@@ -1,5 +1,5 @@
 /* --- BACKGROUND --- */
-        #wp-cont { position: absolute; inset: 0; background: var(--bg) center/cover; transition: opacity 1.05s ease-out, filter 1.35s cubic-bezier(0.16, 1, 0.3, 1), transform 1.35s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.18); filter: blur(46px) brightness(0.62); opacity: 0; cursor: var(--cursor-default); }
+        #wp-cont { position: fixed; inset: 0; width: 100vw; height: 100vh; min-width: 100vw; min-height: 100vh; background: var(--bg) center/cover no-repeat; transition: opacity 1.05s ease-out, filter 1.35s cubic-bezier(0.16, 1, 0.3, 1), transform 1.35s cubic-bezier(0.16, 1, 0.3, 1); transform: scale(1.18); filter: blur(46px) brightness(0.62); opacity: 0; cursor: var(--cursor-default); }
         body.lock-ready, body.lock-ready * { cursor: var(--cursor-default); }
         button, button *, .chip, .chip *, .slider, input[type="range"], [onclick], [onclick] *, [role="button"], [role="button"] * { cursor: var(--cursor-pointer) !important; }
         input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }

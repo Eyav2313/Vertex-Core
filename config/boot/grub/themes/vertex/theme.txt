@@ -1,0 +1,74 @@
+title-text: ""
+title-font: "GNU Unifont Regular 16"
+title-color: "#000000"
+desktop-color: "#000000"
+message-color: "#555555"
+message-bg-color: "#000000"
+terminal-border: "0"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+
++ label {
+    left = 0
+    top = 12
+    width = 620
+    height = 24
+    text = "VERTEX BOOT MANAGER"
+    font = "GNU Unifont Regular 16"
+    color = "#ffffff"
+    align = "left"
+}
+
++ label {
+    left = 0
+    top = 34
+    width = 620
+    height = 22
+    text = "UEFI LIVE MEDIA - Nuren Zarif Haque"
+    font = "GNU Unifont Regular 16"
+    color = "#333333"
+    align = "left"
+}
+
++ boot_menu {
+    left = 0
+    top = 66
+    width = 620
+    height = 160
+    item_font = "GNU Unifont Regular 16"
+    selected_item_font = "GNU Unifont Regular 16"
+    item_height = 18
+    item_padding = 16
+    item_spacing = 0
+    icon_width = 0
+    icon_height = 0
+    item_icon_space = 0
+    item_color = "#3a3a3a"
+    selected_item_color = "#b8b8b8"
+    selected_item_pixmap_style = "selected_*.png"
+    scrollbar = false
+}
+
++ label {
+    left = 0
+    top = 202
+    width = 760
+    height = 22
+    text = "Start Vertex OS opens the full-screen web UI after Linux boots."
+    font = "GNU Unifont Regular 16"
+    color = "#242424"
+    align = "left"
+}
+
++ label {
+    left = 0
+    top = 238
+    width = 760
+    height = 22
+    text = "Use Up/Down or number keys. Enter = select. Esc = command line."
+    font = "GNU Unifont Regular 16"
+    color = "#242424"
+    align = "left"
+}

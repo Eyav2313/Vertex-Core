@@ -10,6 +10,7 @@ ROOTFS_IMAGE="${VERTEX_ROOTFS_IMAGE:-$HTML_OUT/vertex-html-lock-rootfs.ext4}"
 KERNEL_IMAGE="${VERTEX_KERNEL_IMAGE:-$HTML_OUT/vertex-html-lock-vmlinuz}"
 INITRD_IMAGE="${VERTEX_INITRD_IMAGE:-$HTML_OUT/vertex-html-lock-initrd.img}"
 GRUB_CFG_TEMPLATE="$ROOT_DIR/config/boot/grub/vertex-usb-grub.cfg"
+GRUB_THEME_DIR="$ROOT_DIR/config/boot/grub/themes/vertex"
 
 IMAGE="${VERTEX_USB_IMAGE:-$USB_OUT/Vertex-live-usb.img}"
 IMAGE_WORK="$WORK_DIR/Vertex-live-usb.img"
@@ -109,10 +110,21 @@ EOF
 
 info "Installing UEFI boot files."
 mount "$ESP_PART" "$ESP_MNT"
-mkdir -p "$ESP_MNT/EFI/BOOT" "$ESP_MNT/boot/vertex" "$ESP_MNT/boot/grub/fonts"
+mkdir -p "$ESP_MNT/EFI/BOOT" "$ESP_MNT/boot/vertex" "$ESP_MNT/boot/grub/fonts" "$ESP_MNT/boot/grub/themes/vertex" "$ESP_MNT/boot/grub/x86_64-efi"
 cp "$KERNEL_IMAGE" "$ESP_MNT/boot/vertex/vmlinuz"
 cp "$INITRD_IMAGE" "$ESP_MNT/boot/vertex/initrd.img"
 cp "$GRUB_CFG_TEMPLATE" "$ESP_MNT/boot/grub/grub.cfg"
+if [ -f /usr/share/grub/unicode.pf2 ]; then
+    cp /usr/share/grub/unicode.pf2 "$ESP_MNT/boot/grub/fonts/unicode.pf2"
+fi
+for module in bitmap bufio png; do
+    if [ -f "/usr/lib/grub/x86_64-efi/${module}.mod" ]; then
+        cp "/usr/lib/grub/x86_64-efi/${module}.mod" "$ESP_MNT/boot/grub/x86_64-efi/${module}.mod"
+    fi
+done
+if [ -d "$GRUB_THEME_DIR" ]; then
+    cp -r "$GRUB_THEME_DIR"/. "$ESP_MNT/boot/grub/themes/vertex/"
+fi
 
 cat > "$GRUB_WORK/embedded.cfg" <<EOF
 search --no-floppy --label $ESP_LABEL --set=root
@@ -123,8 +135,13 @@ EOF
 grub-mkstandalone \
     -O x86_64-efi \
     -o "$ESP_MNT/EFI/BOOT/BOOTX64.EFI" \
-    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test" \
+    --modules="all_video efi_gop efi_uga font gfxterm gfxmenu png part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt efifwsetup echo sleep read test" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
+
+cat > "$ESP_MNT/startup.nsh" <<'EOF'
+fs0:
+\EFI\BOOT\BOOTX64.EFI
+EOF
 
 cat > "$ESP_MNT/README.txt" <<'EOF'
 Vertex UEFI Live Media
@@ -153,7 +170,7 @@ Image:
   $IMAGE
 
 Minimum pendrive:
-  4 GB required, 8 GB recommended
+  Larger than the image file, 8 GB recommended
 
 Linux flash command:
   sudo VERTEX_WRITE_USB_CONFIRM=YES scripts/write-usb-live.sh /dev/sdX
@@ -167,4 +184,4 @@ Boot:
 EOF
 
 info "Created $IMAGE"
-info "Flash it to a 4 GB or larger USB drive with Rufus, Etcher, or scripts/write-usb-live.sh."
+info "Flash it to a USB drive larger than the image file. 8 GB is recommended."
