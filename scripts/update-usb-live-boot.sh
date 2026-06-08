@@ -62,6 +62,14 @@ mkdir -p "$ESP_MNT/EFI/BOOT" "$ESP_MNT/boot/vertex" "$ESP_MNT/boot/grub"
 cp "$KERNEL_IMAGE" "$ESP_MNT/boot/vertex/vmlinuz"
 cp "$INITRD_IMAGE" "$ESP_MNT/boot/vertex/initrd.img"
 cp "$GRUB_CFG_TEMPLATE" "$ESP_MNT/boot/grub/grub.cfg"
+mkdir -p "$ESP_MNT/boot/grub/fonts"
+if command -v grub-mkfont >/dev/null 2>&1; then
+    FONT_SOURCE="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+    [ -f /usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf ] && FONT_SOURCE="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"
+    if [ -f "$FONT_SOURCE" ]; then
+        grub-mkfont -s 24 -o "$ESP_MNT/boot/grub/fonts/vertex-boot.pf2" "$FONT_SOURCE"
+    fi
+fi
 
 cat > "$GRUB_WORK/embedded.cfg" <<EOF
 search --no-floppy --label $ESP_LABEL --set=root
@@ -72,7 +80,7 @@ EOF
 grub-mkstandalone \
     -O x86_64-efi \
     -o "$ESP_MNT/EFI/BOOT/BOOTX64.EFI" \
-    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test" \
+    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test all_video gfxterm font" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
 
 sync

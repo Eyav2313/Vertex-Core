@@ -117,6 +117,13 @@ cp "$GRUB_CFG_TEMPLATE" "$ESP_MNT/boot/grub/grub.cfg"
 if [ -f /usr/share/grub/unicode.pf2 ]; then
     cp /usr/share/grub/unicode.pf2 "$ESP_MNT/boot/grub/fonts/unicode.pf2"
 fi
+if command -v grub-mkfont >/dev/null 2>&1; then
+    FONT_SOURCE="/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+    [ -f /usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf ] && FONT_SOURCE="/usr/share/fonts/truetype/ubuntu/UbuntuMono-R.ttf"
+    if [ -f "$FONT_SOURCE" ]; then
+        grub-mkfont -s 24 -o "$ESP_MNT/boot/grub/fonts/vertex-boot.pf2" "$FONT_SOURCE"
+    fi
+fi
 
 cat > "$GRUB_WORK/embedded.cfg" <<EOF
 search --no-floppy --label $ESP_LABEL --set=root
@@ -127,7 +134,7 @@ EOF
 grub-mkstandalone \
     -O x86_64-efi \
     -o "$ESP_MNT/EFI/BOOT/BOOTX64.EFI" \
-    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test" \
+    --modules="part_gpt fat ext2 normal linux search search_label configfile reboot halt efifwsetup echo sleep read test all_video gfxterm font" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
 
 cat > "$ESP_MNT/README.txt" <<'EOF'
