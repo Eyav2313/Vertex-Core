@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-live-usb.img}"
+IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-OS-Live-USB-x86_64-UEFI.img}"
 DEVICE="${1:-}"
 
 die() {

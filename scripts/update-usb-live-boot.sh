@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-live-usb.img}"
+IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-OS-Live-USB-x86_64-UEFI.img}"
 GRUB_CFG_TEMPLATE="$ROOT_DIR/config/boot/grub/vertex-usb-grub.cfg"
 GRUB_THEME_DIR="$ROOT_DIR/config/boot/grub/themes/vertex"
 WORK_DIR="${VERTEX_USB_WORK_DIR:-/var/tmp/vertex-usb-live}"
