@@ -1,8 +1,8 @@
 param(
-    [string]$Memory = "4096M",
-    [int]$Cpus = 4,
-    [int]$Width = 1280,
-    [int]$Height = 720,
+    [string]$Memory = "2048M",
+    [int]$Cpus = 2,
+    [int]$Width = 1920,
+    [int]$Height = 1080,
     [switch]$NoAudio
 )
 
@@ -37,7 +37,7 @@ $qemuArgs = @(
     "-accel", "tcg,thread=multi"
     "-kernel", $Kernel
     "-initrd", $Initrd
-    "-append", "root=/dev/vda rw quiet loglevel=3 console=ttyS0,115200n8 vt.global_cursor_default=0 video=${Width}x${Height} systemd.unit=multi-user.target systemd.mask=systemd-udev-settle.service"
+    "-append", "root=/dev/vda rw quiet loglevel=3 console=tty0 console=ttyS0,115200n8 vt.global_cursor_default=0 video=${Width}x${Height} systemd.show_status=1 systemd.unit=multi-user.target systemd.mask=systemd-udev-settle.service"
     "-drive", "file=$Rootfs,if=virtio,format=raw,cache=writeback"
     "-device", "VGA,vgamem_mb=64,xres=$Width,yres=$Height"
     "-usb"

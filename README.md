@@ -71,6 +71,37 @@ For the optional UEFI smoke path:
 powershell -ExecutionPolicy Bypass -File scripts\run-smoke-os.ps1 -Firmware uefi
 ```
 
+## Live USB Boot
+
+To create a pendrive-bootable Vertex live image, first build the HTML lock OS artifacts, then wrap them in a real UEFI USB image:
+
+```sh
+scripts/build-html-lock-os.sh
+scripts/build-usb-live.sh
+```
+
+The USB artifact is written to:
+
+```text
+out/usb/Vertex-live-usb.img
+```
+
+That image contains a removable-media UEFI boot path at `EFI/BOOT/BOOTX64.EFI`, a Vertex boot manager, the Linux kernel/initrd, and the live ext4 root filesystem. The boot manager keeps a black console-first style and the selected entry starts Linux with real kernel/systemd status output before the Vertex lock screen appears.
+
+Test the USB image in QEMU on Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run-usb-live-os.ps1
+```
+
+Flash to a real USB drive with Rufus or balenaEtcher on Windows. On Linux, use the guarded writer and replace `/dev/sdX` with the whole USB disk, not a partition:
+
+```sh
+sudo VERTEX_WRITE_USB_CONFIRM=YES scripts/write-usb-live.sh /dev/sdX
+```
+
+The writer is intentionally locked behind `VERTEX_WRITE_USB_CONFIRM=YES` because it destroys all existing data on the target device.
+
 The smoke boot is not a website preview and it is not the final Hyprland desktop. It exists to verify that Vertex can boot as an operating system quickly while the full GUI ISO pipeline is being built.
 
 Smoke boot metrics show the virtual machine resources assigned to QEMU. The WSL/KVM runner passes through the host CPU model when `/dev/kvm` is available, while the Windows runner may show a generic QEMU CPU unless Windows acceleration is enabled. RAM shows the QEMU memory size, and disk shows the attached smoke disk image. A full live USB or installed Vertex system reports the real machine CPU, memory, and physical disks.

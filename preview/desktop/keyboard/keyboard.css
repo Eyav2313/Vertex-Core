@@ -1,4 +1,4 @@
-.virtual-keyboard { position: fixed; left: 50%; bottom: 34px; z-index: 9600; width: min(850px, calc(100vw - 72px)); padding: 0 6px 6px; border-radius: 3px; overflow: hidden; isolation: isolate; background: #f2f2f2; border: 1px solid #c9d5dc; box-shadow: 0 3px 14px rgba(0,0,0,0.22); backdrop-filter: none; -webkit-backdrop-filter: none; opacity: 0; visibility: hidden; transform: translate(-50%, 16px) scale(0.985); transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s; }
+.virtual-keyboard { position: fixed; left: 50%; bottom: 34px; z-index: 9600; width: min(1010px, calc(100vw - 72px)); padding: 0 7px 7px; border-radius: 3px; overflow: hidden; isolation: isolate; background: #f2f2f2; border: 1px solid #c9d5dc; box-shadow: 0 3px 14px rgba(0,0,0,0.22); backdrop-filter: none; -webkit-backdrop-filter: none; opacity: 0; visibility: hidden; transform: translate(-50%, 16px) scale(0.985); transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s; }
         .virtual-keyboard.active { opacity: 1; visibility: visible; transform: translate(-50%, 0) scale(1); }
         .virtual-keyboard::before { display: none; }
         .keyboard-toolbar { height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 6px 0 8px; color: #333; background: #f2f2f2; border-bottom: 1px solid #d7e0e5; margin: 0 -6px 6px; }
@@ -9,13 +9,13 @@
         .keyboard-tool svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 1.65; fill: none; stroke-linecap: round; stroke-linejoin: round; }
         .keyboard-title { display: none; }
         .keyboard-close { margin-left: auto; }
-        .key-row { position: relative; z-index: 2; display: grid; gap: 5px; margin: 0 0 5px; }
+        .key-row { position: relative; z-index: 2; display: grid; gap: 6px; margin: 0 0 6px; }
         .key-row:last-child { margin-bottom: 0; }
         .key-row.top-row { grid-template-columns: repeat(10, minmax(0, 1fr)) 1.55fr; }
         .key-row.home-row { grid-template-columns: repeat(10, minmax(0, 1fr)) 1.55fr; padding: 0 0 0 38px; }
         .key-row.bottom-row { grid-template-columns: 1.28fr repeat(10, minmax(0, 1fr)) 1.28fr; }
         .key-row.control-row { grid-template-columns: 1fr 1fr 1fr 6.4fr 1fr 1fr 1.2fr; }
-        .vk-key { position: relative; min-width: 0; height: 58px; padding: 0 8px; border: 1px solid #d4d4d4; border-radius: 3px; background: #fff; color: #222; font-family: 'Segoe UI', Arial, sans-serif; font-size: 1.28rem; font-weight: 400; letter-spacing: 0; box-shadow: none; transition: background 0.1s ease; }
+        .vk-key { position: relative; min-width: 0; height: 64px; padding: 0 8px; border: 1px solid #d4d4d4; border-radius: 3px; background: #fff; color: #222; font-family: 'Segoe UI', Arial, sans-serif; font-size: 1.38rem; font-weight: 400; letter-spacing: 0; box-shadow: none; transition: background 0.1s ease; }
         .vk-key::before { content: attr(data-hint); position: absolute; left: 7px; top: 5px; font-size: 0.62rem; color: #777; line-height: 1; }
         .vk-key:hover { background: #f8f8f8; color: #222; border-color: #d4d4d4; box-shadow: none; }
         .vk-key:active { transform: none; background: #e6e6e6; color: #222; box-shadow: none; }

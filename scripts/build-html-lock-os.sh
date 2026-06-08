@@ -34,6 +34,7 @@ PACKAGES=(
     xserver-xorg-input-libinput
     x11-xserver-utils
     xinit
+    kbd
     fonts-dejavu-core
     fonts-liberation
     fonts-inter
@@ -71,6 +72,7 @@ configure_rootfs() {
         "$ROOTFS/usr/share/fonts/truetype/vertex" \
         "$ROOTFS/usr/local/bin" \
         "$ROOTFS/etc/systemd/system/multi-user.target.wants" \
+        "$ROOTFS/etc/systemd/system/sockets.target.wants" \
         "$ROOTFS/etc/X11/xorg.conf.d" \
         "$ROOTFS/var/log/vertex"
 
@@ -200,8 +202,75 @@ RestartSec=2
 WantedBy=multi-user.target
 EOF
 
+    cat > "$ROOTFS/usr/local/bin/vertex-power-bridge" <<'EOF'
+#!/bin/sh
+set -eu
+
+read -r REQUEST_LINE || REQUEST_LINE=""
+ACTION="$(printf '%s' "$REQUEST_LINE" | sed -n 's#^[A-Z][A-Z]* /power?action=\([^& ]*\).*#\1#p')"
+
+case "$ACTION" in
+    suspend|restart|shutdown) ;;
+    reboot) ACTION=restart ;;
+    poweroff) ACTION=shutdown ;;
+    *) ACTION="" ;;
+esac
+
+printf 'HTTP/1.1 204 No Content\r\n'
+printf 'Access-Control-Allow-Origin: *\r\n'
+printf 'Connection: close\r\n\r\n'
+
+[ -n "$ACTION" ] || exit 0
+
+(
+    sleep 0.18
+    if command -v chvt >/dev/null 2>&1; then
+        chvt 1 >/dev/null 2>&1 || true
+    fi
+    case "$ACTION" in
+        suspend)
+            systemctl suspend >/dev/null 2>&1 || printf mem > /sys/power/state 2>/dev/null || true
+            ;;
+        restart)
+            systemctl reboot
+            ;;
+        shutdown)
+            systemctl poweroff
+            ;;
+    esac
+) >/dev/null 2>&1 &
+EOF
+    chmod 0755 "$ROOTFS/usr/local/bin/vertex-power-bridge"
+
+    cat > "$ROOTFS/etc/systemd/system/vertex-power-bridge.socket" <<'EOF'
+[Unit]
+Description=Vertex lock screen power action socket
+
+[Socket]
+ListenStream=127.0.0.1:8757
+Accept=yes
+NoDelay=true
+
+[Install]
+WantedBy=sockets.target
+EOF
+
+    cat > "$ROOTFS/etc/systemd/system/vertex-power-bridge@.service" <<'EOF'
+[Unit]
+Description=Vertex lock screen power action bridge
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/vertex-power-bridge
+StandardInput=socket
+StandardOutput=journal
+StandardError=journal
+EOF
+
     ln -sf /etc/systemd/system/vertex-lockscreen.service \
         "$ROOTFS/etc/systemd/system/multi-user.target.wants/vertex-lockscreen.service"
+    ln -sf /etc/systemd/system/vertex-power-bridge.socket \
+        "$ROOTFS/etc/systemd/system/sockets.target.wants/vertex-power-bridge.socket"
     ln -sf /dev/null "$ROOTFS/etc/systemd/system/getty@tty1.service"
 }
 

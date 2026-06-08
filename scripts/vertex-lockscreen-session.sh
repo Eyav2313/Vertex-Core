@@ -26,7 +26,7 @@ write_system_info() {
     [ -n "$DISK" ] || DISK="unknown"
     KERNEL="$(uname -sr 2>/dev/null || echo Linux)"
     PLATFORM="$(uname -m 2>/dev/null || echo amd64)"
-    DISPLAY_SIZE="${VERTEX_LOCKSCREEN_WIDTH:-1280} x ${VERTEX_LOCKSCREEN_HEIGHT:-720}"
+    DISPLAY_SIZE="${VERTEX_LOCKSCREEN_WIDTH:-1920} x ${VERTEX_LOCKSCREEN_HEIGHT:-1080}"
 
     BATTERY="AC / unknown"
     BATTERY_PERCENT=""
@@ -100,12 +100,21 @@ for _ in $(seq 1 80); do
     sleep 0.15
 done
 
+for _ in $(seq 1 80); do
+    DISPLAY=:0 xset q >/dev/null 2>&1 && break
+    sleep 0.15
+done
+
+if command -v chvt >/dev/null 2>&1; then
+    chvt 1 >/dev/null 2>&1 || true
+fi
+
 xset s off >/dev/null 2>&1 || true
 xset -dpms >/dev/null 2>&1 || true
 
 OUTPUT="$(xrandr --query 2>/dev/null | awk '/ connected/{print $1; exit}')"
 if [ -n "$OUTPUT" ]; then
-    xrandr --output "$OUTPUT" --mode "${VERTEX_LOCKSCREEN_MODE:-1280x720}" >/dev/null 2>&1 || \
+    xrandr --output "$OUTPUT" --mode "${VERTEX_LOCKSCREEN_MODE:-1920x1080}" >/dev/null 2>&1 || \
         xrandr --output "$OUTPUT" --auto >/dev/null 2>&1 || true
 fi
 
@@ -130,7 +139,7 @@ exec "$CHROMIUM" \
     --disable-background-timer-throttling \
     --disable-features=TranslateUI,MediaRouter,OptimizationHints \
     --hide-scrollbars \
-    --window-size=1280,720 \
+    --window-size="${VERTEX_LOCKSCREEN_WIDTH:-1920},${VERTEX_LOCKSCREEN_HEIGHT:-1080}" \
     --force-device-scale-factor=1 \
     --overscroll-history-navigation=0 \
     --user-data-dir=/tmp/vertex-chromium \
