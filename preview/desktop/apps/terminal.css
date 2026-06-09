@@ -1,0 +1,824 @@
+:root {
+    --shell-surface: rgba(24, 24, 27, 0.76);
+    --shell-surface-strong: rgba(30, 30, 34, 0.9);
+    --shell-border: rgba(255, 255, 255, 0.12);
+    --shell-text: rgba(246, 246, 246, 0.94);
+    --shell-muted: rgba(218, 218, 218, 0.62);
+    --shell-blue: #3584e4;
+    --shell-green: #26a269;
+    --shell-red: #e01b24;
+    --shell-radius: 0;
+    --terminal-bg: #080808;
+    --terminal-text: #eaeaea;
+    --terminal-titlebar: 36px;
+}
+
+.vertex-shell-focus {
+    position: fixed;
+    inset: 0;
+    z-index: 9820;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    background: rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(5px) saturate(108%);
+    -webkit-backdrop-filter: blur(5px) saturate(108%);
+    transition: opacity 180ms ease, visibility 180ms ease;
+}
+
+.vertex-shell-focus.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.vertex-taskbar {
+    position: fixed;
+    left: 16px;
+    bottom: 18px;
+    z-index: 9920;
+    min-height: 48px;
+    max-width: min(760px, calc(100vw - 36px));
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0;
+    background: rgba(9, 9, 10, 0.88);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px) saturate(120%);
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-14px);
+    transition: opacity 180ms ease, transform 260ms cubic-bezier(0.2, 0.9, 0.18, 1), visibility 180ms ease;
+}
+
+.vertex-taskbar.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.vertex-taskbar-button {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--shell-text);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 22px rgba(0, 0, 0, 0.28);
+    font: 520 0.72rem var(--font);
+    transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.vertex-taskbar-button:hover {
+    transform: translateX(2px);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 10px 26px rgba(0, 0, 0, 0.34);
+}
+
+.vertex-taskbar-button svg {
+    width: 19px;
+    height: 19px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.vertex-taskbar-button span {
+    display: none;
+}
+
+.vertex-window {
+    position: fixed;
+    z-index: 9850;
+    display: none;
+    min-width: 340px;
+    min-height: 230px;
+    overflow: hidden;
+    resize: both;
+    border-radius: var(--shell-radius);
+    border: 1px solid var(--shell-border);
+    background: var(--shell-surface);
+    color: var(--shell-text);
+    box-shadow:
+        0 30px 72px rgba(0, 0, 0, 0.64),
+        0 10px 24px rgba(0, 0, 0, 0.42),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(26px) saturate(128%);
+    -webkit-backdrop-filter: blur(26px) saturate(128%);
+    opacity: 0;
+    transform: translate3d(0, 14px, 0) scale(0.97);
+    transition:
+        left 260ms cubic-bezier(0.2, 0.9, 0.18, 1),
+        top 260ms cubic-bezier(0.2, 0.9, 0.18, 1),
+        width 260ms cubic-bezier(0.2, 0.9, 0.18, 1),
+        height 260ms cubic-bezier(0.2, 0.9, 0.18, 1),
+        opacity 160ms ease,
+        transform 260ms cubic-bezier(0.2, 0.9, 0.18, 1),
+        box-shadow 180ms ease,
+        filter 180ms ease;
+}
+
+.vertex-window.active {
+    display: grid;
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    animation: vertexWindowOpen 220ms cubic-bezier(0.2, 0.9, 0.18, 1) both;
+}
+
+.vertex-window.focused {
+    box-shadow:
+        0 32px 82px rgba(0, 0, 0, 0.6),
+        0 12px 30px rgba(0, 0, 0, 0.38),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.vertex-window.inactive {
+    opacity: 0.84;
+    filter: saturate(0.86) brightness(0.88);
+}
+
+.vertex-window.dragging {
+    user-select: none;
+    transition: none;
+}
+
+.vertex-window.minimizing {
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(var(--minimize-x, 0), var(--minimize-y, 80px), 0) scale(0.34);
+}
+
+.vertex-window.restoring {
+    animation: vertexWindowRestore 240ms cubic-bezier(0.2, 0.9, 0.18, 1) both;
+}
+
+.vertex-window-titlebar {
+    position: relative;
+    z-index: 2;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 8px 0 12px;
+    background: rgba(245, 245, 247, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    user-select: none;
+    cursor: default;
+}
+
+.vertex-window-titlebar[data-window-drag] { cursor: grab; }
+.vertex-window.dragging .vertex-window-titlebar[data-window-drag] { cursor: grabbing; }
+
+.vertex-window-titlecluster {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.vertex-window-appicon {
+    width: 23px;
+    height: 23px;
+    display: grid;
+    place-items: center;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(145deg, #4c4f54, #25272b);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.vertex-window-appicon svg {
+    width: 15px;
+    height: 15px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.vertex-window-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'SF Pro Display', 'Manrope', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(250, 250, 250, 0.9);
+}
+
+.vertex-window-controls {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.vertex-window-control {
+    width: 30px;
+    height: 28px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: rgba(245, 245, 245, 0.66);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    transition: color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.vertex-window-control:hover {
+    color: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.vertex-window-close:hover {
+    background: rgba(224, 27, 36, 0.22);
+    box-shadow: 0 0 14px rgba(224, 27, 36, 0.24);
+}
+
+.vertex-window-control svg {
+    width: 13px;
+    height: 13px;
+    stroke: currentColor;
+    stroke-width: 1.65;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.vertex-window-control rect { fill: none; }
+
+.terminal-window {
+    left: 28px;
+    top: 28px;
+    width: min(900px, calc(100vw - 56px));
+    height: min(550px, calc(100vh - 96px));
+    min-width: 560px;
+    min-height: 330px;
+    grid-template-rows: var(--terminal-titlebar) 1fr 34px;
+    border-radius: 0;
+    border-color: rgba(255, 255, 255, 0.16);
+    background: #090909;
+    box-shadow: 0 34px 78px rgba(0, 0, 0, 0.72), 0 9px 22px rgba(0, 0, 0, 0.46);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.terminal-window .vertex-window-titlebar {
+    height: var(--terminal-titlebar);
+    padding: 0 6px 0 10px;
+    background: #111;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.34);
+}
+
+.terminal-window .vertex-window-appicon {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background: #050505;
+    color: #f2f2f2;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.terminal-window .vertex-window-title {
+    font-family: 'SF Pro Display', 'Manrope', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #f1f1f1;
+}
+
+.terminal-window .vertex-window-control {
+    width: 28px;
+    height: 26px;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.terminal-window .vertex-window-control:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.terminal-window .vertex-window-close:hover {
+    background: #c01c28;
+    color: #fff;
+}
+
+.terminal-screen {
+    position: relative;
+    z-index: 1;
+    padding: 10px 12px 8px;
+    overflow: auto;
+    font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Cascadia Mono", "Consolas", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--terminal-text);
+    background: var(--terminal-bg);
+}
+
+.terminal-line {
+    min-height: 21px;
+    white-space: pre-wrap;
+    color: var(--terminal-text);
+}
+
+.terminal-line.dim { color: #b7b7b7; }
+.terminal-line.ok { color: #eaeaea; }
+.terminal-line.warn { color: #f5c211; }
+.terminal-line.system { color: #d0d0d0; }
+.terminal-line.command { color: #eaeaea; }
+.terminal-line.red { color: #f66151; }
+.terminal-line.gray { color: #9a9a9a; }
+.terminal-line.blue { color: #99c1f1; }
+.terminal-line.green { color: #8ff0a4; }
+
+.terminal-command-prompt .prompt-user,
+.terminal-prompt .prompt-user {
+    color: #8ff0a4;
+    font-weight: 700;
+}
+
+.terminal-command-prompt .prompt-path,
+.terminal-prompt .prompt-path {
+    color: #99c1f1;
+    font-weight: 700;
+}
+
+.terminal-command-prompt .prompt-colon,
+.terminal-command-prompt .prompt-dollar,
+.terminal-prompt .prompt-colon,
+.terminal-prompt .prompt-dollar {
+    color: #eaeaea;
+}
+
+.terminal-input-row {
+    position: relative;
+    z-index: 1;
+    min-height: 34px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 7px;
+    padding: 0 12px 7px;
+    background: var(--terminal-bg);
+}
+
+.terminal-prompt {
+    font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Cascadia Mono", "Consolas", monospace;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.terminal-prompt span + span,
+.terminal-command-prompt span + span {
+    margin-left: 0;
+}
+
+.terminal-autocomplete {
+    position: absolute;
+    left: var(--terminal-input-left, 148px);
+    right: 12px;
+    bottom: 12px;
+    color: rgba(234, 234, 234, 0.34);
+    font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Cascadia Mono", "Consolas", monospace;
+    font-size: 14px;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#vertex-terminal-input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--terminal-text);
+    font-family: "JetBrains Mono", "Cascadia Code", "Fira Code", "Cascadia Mono", "Consolas", monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    caret-color: transparent;
+}
+
+.terminal-cursor {
+    position: absolute;
+    left: var(--terminal-cursor-left, 148px);
+    bottom: 10px;
+    width: 8px;
+    height: 17px;
+    background: #eaeaea;
+    pointer-events: none;
+    animation: terminalCursorBlink 1.05s steps(2, end) infinite;
+}
+
+.terminal-input-row:focus-within .terminal-cursor {
+    background: #f2f2f2;
+}
+
+.vertex-app-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 9840;
+    pointer-events: none;
+}
+
+.vertex-app-window {
+    position: fixed;
+    width: min(680px, calc(100vw - 48px));
+    height: min(480px, calc(100vh - 112px));
+    min-height: 320px;
+    max-height: calc(100vh - 84px);
+    display: grid;
+    grid-template-rows: 40px 1fr;
+    pointer-events: auto;
+}
+
+.vertex-app-window .vertex-window-body {
+    position: relative;
+    z-index: 1;
+    overflow: auto;
+    padding: 16px;
+    font-size: 0.86rem;
+    color: rgba(36, 36, 38, 0.96);
+    background: rgba(246, 247, 249, 0.88);
+}
+
+.vertex-files .vertex-window-body {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 0;
+    padding: 0;
+    background: rgba(248, 249, 251, 0.92);
+}
+
+.files-sidebar {
+    padding: 12px 10px;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(239, 241, 246, 0.72);
+}
+
+.files-side-item {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-radius: 8px;
+    color: #2f3337;
+    font-size: 0.78rem;
+}
+
+.files-side-item.active,
+.files-side-item:hover {
+    background: rgba(53, 132, 228, 0.12);
+}
+
+.files-main {
+    display: grid;
+    grid-template-rows: 48px 1fr;
+    min-width: 0;
+}
+
+.files-toolbar {
+    display: grid;
+    grid-template-columns: 1fr 190px;
+    align-items: center;
+    gap: 12px;
+    padding: 0 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.files-breadcrumbs {
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: #25272a;
+}
+
+.files-search {
+    height: 30px;
+    border-radius: 9px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.82);
+    padding: 0 10px;
+    color: #303236;
+}
+
+.folder-grid {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+    gap: 14px;
+    align-content: start;
+}
+
+.folder-tile {
+    min-height: 88px;
+    display: grid;
+    place-items: center;
+    gap: 6px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.68);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: #2d3035;
+    font-size: 0.76rem;
+}
+
+.folder-tile svg {
+    width: 32px;
+    height: 32px;
+    stroke: #d9952e;
+    fill: rgba(217, 149, 46, 0.18);
+}
+
+.vertex-settings .vertex-window-body {
+    display: grid;
+    grid-template-columns: 184px 1fr;
+    gap: 0;
+    padding: 0;
+    background: rgba(244, 245, 248, 0.94);
+}
+
+.settings-nav {
+    padding: 14px 10px;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(235, 238, 244, 0.76);
+}
+
+.settings-nav-item {
+    height: 34px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 9px;
+    color: #2f3338;
+    font-size: 0.78rem;
+}
+
+.settings-nav-item.active,
+.settings-nav-item:hover {
+    background: rgba(53, 132, 228, 0.13);
+}
+
+.settings-page {
+    padding: 18px;
+}
+
+.settings-heading {
+    margin-bottom: 14px;
+    font-size: 1.12rem;
+    font-weight: 720;
+    color: #1f2328;
+}
+
+.settings-card {
+    min-height: 58px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    border-radius: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.settings-card-title {
+    color: #24272c;
+    font-weight: 650;
+}
+
+.settings-card-sub {
+    margin-top: 2px;
+    color: #6b7178;
+    font-size: 0.74rem;
+}
+
+.settings-pill {
+    min-width: 48px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: #1d5fb8;
+    background: rgba(53, 132, 228, 0.12);
+    font-size: 0.72rem;
+    text-align: center;
+}
+
+.vertex-notepad .vertex-window-body {
+    padding: 0;
+    background: #fbfbfb;
+}
+
+.vertex-notepad textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
+    resize: none;
+    border: 0;
+    background: #fbfbfb;
+    color: #1f1f1f;
+    padding: 18px;
+    font-family: "Segoe UI", "Manrope", sans-serif;
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.task-table th,
+.task-table td {
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    text-align: left;
+}
+
+.task-table th {
+    color: #3a3d42;
+    font-weight: 700;
+    background: rgba(239, 241, 244, 0.9);
+}
+
+.task-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.task-card {
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.task-card strong {
+    display: block;
+    color: #1f2328;
+    font-size: 1rem;
+}
+
+.task-card span {
+    color: #6b7178;
+    font-size: 0.72rem;
+}
+
+.paint-toolbar {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.paint-toolbar button {
+    min-height: 34px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.78);
+    color: #1f2328;
+    padding: 0 12px;
+    font: 600 0.78rem "Segoe UI", "Manrope", sans-serif;
+}
+
+.paint-swatch {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    padding: 0;
+    background: var(--paint-color) !important;
+}
+
+.paint-canvas {
+    width: 100%;
+    height: calc(100% - 54px);
+    min-height: 260px;
+    display: block;
+    background: #0f0f0f;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.clock-app {
+    height: 100%;
+    min-height: 260px;
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 10px;
+    background: #101010;
+    color: #f4f4f4;
+}
+
+.clock-time {
+    font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    font-weight: 700;
+    color: #eaeaea;
+}
+
+.clock-date {
+    color: #9a9a9a;
+    font-size: 0.92rem;
+}
+
+.calc-display {
+    min-height: 64px;
+    padding: 13px 14px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.82);
+    color: #1f2328;
+    text-align: right;
+    font-family: "Segoe UI", "Manrope", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.calc-grid button {
+    min-height: 44px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #1f2328;
+    font: 600 0.9rem "Segoe UI", "Manrope", sans-serif;
+}
+
+.calc-grid button:hover {
+    background: rgba(53, 132, 228, 0.12);
+}
+
+@keyframes vertexWindowOpen {
+    0% { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.97); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes vertexWindowRestore {
+    0% { opacity: 0; transform: translate3d(0, 12px, 0) scale(0.9); }
+    100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes terminalCursorBlink {
+    0%, 45% { opacity: 1; }
+    46%, 100% { opacity: 0; }
+}
+
+@media (max-width: 720px) {
+    .terminal-window {
+        left: 10px;
+        top: 10px;
+        width: calc(100vw - 20px);
+        height: min(550px, calc(100vh - 84px));
+        min-width: 280px;
+    }
+
+    .vertex-window {
+        min-width: 280px;
+    }
+
+    .vertex-app-window {
+        left: 12px !important;
+        width: calc(100vw - 24px);
+    }
+
+    .vertex-files .vertex-window-body,
+    .vertex-settings .vertex-window-body {
+        grid-template-columns: 1fr;
+    }
+
+    .files-sidebar,
+    .settings-nav {
+        display: none;
+    }
+
+    .vertex-taskbar {
+        bottom: 10px;
+        max-width: calc(100vw - 20px);
+    }
+}

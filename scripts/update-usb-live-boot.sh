@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-OS-Live-USB-x86_64-UEFI.img}"
+IMAGE="${VERTEX_USB_IMAGE:-$ROOT_DIR/out/usb/Vertex-OS-Live-USB-x86_64-BIOS-UEFI.img}"
 GRUB_CFG_TEMPLATE="$ROOT_DIR/config/boot/grub/vertex-usb-grub.cfg"
 GRUB_THEME_DIR="$ROOT_DIR/config/boot/grub/themes/vertex"
 WORK_DIR="${VERTEX_USB_WORK_DIR:-/var/tmp/vertex-usb-live}"
@@ -41,6 +41,7 @@ trap cleanup EXIT
 require losetup
 require mount
 require umount
+require grub-install
 require grub-mkstandalone
 
 [ -f "$IMAGE" ] || die "Missing USB image: $IMAGE. Run scripts/build-usb-live.sh first."
@@ -50,7 +51,11 @@ require grub-mkstandalone
 
 mkdir -p "$ESP_MNT" "$GRUB_WORK"
 LOOP_DEV="$(losetup --show -fP "$IMAGE")"
-ESP_PART="$(part_path "$LOOP_DEV" 1)"
+if [ -b "$(part_path "$LOOP_DEV" 2)" ]; then
+    ESP_PART="$(part_path "$LOOP_DEV" 2)"
+else
+    ESP_PART="$(part_path "$LOOP_DEV" 1)"
+fi
 
 for _ in $(seq 1 40); do
     [ -b "$ESP_PART" ] && break
@@ -86,6 +91,16 @@ grub-mkstandalone \
     -o "$ESP_MNT/EFI/BOOT/BOOTX64.EFI" \
     --modules="all_video efi_gop efi_uga font gfxterm gfxmenu png part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt efifwsetup echo sleep read test" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
+
+if [ -b "$(part_path "$LOOP_DEV" 1)" ] && parted -s "$LOOP_DEV" print 2>/dev/null | grep -q 'bios_grub'; then
+    grub-install \
+        --target=i386-pc \
+        --boot-directory="$ESP_MNT/boot" \
+        --modules="all_video vbe vga video_bochs video_cirrus font gfxterm gfxmenu png bitmap bufio part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt echo sleep test" \
+        --recheck \
+        --force \
+        "$LOOP_DEV" >/dev/null
+fi
 
 cat > "$ESP_MNT/startup.nsh" <<'EOF'
 fs0:

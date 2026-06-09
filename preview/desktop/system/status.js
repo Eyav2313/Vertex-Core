@@ -91,6 +91,16 @@ function initBatteryWidget() {
         }
 
         function playBatteryPowerSound(kind) {
+            if (typeof playVertexSound === 'function') {
+                const volume = kind === 'plug-out' ? 0.72 : 0.82;
+                playVertexSound(kind, volume).catch(() => playBatteryPowerToneFallback(kind));
+                return;
+            }
+
+            playBatteryPowerToneFallback(kind);
+        }
+
+        function playBatteryPowerToneFallback(kind) {
             const AudioEngine = window.AudioContext || window.webkitAudioContext;
             if (!AudioEngine) return;
 
@@ -146,6 +156,7 @@ function initBatteryWidget() {
 
         function showChargingAura({ charging, fastCharging, percent }) {
             const aura = document.getElementById('charge-aura');
+            const frost = document.getElementById('charge-frost');
             const icon = document.getElementById('charge-aura-icon');
             const title = document.getElementById('charge-aura-title');
             const subtitle = document.getElementById('charge-aura-subtitle');
@@ -156,12 +167,19 @@ function initBatteryWidget() {
             icon.textContent = charging ? 'ϟ' : 'AC';
             title.textContent = charging ? (fastCharging ? 'Fast Charging' : 'Charging') : 'Power Disconnected';
             subtitle.textContent = charging ? `${percent}% battery` : `${percent}% remaining`;
+            icon.textContent = charging ? 'AC' : '--';
             aura.setAttribute('aria-hidden', 'false');
             aura.classList.add('active');
+            if (frost) {
+                frost.setAttribute('aria-hidden', 'false');
+                frost.classList.add('active');
+            }
 
             window.__vertexChargeAuraTimer = window.setTimeout(() => {
                 aura.classList.remove('active');
+                if (frost) frost.classList.remove('active');
                 window.setTimeout(() => aura.setAttribute('aria-hidden', 'true'), 520);
+                window.setTimeout(() => frost?.setAttribute('aria-hidden', 'true'), 520);
             }, charging ? 2200 : 1800);
         }
 

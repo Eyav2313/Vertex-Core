@@ -11,7 +11,7 @@ $ErrorActionPreference = "Stop"
 
 $Root = Split-Path -Parent $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($Image)) {
-    $Image = Join-Path $Root "out\usb\Vertex-OS-Live-USB-x86_64-UEFI.img"
+    $Image = Join-Path $Root "out\usb\Vertex-OS-Live-USB-x86_64-BIOS-UEFI.img"
 }
 
 if (-not (Test-Path $Image)) {

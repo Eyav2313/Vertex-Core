@@ -50,6 +50,15 @@ function getBootProfile() {
             if (window.__vertexBootRevealSoundPlayed) return;
             window.__vertexBootRevealSoundPlayed = true;
 
+            if (typeof playVertexSound === 'function') {
+                playVertexSound('start', 0.82).catch(() => playBootRevealToneFallback());
+                return;
+            }
+
+            playBootRevealToneFallback();
+        }
+
+        function playBootRevealToneFallback() {
             const AudioEngine = window.AudioContext || window.webkitAudioContext;
             if (!AudioEngine) return;
 

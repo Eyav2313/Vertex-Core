@@ -5,12 +5,12 @@
             .network-popover { right: 54px; width: min(292px, calc(100vw - 36px)); }
             .accessibility-popover { right: 92px; width: min(244px, calc(100vw - 36px)); }
             .battery-popover { right: 18px; width: min(244px, calc(100vw - 36px)); }
-            .power-popover { right: 18px; width: min(218px, calc(100vw - 36px)); }
-            .widget-icon { width: 28px; height: 26px; }
-            .widget-icon svg { width: 15px; height: 15px; }
-            #network-widget { width: 32px; height: 26px; }
-            #network-widget svg { width: 18px; height: 18px; }
-            .battery-widget { width: 34px; }
+            .power-popover { right: 18px; width: min(236px, calc(100vw - 36px)); }
+            .widget-icon { width: 34px; height: 32px; }
+            .widget-icon svg { width: 19px; height: 19px; }
+            #network-widget { width: 38px; height: 32px; }
+            #network-widget svg { width: 22px; height: 22px; }
+            .battery-widget { width: 40px; }
             #custom-window { width: min(560px, calc(100vw - 32px)); }
             .control-line { grid-template-columns: 1fr; gap: 8px; }
             .control-line input[type="range"], .toggle-grid, .system-grid { width: 100%; }
@@ -19,7 +19,7 @@
             #date-text { font-size: 0.76rem; }
             #pass-in { width: 184px; }
             .login-actions { right: 18px; bottom: 22px; gap: 8px; }
-            .login-utility-action { width: 30px; height: 28px; }
+            .login-utility-action { width: 36px; height: 34px; }
             .virtual-keyboard { bottom: 58px; width: min(560px, calc(100vw - 28px)); padding: 0 5px 5px; border-radius: 3px; }
             .keyboard-toolbar { height: 34px; margin-bottom: 5px; }
             .key-row { gap: 5px; }

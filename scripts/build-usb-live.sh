@@ -12,9 +12,9 @@ INITRD_IMAGE="${VERTEX_INITRD_IMAGE:-$HTML_OUT/vertex-html-lock-initrd.img}"
 GRUB_CFG_TEMPLATE="$ROOT_DIR/config/boot/grub/vertex-usb-grub.cfg"
 GRUB_THEME_DIR="$ROOT_DIR/config/boot/grub/themes/vertex"
 
-IMAGE="${VERTEX_USB_IMAGE:-$USB_OUT/Vertex-OS-Live-USB-x86_64-UEFI.img}"
-IMAGE_WORK="$WORK_DIR/Vertex-OS-Live-USB-x86_64-UEFI.img"
-IMAGE_SIZE="${VERTEX_USB_IMAGE_SIZE:-4G}"
+IMAGE="${VERTEX_USB_IMAGE:-$USB_OUT/Vertex-OS-Live-USB-x86_64-BIOS-UEFI.img}"
+IMAGE_WORK="$WORK_DIR/Vertex-OS-Live-USB-x86_64-BIOS-UEFI.img"
+IMAGE_SIZE="${VERTEX_USB_IMAGE_SIZE:-5G}"
 ESP_LABEL="${VERTEX_USB_ESP_LABEL:-VERTEXBOOT}"
 ROOT_LABEL="${VERTEX_USB_ROOT_LABEL:-VertexLiveRoot}"
 
@@ -62,6 +62,7 @@ require mkfs.ext4
 require mount
 require umount
 require rsync
+require grub-install
 require grub-mkstandalone
 
 [ -f "$ROOTFS_IMAGE" ] || die "Missing rootfs image: $ROOTFS_IMAGE. Run scripts/build-html-lock-os.sh first."
@@ -76,15 +77,18 @@ rm -f "$IMAGE_WORK" "$IMAGE"
 truncate -s "$IMAGE_SIZE" "$IMAGE_WORK"
 
 parted -s "$IMAGE_WORK" mklabel gpt
-parted -s "$IMAGE_WORK" mkpart ESP fat32 1MiB 513MiB
-parted -s "$IMAGE_WORK" set 1 esp on
-parted -s "$IMAGE_WORK" name 1 VertexEFI
-parted -s "$IMAGE_WORK" mkpart VertexRoot ext4 513MiB 100%
-parted -s "$IMAGE_WORK" name 2 VertexRoot
+parted -s "$IMAGE_WORK" mkpart VertexBIOS 1MiB 2MiB
+parted -s "$IMAGE_WORK" set 1 bios_grub on
+parted -s "$IMAGE_WORK" name 1 VertexBIOS
+parted -s "$IMAGE_WORK" mkpart ESP fat32 2MiB 514MiB
+parted -s "$IMAGE_WORK" set 2 esp on
+parted -s "$IMAGE_WORK" name 2 VertexEFI
+parted -s "$IMAGE_WORK" mkpart VertexRoot ext4 514MiB 100%
+parted -s "$IMAGE_WORK" name 3 VertexRoot
 
 LOOP_DEV="$(losetup --show -fP "$IMAGE_WORK")"
-ESP_PART="$(part_path "$LOOP_DEV" 1)"
-ROOT_PART="$(part_path "$LOOP_DEV" 2)"
+ESP_PART="$(part_path "$LOOP_DEV" 2)"
+ROOT_PART="$(part_path "$LOOP_DEV" 3)"
 
 for _ in $(seq 1 40); do
     [ -b "$ESP_PART" ] && [ -b "$ROOT_PART" ] && break
@@ -138,6 +142,15 @@ grub-mkstandalone \
     --modules="all_video efi_gop efi_uga font gfxterm gfxmenu png part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt efifwsetup echo sleep read test" \
     "boot/grub/grub.cfg=$GRUB_WORK/embedded.cfg"
 
+info "Installing legacy BIOS boot files."
+grub-install \
+    --target=i386-pc \
+    --boot-directory="$ESP_MNT/boot" \
+    --modules="all_video vbe vga video_bochs video_cirrus font gfxterm gfxmenu png bitmap bufio part_gpt fat ext2 normal linux gzio search search_label configfile reboot halt echo sleep test" \
+    --recheck \
+    --force \
+    "$LOOP_DEV" >/dev/null
+
 cat > "$ESP_MNT/startup.nsh" <<'EOF'
 fs0:
 \EFI\BOOT\BOOTX64.EFI
@@ -146,7 +159,9 @@ EOF
 cat > "$ESP_MNT/README.txt" <<'EOF'
 Vertex UEFI Live Media
 
-This drive boots Vertex from the UEFI removable media path:
+This drive boots Vertex from UEFI and legacy BIOS firmware.
+
+UEFI removable media path:
 
   EFI/BOOT/BOOTX64.EFI
 

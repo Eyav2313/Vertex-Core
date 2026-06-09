@@ -83,7 +83,7 @@ scripts/build-usb-live.sh
 The USB artifact is written to:
 
 ```text
-out/usb/Vertex-OS-Live-USB-x86_64-UEFI.img
+out/usb/Vertex-OS-Live-USB-x86_64-BIOS-UEFI.img
 ```
 
 That image contains a removable-media UEFI boot path at `EFI/BOOT/BOOTX64.EFI`, a Vertex boot manager, the Linux kernel/initrd, and the live ext4 root filesystem. The boot manager keeps a black console-first style and the selected entry starts Linux with real kernel/systemd status output before the Vertex lock screen appears.

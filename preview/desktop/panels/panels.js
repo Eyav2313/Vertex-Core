@@ -72,7 +72,7 @@ function toggleUtilityPanel(event) {
             closeBatteryPanel();
             closeAccessibilityPanel();
             closeVirtualKeyboard();
-            if (active) positionPopoverNearTrigger(panel, event?.currentTarget || document.querySelector('.power-trigger'), 218);
+            if (active) positionPopoverNearTrigger(panel, event?.currentTarget || document.querySelector('.power-trigger'), 236);
             panel.classList.toggle('active', active);
             document.querySelectorAll('.power-trigger').forEach((button) => button.classList.toggle('active', active));
         }

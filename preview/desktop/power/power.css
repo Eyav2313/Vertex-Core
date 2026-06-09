@@ -1,10 +1,1 @@
-.power-transition { position: fixed; inset: 0; z-index: 22000; display: grid; place-items: center; background: #000; color: rgba(255,255,255,0.82); opacity: 0; visibility: hidden; transition: opacity 0.55s ease, visibility 0.55s ease; cursor: none; }
-        body.powering-down, body.powering-down * { cursor: none !important; }
-        .power-transition.active { opacity: 1; visibility: visible; }
-        .power-transition.console-mode { place-items: start stretch; }
-        .power-transition-content { text-align: center; transform: scale(0.98); opacity: 0; transition: opacity 0.55s 0.16s ease, transform 0.7s 0.16s cubic-bezier(0.16, 1, 0.3, 1); }
-        .power-transition.active .power-transition-content { opacity: 1; transform: scale(1); }
-        .power-transition.console-mode .power-transition-content { opacity: 0; visibility: hidden; }
-        .power-transition-title { font-family: 'SF Pro Display', 'Manrope', sans-serif; font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; letter-spacing: 0.28em; text-transform: uppercase; }
-        .power-transition-subtitle { margin-top: 12px; font-size: 0.74rem; font-weight: 300; letter-spacing: 0.08em; color: rgba(255,255,255,0.48); }
-        .power-cut-line { width: 96px; height: 1px; margin: 22px auto 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.68), transparent); opacity: 0.72; }
+/* Power actions are handled by the Vertex OS bridge. */
