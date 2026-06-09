@@ -139,9 +139,10 @@ function seedVertexTerminal() {
     if (input) input.disabled = true;
     writeTerminalLine("VertexOS Terminal 1.0");
     writeTerminalLine("Copyright VertexOS", "gray");
+    writeTerminalLine("Developed by Nuren Zarif Haque", "gray");
     writeTerminalLine("");
-    writeTerminalLine("Loading shell...", "gray");
-    writeTerminalLine("Done.", "green");
+    writeTerminalLine("Session initialized.", "gray");
+    writeTerminalLine("Shell ready.", "green");
     writeTerminalLine("Type help to list commands.", "gray");
     vertexTerminalBooting = false;
     if (input) {
@@ -323,14 +324,15 @@ function getPromptHtml(path = vertexCwd) {
 function printNeofetch() {
     const info = window.VERTEX_SYSTEM_INFO || {};
     const rows = [
-        "        ./+o+-       zarif@vertexos",
-        "      yyyyy- -yy      OS: VertexOS Live",
-        "   ://+//////-yy      Host: Vertex Live Media",
-        " .++ .:/++++++/-      Kernel: " + (info.kernel || "Linux live"),
-        " .:++++oooooo++/      Shell: vxsh 1.0",
-        "      ./ooosssso      Resolution: " + (info.display || `${window.innerWidth}x${window.innerHeight}`),
-        "     .oossssso-       CPU: " + (info.cpu || `${navigator.hardwareConcurrency || 2} threads`),
-        "    -osssssso.        Memory: " + (info.memory || "Browser managed")
+        "__     __        zarif@vertexos",
+        "\\ \\   / /        OS: VertexOS Live",
+        " \\ \\ / /         Host: Vertex Live Media",
+        "  \\ V /          Kernel: " + (info.kernel || "Linux live"),
+        "   \\_/           Shell: vxsh 1.0",
+        "  VERTEX         Developer: Nuren Zarif Haque",
+        "                 Resolution: " + (info.display || `${window.innerWidth}x${window.innerHeight}`),
+        "                 CPU: " + (info.cpu || `${navigator.hardwareConcurrency || 2} threads`),
+        "                 Memory: " + (info.memory || "Browser managed")
     ];
     rows.forEach((line, index) => writeTerminalLine(line, index === 0 ? "green" : ""));
 }
@@ -402,9 +404,6 @@ function scrollTerminalToBottom() {
 }
 
 function openVertexApp(kind) {
-    const layer = document.getElementById("vertex-app-layer");
-    if (!layer) return;
-
     const app = document.createElement("div");
     const offset = vertexAppOffset % 110;
     vertexAppOffset += 22;
@@ -426,7 +425,7 @@ function openVertexApp(kind) {
         </div>
         <div class="vertex-window-body">${getVertexAppBody(kind)}</div>
     `;
-    layer.appendChild(app);
+    document.body.appendChild(app);
     initVertexWindowControls(app);
     bringVertexWindowToFront(app);
     updateShellFocusState();
@@ -434,6 +433,7 @@ function openVertexApp(kind) {
     if (kind === "calc") initCalcWindow(app);
     if (kind === "paint") initPaintWindow(app);
     if (kind === "files") initFilesWindow(app);
+    if (kind === "notepad") initNotepadWindow(app);
     if (kind === "clock") initClockWindow(app);
 }
 
@@ -683,7 +683,14 @@ function getVertexAppBody(kind) {
     if (kind === "files") return getFilesBody();
     if (kind === "settings") return getSettingsBody();
     if (kind === "notepad") {
-        return `<textarea aria-label="Notepad text">VertexOS note\n\n</textarea>`;
+        return `
+            <div class="notepad-toolbar">
+                <input class="notepad-filename" value="vertex-note.txt" aria-label="File name">
+                <button type="button" data-notepad-save>Save</button>
+                <span class="notepad-status" data-notepad-status>Ready</span>
+            </div>
+            <textarea aria-label="Notepad text">VertexOS note\n\n</textarea>
+        `;
     }
     if (kind === "task") return getTaskManagerBody();
     if (kind === "paint") return getPaintBody();
@@ -750,7 +757,8 @@ function getSettingsBody() {
         ["Display", "1920 x 1080, 100% scale", "Open"],
         ["Sound", "Output: Default device", "70%"],
         ["Battery", "Balanced power mode", "Auto"],
-        ["Updates", "VertexOS live channel", "Ready"]
+        ["Updates", "VertexOS live channel", "Ready"],
+        ["Developer", "Developed by Nuren Zarif Haque", "Vertex"]
     ];
     return `
         <aside class="settings-nav">
@@ -803,6 +811,62 @@ function initFilesWindow(app) {
             tile.style.display = visible ? "" : "none";
         });
     });
+}
+
+function initNotepadWindow(app) {
+    const textarea = app.querySelector("textarea");
+    const filename = app.querySelector(".notepad-filename");
+    const status = app.querySelector("[data-notepad-status]");
+    const save = app.querySelector("[data-notepad-save]");
+    if (!textarea || !filename || !save) return;
+
+    save.addEventListener("click", async () => {
+        const name = sanitizeFileName(filename.value || "vertex-note.txt");
+        const text = textarea.value;
+        try {
+            if (window.showSaveFilePicker) {
+                const handle = await window.showSaveFilePicker({
+                    suggestedName: name,
+                    types: [{ description: "Text file", accept: { "text/plain": [".txt", ".md", ".log"] } }]
+                });
+                const writable = await handle.createWritable();
+                await writable.write(text);
+                await writable.close();
+                setNotepadStatus(status, `Saved ${name}`);
+                return;
+            }
+            downloadNotepadText(name, text);
+            setNotepadStatus(status, `Saved ${name}`);
+        } catch (error) {
+            setNotepadStatus(status, "Save cancelled");
+        }
+    });
+}
+
+function sanitizeFileName(name) {
+    const cleaned = String(name).replace(/[<>:"/\\|?*\x00-\x1F]/g, "-").trim();
+    return cleaned || "vertex-note.txt";
+}
+
+function downloadNotepadText(name, text) {
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 800);
+}
+
+function setNotepadStatus(status, text) {
+    if (!status) return;
+    status.textContent = text;
+    window.clearTimeout(status.__vertexTimer);
+    status.__vertexTimer = window.setTimeout(() => {
+        status.textContent = "Ready";
+    }, 2200);
 }
 
 function initPaintWindow(app) {

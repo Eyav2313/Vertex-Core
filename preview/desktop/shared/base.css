@@ -15,9 +15,9 @@
             --bg: url('../../../assets/wallpapers/vertex-lock-background.png'); 
             --f-size: clamp(6rem, 24vw, 10rem);
             --time-opacity: 1;
-            --cursor-default: url('../../../assets/cursors/vertex-arrow.png') 1 1, auto;
-            --cursor-pointer: url('../../../assets/cursors/vertex-hand.png') 11 2, pointer;
-            --cursor-input: url('../../../assets/cursors/vertex-input.png') 10 12, text;
+            --cursor-default: url('../../../assets/cursors/vertex-arrow.png') 2 2, auto;
+            --cursor-pointer: url('../../../assets/cursors/vertex-hand.png') 15 3, pointer;
+            --cursor-input: url('../../../assets/cursors/vertex-input.png') 13 16, text;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         html { font-size: 18px; }

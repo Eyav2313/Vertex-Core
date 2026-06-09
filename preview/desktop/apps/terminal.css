@@ -11,6 +11,51 @@
     --terminal-bg: #080808;
     --terminal-text: #eaeaea;
     --terminal-titlebar: 36px;
+    --app-bg: #070708;
+    --app-panel: rgba(18, 18, 20, 0.96);
+    --app-panel-soft: rgba(28, 28, 31, 0.9);
+    --app-border: rgba(255, 255, 255, 0.1);
+    --app-text: rgba(244, 244, 245, 0.94);
+    --app-muted: rgba(185, 185, 190, 0.62);
+}
+
+.vertex-window,
+.terminal-screen,
+.vertex-window-body,
+.vertex-notepad textarea {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(164, 164, 170, 0.46) rgba(8, 8, 9, 0.82);
+}
+
+.vertex-window::-webkit-scrollbar,
+.terminal-screen::-webkit-scrollbar,
+.vertex-window-body::-webkit-scrollbar,
+.vertex-notepad textarea::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.vertex-window::-webkit-scrollbar-track,
+.terminal-screen::-webkit-scrollbar-track,
+.vertex-window-body::-webkit-scrollbar-track,
+.vertex-notepad textarea::-webkit-scrollbar-track {
+    background: rgba(8, 8, 9, 0.82);
+}
+
+.vertex-window::-webkit-scrollbar-thumb,
+.terminal-screen::-webkit-scrollbar-thumb,
+.vertex-window-body::-webkit-scrollbar-thumb,
+.vertex-notepad textarea::-webkit-scrollbar-thumb {
+    border: 2px solid rgba(8, 8, 9, 0.82);
+    border-radius: 999px;
+    background: rgba(164, 164, 170, 0.42);
+}
+
+.vertex-window::-webkit-scrollbar-thumb:hover,
+.terminal-screen::-webkit-scrollbar-thumb:hover,
+.vertex-window-body::-webkit-scrollbar-thumb:hover,
+.vertex-notepad textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(214, 214, 218, 0.56);
 }
 
 .vertex-shell-focus {
@@ -33,21 +78,21 @@
 
 .vertex-taskbar {
     position: fixed;
-    left: 16px;
-    bottom: 18px;
+    left: 12px;
+    bottom: 14px;
     z-index: 9920;
-    min-height: 48px;
+    min-height: 30px;
     max-width: min(760px, calc(100vw - 36px));
-    padding: 7px;
+    padding: 0;
     display: flex;
     align-items: center;
-    gap: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    gap: 4px;
+    border: 0;
     border-radius: 0;
-    background: rgba(9, 9, 10, 0.88);
-    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(18px) saturate(120%);
-    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     opacity: 0;
     visibility: hidden;
     transform: translateX(-14px);
@@ -61,31 +106,32 @@
 }
 
 .vertex-taskbar-button {
-    width: 42px;
-    min-width: 42px;
-    height: 42px;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
     border: 0;
     border-radius: 0;
     padding: 0;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     color: var(--shell-text);
-    background: rgba(255, 255, 255, 0.06);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 22px rgba(0, 0, 0, 0.28);
+    background: transparent;
+    box-shadow: none;
     font: 520 0.72rem var(--font);
     transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
 }
 
 .vertex-taskbar-button:hover {
     transform: translateX(2px);
-    background: rgba(255, 255, 255, 0.14);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 10px 26px rgba(0, 0, 0, 0.34);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.34);
 }
 
 .vertex-taskbar-button svg {
-    width: 19px;
-    height: 19px;
+    width: 15px;
+    height: 15px;
     stroke: currentColor;
     fill: none;
     stroke-width: 1.8;
@@ -178,8 +224,8 @@
     cursor: default;
 }
 
-.vertex-window-titlebar[data-window-drag] { cursor: grab; }
-.vertex-window.dragging .vertex-window-titlebar[data-window-drag] { cursor: grabbing; }
+.vertex-window-titlebar[data-window-drag] { cursor: var(--cursor-default); }
+.vertex-window.dragging .vertex-window-titlebar[data-window-drag] { cursor: var(--cursor-default); }
 
 .vertex-window-titlecluster {
     min-width: 0;
@@ -453,8 +499,8 @@
     overflow: auto;
     padding: 16px;
     font-size: 0.86rem;
-    color: rgba(36, 36, 38, 0.96);
-    background: rgba(246, 247, 249, 0.88);
+    color: var(--app-text);
+    background: linear-gradient(180deg, var(--app-panel), var(--app-bg));
 }
 
 .vertex-files .vertex-window-body {
@@ -462,13 +508,13 @@
     grid-template-columns: 168px 1fr;
     gap: 0;
     padding: 0;
-    background: rgba(248, 249, 251, 0.92);
+    background: #09090a;
 }
 
 .files-sidebar {
     padding: 12px 10px;
-    border-right: 1px solid rgba(0, 0, 0, 0.08);
-    background: rgba(239, 241, 246, 0.72);
+    border-right: 1px solid var(--app-border);
+    background: rgba(12, 12, 14, 0.96);
 }
 
 .files-side-item {
@@ -477,14 +523,15 @@
     align-items: center;
     gap: 8px;
     padding: 0 10px;
-    border-radius: 8px;
-    color: #2f3337;
+    border-radius: 0;
+    color: var(--app-muted);
     font-size: 0.78rem;
 }
 
 .files-side-item.active,
 .files-side-item:hover {
-    background: rgba(53, 132, 228, 0.12);
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .files-main {
@@ -499,22 +546,27 @@
     align-items: center;
     gap: 12px;
     padding: 0 14px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid var(--app-border);
+    background: rgba(15, 15, 17, 0.94);
 }
 
 .files-breadcrumbs {
     font-size: 0.8rem;
     font-weight: 650;
-    color: #25272a;
+    color: var(--app-text);
 }
 
 .files-search {
     height: 30px;
-    border-radius: 9px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.82);
+    border-radius: 0;
+    border: 1px solid var(--app-border);
+    background: rgba(5, 5, 6, 0.92);
     padding: 0 10px;
-    color: #303236;
+    color: var(--app-text);
+}
+
+.files-search::placeholder {
+    color: rgba(190, 190, 196, 0.46);
 }
 
 .folder-grid {
@@ -530,10 +582,10 @@
     display: grid;
     place-items: center;
     gap: 6px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.68);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    color: #2d3035;
+    border-radius: 0;
+    background: rgba(19, 19, 22, 0.92);
+    border: 1px solid var(--app-border);
+    color: var(--app-text);
     font-size: 0.76rem;
 }
 
@@ -549,13 +601,13 @@
     grid-template-columns: 184px 1fr;
     gap: 0;
     padding: 0;
-    background: rgba(244, 245, 248, 0.94);
+    background: #09090a;
 }
 
 .settings-nav {
     padding: 14px 10px;
-    border-right: 1px solid rgba(0, 0, 0, 0.08);
-    background: rgba(235, 238, 244, 0.76);
+    border-right: 1px solid var(--app-border);
+    background: rgba(12, 12, 14, 0.96);
 }
 
 .settings-nav-item {
@@ -563,14 +615,15 @@
     display: flex;
     align-items: center;
     padding: 0 10px;
-    border-radius: 9px;
-    color: #2f3338;
+    border-radius: 0;
+    color: var(--app-muted);
     font-size: 0.78rem;
 }
 
 .settings-nav-item.active,
 .settings-nav-item:hover {
-    background: rgba(53, 132, 228, 0.13);
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .settings-page {
@@ -581,7 +634,7 @@
     margin-bottom: 14px;
     font-size: 1.12rem;
     font-weight: 720;
-    color: #1f2328;
+    color: var(--app-text);
 }
 
 .settings-card {
@@ -592,19 +645,19 @@
     gap: 14px;
     padding: 12px 14px;
     margin-bottom: 10px;
-    border-radius: 13px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    background: rgba(255, 255, 255, 0.78);
+    border-radius: 0;
+    border: 1px solid var(--app-border);
+    background: rgba(18, 18, 21, 0.92);
 }
 
 .settings-card-title {
-    color: #24272c;
+    color: var(--app-text);
     font-weight: 650;
 }
 
 .settings-card-sub {
     margin-top: 2px;
-    color: #6b7178;
+    color: var(--app-muted);
     font-size: 0.74rem;
 }
 
@@ -612,15 +665,58 @@
     min-width: 48px;
     padding: 5px 10px;
     border-radius: 999px;
-    color: #1d5fb8;
-    background: rgba(53, 132, 228, 0.12);
+    color: #99c1f1;
+    background: rgba(53, 132, 228, 0.16);
     font-size: 0.72rem;
     text-align: center;
 }
 
 .vertex-notepad .vertex-window-body {
     padding: 0;
-    background: #fbfbfb;
+    display: grid;
+    grid-template-rows: 38px 1fr;
+    background: #080809;
+}
+
+.notepad-toolbar {
+    display: grid;
+    grid-template-columns: minmax(140px, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--app-border);
+    background: rgba(15, 15, 17, 0.96);
+}
+
+.notepad-filename {
+    min-width: 0;
+    height: 28px;
+    border: 1px solid var(--app-border);
+    border-radius: 0;
+    padding: 0 9px;
+    background: rgba(5, 5, 6, 0.94);
+    color: var(--app-text);
+    font: 500 0.78rem "Segoe UI", "Manrope", sans-serif;
+}
+
+.notepad-toolbar button {
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 0;
+    padding: 0 12px;
+    background: rgba(42, 42, 46, 0.95);
+    color: var(--app-text);
+    font: 650 0.74rem "Segoe UI", "Manrope", sans-serif;
+}
+
+.notepad-toolbar button:hover {
+    background: rgba(68, 68, 74, 0.96);
+}
+
+.notepad-status {
+    color: var(--app-muted);
+    font-size: 0.72rem;
+    white-space: nowrap;
 }
 
 .vertex-notepad textarea {
@@ -629,8 +725,8 @@
     min-height: 280px;
     resize: none;
     border: 0;
-    background: #fbfbfb;
-    color: #1f1f1f;
+    background: #080809;
+    color: var(--app-text);
     padding: 18px;
     font-family: "Segoe UI", "Manrope", sans-serif;
     font-size: 0.92rem;
@@ -641,22 +737,24 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 0.78rem;
-    background: rgba(255, 255, 255, 0.82);
-    border-radius: 12px;
+    background: rgba(14, 14, 16, 0.96);
+    border-radius: 0;
+    border: 1px solid var(--app-border);
     overflow: hidden;
 }
 
 .task-table th,
 .task-table td {
     padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid var(--app-border);
     text-align: left;
+    color: var(--app-text);
 }
 
 .task-table th {
-    color: #3a3d42;
+    color: rgba(230, 230, 234, 0.82);
     font-weight: 700;
-    background: rgba(239, 241, 244, 0.9);
+    background: rgba(25, 25, 28, 0.96);
 }
 
 .task-summary {
@@ -668,19 +766,19 @@
 
 .task-card {
     padding: 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.82);
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0;
+    background: rgba(18, 18, 21, 0.94);
+    border: 1px solid var(--app-border);
 }
 
 .task-card strong {
     display: block;
-    color: #1f2328;
+    color: var(--app-text);
     font-size: 1rem;
 }
 
 .task-card span {
-    color: #6b7178;
+    color: var(--app-muted);
     font-size: 0.72rem;
 }
 
@@ -694,10 +792,10 @@
 
 .paint-toolbar button {
     min-height: 34px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--app-border);
     border-radius: 0;
-    background: rgba(255, 255, 255, 0.78);
-    color: #1f2328;
+    background: rgba(22, 22, 25, 0.94);
+    color: var(--app-text);
     padding: 0 12px;
     font: 600 0.78rem "Segoe UI", "Manrope", sans-serif;
 }
@@ -716,7 +814,7 @@
     min-height: 260px;
     display: block;
     background: #0f0f0f;
-    border: 1px solid rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--app-border);
 }
 
 .clock-app {
@@ -746,9 +844,10 @@
     min-height: 64px;
     padding: 13px 14px;
     margin-bottom: 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.82);
-    color: #1f2328;
+    border-radius: 0;
+    background: rgba(6, 6, 7, 0.96);
+    color: var(--app-text);
+    border: 1px solid var(--app-border);
     text-align: right;
     font-family: "Segoe UI", "Manrope", sans-serif;
     font-size: 1.45rem;
@@ -763,15 +862,15 @@
 
 .calc-grid button {
     min-height: 44px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.78);
-    color: #1f2328;
+    border: 1px solid var(--app-border);
+    border-radius: 0;
+    background: rgba(22, 22, 25, 0.95);
+    color: var(--app-text);
     font: 600 0.9rem "Segoe UI", "Manrope", sans-serif;
 }
 
 .calc-grid button:hover {
-    background: rgba(53, 132, 228, 0.12);
+    background: rgba(53, 132, 228, 0.2);
 }
 
 @keyframes vertexWindowOpen {

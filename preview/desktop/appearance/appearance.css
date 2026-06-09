@@ -15,7 +15,7 @@
         }
         #custom-overlay.active #custom-window { transform: translate(-50%, -50%); }
         .window-titlebar { position: relative; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 6px 0 12px; background: rgba(3,3,4,0.72); border-bottom: 1px solid rgba(255,255,255,0.08); user-select: none; }
-        .window-titlebar[data-drag-handle] { cursor: var(--cursor-pointer); }
+        .window-titlebar[data-drag-handle] { cursor: var(--cursor-default); }
         .window-titlebar[data-drag-handle]::after { content: ""; position: absolute; left: 50%; top: 50%; width: 32px; height: 3px; transform: translate(-50%, -50%); background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent); opacity: 0.75; }
         .window-titlebar span { font-size: 0.82rem; font-weight: 400; color: rgba(255,255,255,0.78); }
         .window-close { width: 30px; height: 30px; border: 0; border-radius: 50%; background: transparent; color: rgba(255,255,255,0.66); display: grid; place-items: center; }

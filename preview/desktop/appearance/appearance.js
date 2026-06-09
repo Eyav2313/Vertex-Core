@@ -6,8 +6,8 @@ let appearanceOpening = false;
             lastPointer = { x, y };
             const spinner = document.getElementById('cursor-wait-spinner');
             if (!spinner) return;
-            spinner.style.left = `${Math.max(0, Math.min(window.innerWidth - 32, x))}px`;
-            spinner.style.top = `${Math.max(0, Math.min(window.innerHeight - 32, y))}px`;
+            spinner.style.left = `${Math.max(0, Math.min(window.innerWidth - 54, x))}px`;
+            spinner.style.top = `${Math.max(0, Math.min(window.innerHeight - 54, y))}px`;
         }
 
         window.addEventListener('pointermove', (event) => {

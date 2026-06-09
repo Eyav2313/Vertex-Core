@@ -4,8 +4,8 @@
         button, button *, .chip, .chip *, .slider, input[type="range"], [onclick], [onclick] *, [role="button"], [role="button"] * { cursor: var(--cursor-pointer) !important; }
         input:not([type="range"]), textarea, [contenteditable="true"] { cursor: var(--cursor-input) !important; }
         body.wait-cursor-active, body.wait-cursor-active * { cursor: none !important; }
-        .cursor-wait-spinner { position: fixed; left: 0; top: 0; z-index: 10020; width: 16px; height: 16px; opacity: 0; pointer-events: none; transform: translate(10px, 10px); filter: drop-shadow(0 3px 9px rgba(0,0,0,0.62)); transition: opacity 0.16s ease; }
-        .cursor-wait-spinner::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.16); border-top-color: rgba(255,255,255,0.86); animation: spinnerRotate 0.82s linear infinite; }
+        .cursor-wait-spinner { position: fixed; left: 0; top: 0; z-index: 10020; width: 28px; height: 28px; opacity: 0; pointer-events: none; transform: translate(13px, 13px); filter: drop-shadow(0 5px 14px rgba(0,0,0,0.72)); transition: opacity 0.16s ease; }
+        .cursor-wait-spinner::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2.6px solid rgba(255,255,255,0.16); border-top-color: rgba(255,255,255,0.92); animation: spinnerRotate 0.82s linear infinite; }
         .cursor-wait-spinner.active { opacity: 0.88; }
         .wp-ready { filter: blur(0px) !important; opacity: 1 !important; transform: scale(1) !important; animation: lockReveal 1.95s cubic-bezier(0.16, 1, 0.3, 1) both; }
         .wp-lock-blur { filter: blur(14px) brightness(0.68) !important; transform: scale(1.018) !important; }
